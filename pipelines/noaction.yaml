@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: noaction
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: no action to do
+  tasks:
+    - name: no action
+      taskRef: noaction
