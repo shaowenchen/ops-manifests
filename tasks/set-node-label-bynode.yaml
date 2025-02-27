@@ -1,0 +1,45 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: set-node-label-bynode
+  namespace: ops-system
+spec:
+  desc: set node label by node
+  variables:
+    src:
+      desc: source node
+      required: true
+    dst:
+      desc: destination node
+      required: true
+  steps:
+    - name: set-node-label-bynode
+      content: |
+        SOURCE_NODE=${src}
+        TARGET_NODE=${dst}
+
+        if ! kubectl get node $SOURCE_NODE &> /dev/null; then
+            echo "Error: Source node $SOURCE_NODE not found."
+            exit 1
+        fi
+
+        if ! kubectl get node $TARGET_NODE &> /dev/null; then
+            echo "Error: Target node $TARGET_NODE not found."
+            exit 1
+        fi
+
+        LABELS=$(kubectl get node "$SOURCE_NODE" -o json | jq -r '.metadata.labels | to_entries | .[] | "\(.key)=\(.value)"')
+
+        if [ -z "$LABELS" ]; then
+            echo "Error: No labels found on source node $SOURCE_NODE."
+            exit 1
+        fi
+
+        for label in $LABELS; do
+            kubectl label node "$TARGET_NODE" "$label"
+        done
+
+
+        for label in $LABELS; do
+            echo "Label $label set on node $TARGET_NODE."
+        done
