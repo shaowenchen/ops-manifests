@@ -8,7 +8,7 @@ spec:
     host: "alert-gpu=enabled"
     variables:
         threshold:
-            default: "1"
+            default: "5"
     steps:
         - name: alert-ray-zombie-processes
           content: |
@@ -19,7 +19,6 @@ spec:
               import time
               import os
 
-              # Configure threshold through environment variable with default value
               ZOMBIE_THRESHOLD = int(${threshold})
 
               def send(status, message):
@@ -33,19 +32,16 @@ spec:
                   headers = {
                       'Content-Type': 'application/json'
                   }
-                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports', headers=headers, data=json.dumps(payload))
+                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.${HOSTNAME}', headers=headers, data=json.dumps(payload))
                   print(response.text)
 
               try:
-                  # Command to count Ray zombie processes
                   cmd = "ps axjf | grep defunct | grep ray | wc -l"
                   result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
                   
-                  # Parse the count
                   zombie_count = int(result)
                   
                   if zombie_count >= ZOMBIE_THRESHOLD:
-                      # Get process details for the message
                       process_cmd = "ps axjf | grep defunct | grep ray"
                       process_details = subprocess.check_output(process_cmd, shell=True).decode('utf-8')
                       
