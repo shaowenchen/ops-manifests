@@ -10,4 +10,5 @@ spec:
       default: https://ghproxy.chenshaowen.com/
   steps:
     - name: Install Opscli
-      content: curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops/main/getcli.sh | VERSION=latest sh -
+      content: |
+        curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops/main/getcli.sh | VERSION=latest PROXY=${proxy} sh -
