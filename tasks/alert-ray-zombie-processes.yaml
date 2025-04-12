@@ -8,7 +8,7 @@ spec:
     host: "alert-gpu=enabled"
     variables:
         threshold:
-            default: "5"
+            default: "2"
     steps:
         - name: alert-ray-zombie-processes
           content: |
@@ -23,7 +23,7 @@ spec:
 
               def send(status, message):
                   payload = {
-                     'host': '${HOSTNAME}',
+                      'host': '${HOSTNAME}',
                       'type': 'TaskRunReport',
                       'kind': '${TASKRUN}',
                       'status': status,
@@ -36,16 +36,16 @@ spec:
                   print(response.text)
 
               try:
-                  cmd = "ps axjf | grep defunct | grep ray | wc -l"
+                  cmd = "ps axjf | grep defunct | grep ray | grep -v grep| wc -l"
                   result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
                   
                   zombie_count = int(result)
                   
                   if zombie_count >= ZOMBIE_THRESHOLD:
-                      process_cmd = "ps axjf | grep defunct | grep ray"
+                      process_cmd = "ps axjf | grep defunct | grep ray | grep -v grep"
                       process_details = subprocess.check_output(process_cmd, shell=True).decode('utf-8')
                       
-                      message = f"<br>- Detected {zombie_count} Ray zombie processes (threshold: {ZOMBIE_THRESHOLD})<br>- Details:<br><pre>{process_details}</pre>"
+                      message = f"{process_details}"
                       send('alerting', message)
                   else:
                       send('normal', f"Ray zombie processes count: {zombie_count} (below threshold: {ZOMBIE_THRESHOLD})")
