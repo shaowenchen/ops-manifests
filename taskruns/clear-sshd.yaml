@@ -4,5 +4,5 @@ metadata:
   name: clear-sshd
   namespace: ops-system
 spec:
-  crontab: "45 * * * *"
+  crontab: "30 * * * *"
   taskRef: clear-sshd 

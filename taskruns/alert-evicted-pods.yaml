@@ -4,7 +4,7 @@ metadata:
   name: alert-evicted-pods
   namespace: ops-system
 spec:
-  crontab: "45 * * * *"
+  crontab: "30 * * * *"
   taskRef: alert-evicted-pods
   variables:
     threshold: "10"
