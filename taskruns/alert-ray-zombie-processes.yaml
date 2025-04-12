@@ -4,5 +4,5 @@ metadata:
   name: alert-ray-zombie-processes
   namespace: ops-system
 spec:
-  crontab: "*/5 * * * *"
+  crontab: "*/30 * * * *"
   taskRef: alert-ray-zombie-processes
