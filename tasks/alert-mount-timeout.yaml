@@ -8,7 +8,7 @@ spec:
     host: "alert-gpu=enabled"
     variables:
         threshold:
-            default: "5"
+            default: "3"
     steps:
         - name: alert-mount-timeout
           content: |
@@ -42,13 +42,13 @@ spec:
                       print(f"Failed to send alert: {str(e)}")
 
               try:
-                  cmd = f"timeout {TIMEOUT_SECONDS} df -h > /dev/null 2>&1"
+                  cmd = f"timeout {TIMEOUT_SECONDS} df -h 2>&1 > /dev/null"
                   result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
                   
-                  send('normal', f'df -h executed successfully within {TIMEOUT_SECONDS} seconds:\n{result}')
+                  send('normal', '')
 
               except subprocess.CalledProcessError as e:
-                  send('alerting', f'df -h command failed or timed out after {TIMEOUT_SECONDS} seconds:\n{str(e)}')
+                  send('alerting', 'mount exception')
 
               except Exception as e:
                   send('alerting', f'Unexpected error: {str(e)}')
