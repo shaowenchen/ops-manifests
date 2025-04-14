@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-mount-timeout
+  namespace: ops-system
+spec:
+  additional: "action: clear-mount"
+  keywords:
+    - alerting
+  subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-mount-timeout.reports.*
+  type: xiezuo
+  url: https://xz.wps.cn/api/v1/webhook/send?key=

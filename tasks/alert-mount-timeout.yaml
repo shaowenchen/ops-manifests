@@ -1,0 +1,54 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+    name: alert-ray-zombie-processes
+    namespace: ops-system
+spec:
+    desc: check ray zombie processes
+    host: "alert-gpu=enabled"
+    variables:
+        threshold:
+            default: "2"
+    steps:
+        - name: alert-ray-zombie-processes
+          content: |
+              #!/usr/bin/python
+              import subprocess
+              import requests
+              import json
+              import time
+              import os
+
+              ZOMBIE_THRESHOLD = int(${threshold})
+
+              def send(status, message):
+                  payload = {
+                      'host': '${HOSTNAME}',
+                      'type': 'TaskRunReport',
+                      'kind': '${TASKRUN}',
+                      'status': status,
+                      'message': message
+                  }
+                  headers = {
+                      'Content-Type': 'application/json'
+                  }
+                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.${HOSTNAME}', headers=headers, data=json.dumps(payload))
+                  print(response.text)
+
+              try:
+                  cmd = "ps axjf | grep defunct | grep ray | grep -v grep| wc -l"
+                  result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
+                  
+                  zombie_count = int(result)
+                  
+                  if zombie_count >= ZOMBIE_THRESHOLD:
+                      process_cmd = "ps axjf | grep defunct | grep ray | grep -v grep"
+                      process_details = subprocess.check_output(process_cmd, shell=True).decode('utf-8')
+                      
+                      message = f"{process_details}"
+                      send('alerting', message)
+                  else:
+                      send('normal', f"Ray zombie processes count: {zombie_count} (below threshold: {ZOMBIE_THRESHOLD})")
+
+              except Exception as e:
+                  send('alerting', f"Error checking Ray zombie processes: {str(e)}") 
