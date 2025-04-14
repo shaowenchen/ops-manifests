@@ -1,25 +1,24 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-    name: alert-ray-zombie-processes
+    name: alert-mount-timeout
     namespace: ops-system
 spec:
-    desc: check ray zombie processes
+    desc: check mount response timeout
     host: "alert-gpu=enabled"
     variables:
         threshold:
-            default: "2"
+            default: "5"
     steps:
-        - name: alert-ray-zombie-processes
+        - name: alert-mount-timeout
           content: |
               #!/usr/bin/python
               import subprocess
               import requests
               import json
-              import time
               import os
 
-              ZOMBIE_THRESHOLD = int(${threshold})
+              TIMEOUT_SECONDS = int(${threshold})
 
               def send(status, message):
                   payload = {
@@ -32,23 +31,24 @@ spec:
                   headers = {
                       'Content-Type': 'application/json'
                   }
-                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.${HOSTNAME}', headers=headers, data=json.dumps(payload))
-                  print(response.text)
+                  try:
+                      response = requests.post(
+                          '${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.${HOSTNAME}',
+                          headers=headers,
+                          data=json.dumps(payload)
+                      )
+                      print(response.text)
+                  except Exception as e:
+                      print(f"Failed to send alert: {str(e)}")
 
               try:
-                  cmd = "ps axjf | grep defunct | grep ray | grep -v grep| wc -l"
+                  cmd = f"timeout {TIMEOUT_SECONDS} df -h > /dev/null 2>&1"
                   result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
                   
-                  zombie_count = int(result)
-                  
-                  if zombie_count >= ZOMBIE_THRESHOLD:
-                      process_cmd = "ps axjf | grep defunct | grep ray | grep -v grep"
-                      process_details = subprocess.check_output(process_cmd, shell=True).decode('utf-8')
-                      
-                      message = f"{process_details}"
-                      send('alerting', message)
-                  else:
-                      send('normal', f"Ray zombie processes count: {zombie_count} (below threshold: {ZOMBIE_THRESHOLD})")
+                  send('normal', f'df -h executed successfully within {TIMEOUT_SECONDS} seconds:\n{result}')
+
+              except subprocess.CalledProcessError as e:
+                  send('alerting', f'df -h command failed or timed out after {TIMEOUT_SECONDS} seconds:\n{str(e)}')
 
               except Exception as e:
-                  send('alerting', f"Error checking Ray zombie processes: {str(e)}") 
+                  send('alerting', f'Unexpected error: {str(e)}')
