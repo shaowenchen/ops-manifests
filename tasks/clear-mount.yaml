@@ -6,7 +6,8 @@ metadata:
 spec:
   desc: clear mount
   steps:
-    - name: |
+    - name: clear-mount
+      content: |
         while true; do
             timeout 3s df
             if [ $? -ne 0 ]; then
