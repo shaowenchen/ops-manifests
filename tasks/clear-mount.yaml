@@ -27,4 +27,5 @@ spec:
             for path in $error_paths; do
                 umount -f "$path" && echo "Successfully unmounted: $path" || echo "Failed to unmount: $path"
             done
+            break
         done
