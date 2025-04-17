@@ -18,7 +18,8 @@ spec:
             if [ $? -eq 124 ]; then
                 strace_df=$(timeout -k 1s 3s strace df 2>&1)
                 last_line=$(echo "$strace_df" | tail -n 1)
-                last_mount_path=$(echo "$last_line" | grep -oE '/[^ ,]+' | tail -n 1)
+                last_mount_path=$(echo "$last_line" | grep -oE '/[^ ",]+' | tail -n 1)
+                
                 echo "hang: $last_mount_path"
                 umount -f "$last_mount_path" && echo "success umount: $last_mount_path" || echo "failed umount: $last_mount_path"
                 continue
