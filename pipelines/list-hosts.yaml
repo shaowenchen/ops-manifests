@@ -1,5 +1,5 @@
 apiVersion: crd.chenshaowen.com/v1
-kind: Task
+kind: Pipeline
 metadata:
   name: list-hosts
   namespace: ops-system
