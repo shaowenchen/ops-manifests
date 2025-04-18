@@ -1,0 +1,11 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: list-hosts
+  namespace: ops-system
+spec:
+  desc: List all hosts in the ops-system namespace
+  host: anymaster
+  tasks:
+    - name: list-hosts
+      taskRef: list-hosts

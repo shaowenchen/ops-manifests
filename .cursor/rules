@@ -1,0 +1,58 @@
+# Cursor Rules for YAML Files in ops-manifests
+
+Purpose:
+  This file provides rules and guidelines for editing YAML files in the ops-manifests project to ensure consistency and correctness.
+
+Rules for YAML Files:
+
+  File Naming:
+    Convention: Use lowercase letters and hyphens for file names (e.g., list-hosts.yaml, check-cluster-status.yaml).
+    Avoid: Do not use spaces, underscores, or uppercase letters in file names.
+    Directory Structure: Place task definitions in 'tasks/' and pipeline definitions in 'pipelines/' directories.
+
+  Structure:
+    Indentation: Use 2 spaces for indentation. Do not use tabs.
+    Key-Value Pairs: Ensure keys are strings and values are appropriately typed (string, number, boolean, list, etc.).
+    Lists: Use hyphens for list items, with one space after the hyphen.
+
+  Common Fields for Task and Pipeline YAMLs:
+    apiVersion: Must be specified, typically set to 'crd.chenshaowen.com/v1' for custom resources.
+    kind: Must match the resource type, commonly 'Task' for task and pipeline definitions.
+    metadata: Must include 'name' and 'namespace' (often set to 'ops-system').
+    spec: Contains task or pipeline specifications, including:
+      desc: A brief description of the task or pipeline (e.g., 'List all hosts in the ops-system namespace' or 'Check the status of the cluster').
+      host: Optional field to specify the host, typically set to 'anymaster' for cluster-wide operations.
+      steps: A list of steps, each with:
+        name: A descriptive name for the step (e.g., 'get-hosts' or 'get-cluster-status').
+        content: The script or command to execute, often using multiline strings with '|' for formatting, typically involving 'kubectl' commands for cluster interactions.
+
+  Validation:
+    Required Fields: Ensure all mandatory fields for the specific kind are present (e.g., apiVersion, kind, metadata, spec for Tasks).
+    No Duplicate Keys: YAML does not allow duplicate keys at the same level.
+
+  Comments:
+    Usage: Use comments to explain complex configurations or important decisions.
+    Format: Start comments with # followed by a space.
+
+Example YAML Structure for a Task or Pipeline:
+  apiVersion: crd.chenshaowen.com/v1
+  kind: Task
+  metadata:
+    name: example-task-or-pipeline
+    namespace: ops-system
+  spec:
+    desc: Example task or pipeline description
+    host: anymaster
+    steps:
+      - name: example-step
+        content: |
+          kubectl get resources
+          echo 'Performing operation'
+
+Additional Tips:
+  Linting: Use a YAML linter to catch syntax errors before applying manifests.
+  Validation Tools: Consider using tools like kubeval to validate Kubernetes manifests against schemas if applicable.
+  Documentation: Refer to the project documentation or existing YAML files for specific conventions and custom resource definitions (CRDs).
+  Multiline Strings: Use '|' for multiline content in steps to preserve newlines, or '|+' to keep trailing newlines.
+  Script Content: Ensure scripts within 'content' fields are properly formatted and executable, often starting with a shebang (e.g., #!/usr/bin/python) if they are full scripts.
+  Command Execution: Commands in 'content' should be relevant to the cluster operation, often using 'kubectl' for Kubernetes interactions (e.g., 'kubectl get nodes' or 'kubectl get pods -n kube-system'). 
