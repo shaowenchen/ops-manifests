@@ -1,0 +1,22 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: analysis-disk-usage
+  namespace: ops-system
+spec:
+  desc: analysis disk usage of /dev/sd* and /dev/nvme*
+  steps:
+    - name: analysis disk usage
+      content: |
+        #!/bin/bash
+
+        df -hP | grep -E '^/dev/(sd|nvme)' | awk '{print $6}' | while read MOUNT; do
+            echo "mount point: $MOUNT"
+            echo "----------------------------------------"
+
+            find "$MOUNT" -xdev -mindepth 3 -maxdepth 3 -type d 2>/dev/null | while read DIR; do
+                du -sh "$DIR" 2>/dev/null
+            done | sort -hr | head -n 20
+
+            echo
+        done

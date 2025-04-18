@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: analysis-disk-usage
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: analysis disk usage of /dev/sd* and /dev/nvme*
+  tasks:
+    - name: analysis disk usage
+      taskRef: analysis-disk-usage
