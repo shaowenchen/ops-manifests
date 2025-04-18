@@ -8,5 +8,5 @@ metadata:
 spec:
   desc: List all hosts in the ops-system namespace
   tasks:
-    - name: list-hosts
+    - name: list hosts
       taskRef: list-hosts

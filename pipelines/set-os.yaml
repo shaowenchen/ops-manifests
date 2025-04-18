@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: set-os
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: set os kernel parameters
+  tasks:
+    - name: set os kernel parameters
+      taskRef: set-os
