@@ -4,7 +4,7 @@ metadata:
   name: get-os-usage
   namespace: ops-system
 spec:
-  desc: get status information of OS in specified host
+  desc: get usage of os resources in specified host
   variables:
     host:
       display: host
