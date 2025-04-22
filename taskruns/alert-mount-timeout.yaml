@@ -4,5 +4,5 @@ metadata:
   name: alert-mount-timeout
   namespace: ops-system
 spec:
-  crontab: "30 * * * *"
+  crontab: "30 8 * * *"
   taskRef: alert-mount-timeout
