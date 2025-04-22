@@ -8,7 +8,7 @@ spec:
   steps:
     - name: install packages
       content: |
-        apt-get install -y openssl socat conntrack ipset ebtables chrony ipvsadm || echo "install failed"
+        apt-get install -y openssl socat conntrack ipset ebtables chrony ipvsadm > /dev/null 2>&1 || echo "install failed"
     - name: Max PID
       content: |
         echo "kernel.pid_max=4194303 " >> /etc/sysctl.conf
@@ -40,7 +40,7 @@ spec:
       content: |+
         echo "fs.pipe-user-pages-soft=262144" >> /etc/sysctl.conf 
     - name: apply change
-      content: sysctl -p
+      content: sysctl -p > /dev/null 2>&1 && echo "sysctl apply success" || echo "sysctl apply failed"
     - name: max user processes
       content: |
         sed -i "/soft nproc/d" /etc/security/limits.conf ;
