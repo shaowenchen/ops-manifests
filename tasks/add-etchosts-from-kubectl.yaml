@@ -1,0 +1,37 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: add-etchosts-from-kubectl
+  namespace: ops-system
+spec:
+  desc: add hosts to /etc/hosts for specified host
+  variables:
+    clear:
+      required: true
+      default: "false"
+  steps:
+    - name: Backup Etc Hosts
+      content: |
+        cp /etc/hosts /etc/hosts.bak.$(date +%F_%T)
+    - name: Add Etc Hosts from kubectl
+      content: |
+        kubectl get nodes -o wide | tail -n +2 | awk '{print $6, $1}' | while read ip hostname; do
+          if grep -q "$hostname" /etc/hosts; then
+            echo "$hostname has already been added, skipping"
+          else
+            echo "$ip $hostname" | sudo tee -a /etc/hosts > /dev/null
+            echo "Added $ip $hostname to /etc/hosts"
+          fi
+        done
+      when: ${clear} == "false"
+    - name: Remove Etc Hosts
+      content: |
+        kubectl get nodes -o wide | tail -n +2 | awk '{print $6, $1}' | while read ip hostname; do
+          if grep -q "$hostname" /etc/hosts; then
+            sed -i "/$hostname/d" /etc/hosts
+            echo "Removed $hostname from /etc/hosts"
+          else
+            echo "$hostname is not present in /etc/hosts, skipping"
+          fi
+        done
+      when: ${clear} == "true"
