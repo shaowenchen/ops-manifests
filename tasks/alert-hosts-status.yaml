@@ -1,13 +1,13 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-  name: alert-hosts-failed
+  name: alert-hosts-status
   namespace: ops-system
 spec:
-  desc: alert-hosts-failed
+  desc: alert-hosts-status
   host: anymaster
   steps:
-    - name: alert-hosts-failed
+    - name: alert-hosts-status
       content: |
         #!/usr/bin/python
         import subprocess
