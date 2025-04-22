@@ -1,11 +1,10 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: TaskRun
 metadata:
-  name: alert-hosts-status
+  name: alert-hosts-mem
   namespace: ops-system
 spec:
   crontab: "30 * * * *"
-  taskRef: alert-hosts-status
+  taskRef: alert-hosts-mem
   variables:
-    disk_threshold: "80"
-    mem_threshold: "80"
+    threshold: "84" 
