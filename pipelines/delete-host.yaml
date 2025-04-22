@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: delete-host
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: 删除 host 对象
+  tasks:
+    - name: 白名单检测
+      taskRef: check-whitelist
+    - name: 删除指定的 host
+      taskRef: delete-host
