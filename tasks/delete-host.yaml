@@ -10,7 +10,8 @@ spec:
     hostname:
       display: hostname
       required: true
-      regex: "\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}"
+      examples:
+      - "10-10-10-10"
     namespace:
       value: ops-system
   steps:
