@@ -22,7 +22,7 @@ spec:
                 'status': status,
                 'message': message,
                 'host': host,
-                'threshold': 'label.card-num',
+                'threshold': '${card-num}',
                 'operator': '!=',
                 'value': value
             }
@@ -52,9 +52,9 @@ spec:
                 label_card_num = int(labels.get('card-num', -1))  # -1 表示缺失
 
                 if accelerator_count != label_card_num:
-                    message = (f"Host {hostname} acceleratorCount ({accelerator_count}) "
+                    message = (f"acceleratorCount ({accelerator_count}) "
                                f"!= label.card-num ({label_card_num})")
-                    return 'alerting', message, hostname, f"{accelerator_count} vs {label_card_num}"
+                    return 'alerting', message, hostname, f"{accelerator_count}"
             except Exception as e:
                 return 'alerting', f"Error processing host: {e}", metadata.get('name', 'unknown'), 'error'
             
