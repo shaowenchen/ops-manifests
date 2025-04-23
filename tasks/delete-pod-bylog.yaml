@@ -30,7 +30,7 @@ spec:
           NEED_DELETE=true
         fi
 
-        if NEED_DELETE; then
+        if [ "$NEED_DELETE" = true ]; then
           kubectl -n $NAMESPACE delete pod $POD_NAME
         else
           echo "Not find specific log in pod $POD_NAME"
