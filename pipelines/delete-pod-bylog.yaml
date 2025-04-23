@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Pipeline
 metadata:
-  name: restart-pod-bylog
+  name: delete-pod-bylog
   namespace: ops-system
   labels:
     ops/copilot: enabled
