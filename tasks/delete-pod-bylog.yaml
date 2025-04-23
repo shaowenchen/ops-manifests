@@ -1,0 +1,37 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: delete-pod-bylog
+  namespace: ops-system
+spec:
+  desc: restart or delete pod by specific log in cluster
+  host: anymaster
+  variables:
+    namespace:
+      display: namespace
+      required: true
+    pod:
+      display: pod name
+      required: true
+  steps:
+    - name: delete pod
+      content: |
+        NAMESPACE=${namespace}
+        POD_NAME=${pod}
+
+        LOGS=$(kubectl -n $NAMESPACE logs --tail=100 $POD_NAME)
+        NEED_DELETE=false
+
+        if echo "$LOGS" | grep -q "Out of memory"; then
+          echo "$LOGS" | grep -C 3 "Out of memory"
+          NEED_DELETE=true
+        elif echo "$LOGS" | grep -q "RuntimeError: CUDA error"; then
+          echo "$LOGS" | grep -C 3 "RuntimeError: CUDA error"
+          NEED_DELETE=true
+        fi
+
+        if NEED_DELETE; then
+          kubectl -n $NAMESPACE delete pod $POD_NAME
+        else
+          echo "Not find specific log in pod $POD_NAME"
+        fi
