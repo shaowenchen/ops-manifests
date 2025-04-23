@@ -11,4 +11,4 @@ spec:
     - name: 获取 Pod
       taskRef: get-pod
     - name: 删除 Pod
-      taskRef: delete-pod
+      taskRef: delete-pod-bylog
