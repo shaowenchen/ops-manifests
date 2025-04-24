@@ -51,7 +51,7 @@ spec:
                     if host['status']['heartStatus'] == 'Failed':
                         status = 'alerting'
                         hostname = host['status'].get('hostname', '')
-                        message = f"{hostname} failed to report heart"
+                        message = f"failed to report heart"
                         send(status, message, host['metadata']['name'], 'Failed')
                     else:
                         status = 'normal'
