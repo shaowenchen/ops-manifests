@@ -1,41 +1,21 @@
-name: Release Latest Version
+name: Update-Latest-Tag
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
 
 jobs:
-  release:
+  deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-options: '--depth=0'
-
-      - name: Setup Git
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-
-      - name: Create or update latest tag
-        run: |
-          if git rev-parse latest >/dev/null 2>&1; then
-            git tag -d latest
-            git push origin :refs/tags/latest
-          fi
-          git tag latest
-          git push origin latest
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag Repo
+        uses: richardsimko/update-tag@v1
         with:
           tag_name: latest
-          release_name: Latest Release
-          body: |
-            This is an automated release of the latest version.
-          draft: false
-          prerelease: false 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
