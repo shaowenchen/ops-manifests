@@ -16,6 +16,13 @@ spec:
     - name: Add Etc Hosts from kubectl
       content: |
         kubectl get nodes -o wide | tail -n +2 | awk '{print $6, $1}' | while read ip hostname; do
+          ipDomain=$(echo $ip | sed 's/\./-/g')
+          if grep -q "$ipDomain" /etc/hosts; then
+            echo "$ipDomain has already been added, skipping"
+          else
+            echo "$ip $ipDomain" | sudo tee -a /etc/hosts > /dev/null
+            echo "Added $ip $ipDomain to /etc/hosts"
+          fi
           if grep -q "$hostname" /etc/hosts; then
             echo "$hostname has already been added, skipping"
           else
@@ -27,6 +34,13 @@ spec:
     - name: Remove Etc Hosts
       content: |
         kubectl get nodes -o wide | tail -n +2 | awk '{print $6, $1}' | while read ip hostname; do
+          ipDomain=$(echo $ip | sed 's/\./-/g')
+          if grep -q "$ipDomain" /etc/hosts; then
+            sed -i "/$ipDomain/d" /etc/hosts
+            echo "Removed $ipDomain from /etc/hosts"
+          else
+            echo "$ipDomain is not present in /etc/hosts, skipping"
+          fi
           if grep -q "$hostname" /etc/hosts; then
             sed -i "/$hostname/d" /etc/hosts
             echo "Removed $hostname from /etc/hosts"
