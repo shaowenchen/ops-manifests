@@ -5,7 +5,7 @@ metadata:
     namespace: ops-system
 spec:
     desc: check gpu drop in specified host
-    host: "alert-gpu=enabled"
+    host: "alert-card=gpu"
     steps:
         - name: alert-card-drop
           content: |

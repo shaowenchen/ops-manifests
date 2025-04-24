@@ -5,7 +5,7 @@ metadata:
     namespace: ops-system
 spec:
     desc: check mount response timeout
-    host: "alert-gpu=enabled"
+    host: "alert-card="
     variables:
         threshold:
             default: "3"

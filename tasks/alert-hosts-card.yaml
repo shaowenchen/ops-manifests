@@ -35,7 +35,7 @@ spec:
 
         def get_all_hosts():
             try:
-                cmd = "kubectl -n ops-system get hosts -o json"
+                cmd = "kubectl -n ops-system get hosts -l alert-card -o json"
                 result = subprocess.check_output(cmd, shell=True).decode('utf-8')
                 return json.loads(result)
             except Exception as e:

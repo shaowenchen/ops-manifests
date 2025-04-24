@@ -5,7 +5,7 @@ metadata:
   namespace: ops-system
 spec:
   desc: check fabricmanager in specified host
-  host: "alert-gpu=enabled"
+  host: "alert-card=gpu"
   variables:
     threshold:
       default: "3"

@@ -5,7 +5,7 @@ metadata:
     namespace: ops-system
 spec:
     desc: check ray zombie processes
-    host: "alert-gpu=enabled"
+    host: "alert-card="
     variables:
         threshold:
             default: "2"
