@@ -47,11 +47,11 @@ spec:
                 metadata = host['metadata']
                 status = host.get('status', {})
                 labels = metadata.get('labels', {})
-                hostname = metadata.get('name', '')
+                hostname = status.get('hostname', '')
                 accelerator_count = int(status.get('acceleratorCount', 0))
                 label_card_num = int(labels.get('card-num', -1))
                 if accelerator_count != label_card_num:
-                    message = (f"card-num mismatch")
+                    message = (f"{hostname} card-num mismatch")
                     return 'alerting', message, hostname, f"{accelerator_count}", f"{label_card_num}"
             except Exception as e:
                 return 'alerting', f"Error processing host: {e}", metadata.get('name', 'unknown'), 'error', 'error'

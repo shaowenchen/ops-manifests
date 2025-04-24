@@ -52,21 +52,21 @@ spec:
             status = 'normal'
             message = ''
             value = ''
-            node_name = host['status'].get('hostname', '')
+            hostname = host['status'].get('hostname', '')
             try:
                 mem_usage = host['status'].get('memUsagePercent', '')
                 mem_usage_int = int(mem_usage.strip('%').split('.')[0])
 
                 if mem_usage_int > threshold:
-                    message += (f"usage exceeds threshold")
+                    message += (f"{hostname} usage exceeds threshold")
                     status = 'alerting'
                     value = str(mem_usage_int)
             except KeyError as e:
                 print(f"KeyError: {e}")
-                message = f"Invalid data format for host {node_name}"
+                message = f"Invalid data format for host {hostname}"
                 status = 'alerting'
 
-            return status, message, node_name, value
+            return status, message, hostname, value
 
         def main():
             hosts_data = get_all_hosts()
@@ -75,9 +75,9 @@ spec:
                 for host in hosts_data['items']:
                     if host['status']['heartStatus'] == 'Failed':
                         continue
-                    status, message, node_name, value = check_mem_usage(host)
+                    status, message, hostname, value = check_mem_usage(host)
                     if status == 'alerting':
-                        send(status, message, node_name, value)
+                        send(status, message, hostname, value)
 
         if __name__ == "__main__":
             main() 

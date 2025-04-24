@@ -55,7 +55,7 @@ spec:
         def check_disk_usage(host):
             status = 'normal'
             message = ''
-            node_name = host['status'].get('hostname', '')
+            hostname = host['status'].get('hostname', '')
             value = ''
             try:
                 disk_usage = host['status'].get('diskUsagePercent', '')
@@ -63,15 +63,15 @@ spec:
 
                 for i, usage in enumerate(disk_usage_list):
                     if usage > threshold:
-                        message += (f"disk{i + 1} usage exceeds threshold")
+                        message += (f"{hostname} disk{i + 1} usage exceeds threshold")
                         status = 'alerting'
                         value = str(usage)
             except KeyError as e:
                 print(f"KeyError: {e}")
-                message = f"Invalid data format for host {node_name}"
+                message = f"Invalid data format for host {hostname}"
                 status = 'alerting'
             
-            return status, message, node_name, value
+            return status, message, hostname, value
 
         def main():
             hosts_data = get_all_hosts()
@@ -80,9 +80,9 @@ spec:
                 for host in hosts_data['items']:
                     if host['status']['heartStatus'] == 'Failed':
                         continue
-                    status, message, node_name, value = check_disk_usage(host)
+                    status, message, hostname, value = check_disk_usage(host)
                     if status == 'alerting':
-                        send(status, message, node_name, value)
+                        send(status, message, hostname, value)
 
         if __name__ == "__main__":
             main() 
