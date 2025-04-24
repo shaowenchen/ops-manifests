@@ -15,16 +15,16 @@ spec:
         import json
         import re
 
-        def send(status, message, host, value):
+        def send(status, message, host, accelerator_count, label_card_num):
             payload = {
                 'kind': '${TASKRUN}',
                 'type': 'TaskRunReport',
                 'status': status,
                 'message': message,
                 'host': host,
-                'threshold': '${card-num}',
+                'threshold': label_card_num,
                 'operator': '!=',
-                'value': value
+                'value': accelerator_count
             }
             headers = {
                 'Content-Type': 'application/json'
@@ -49,16 +49,14 @@ spec:
                 labels = metadata.get('labels', {})
                 hostname = metadata.get('name', '')
                 accelerator_count = int(status.get('acceleratorCount', 0))
-                label_card_num = int(labels.get('card-num', -1))  # -1 表示缺失
-
+                label_card_num = int(labels.get('card-num', -1))
                 if accelerator_count != label_card_num:
-                    message = (f"acceleratorCount ({accelerator_count}) "
-                               f"!= label.card-num ({label_card_num})")
-                    return 'alerting', message, hostname, f"{accelerator_count}"
+                    message = (f"card-num mismatch")
+                    return 'alerting', message, hostname, f"{accelerator_count}", f"{label_card_num}"
             except Exception as e:
-                return 'alerting', f"Error processing host: {e}", metadata.get('name', 'unknown'), 'error'
+                return 'alerting', f"Error processing host: {e}", metadata.get('name', 'unknown'), 'error', 'error'
             
-            return 'normal', '', hostname, ''
+            return 'normal', '', hostname, '', ''
 
         def main():
             hosts_data = get_all_hosts()
@@ -66,9 +64,9 @@ spec:
                 for host in hosts_data['items']:
                     if host.get('status', {}).get('heartStatus', '') == 'Failed':
                         continue
-                    status, message, hostname, value = check_card_count(host)
+                    status, message, hostname, accelerator_count, label_card_num = check_card_count(host)
                     if status == 'alerting':
-                        send(status, message, hostname, value)
+                        send(status, message, hostname, accelerator_count, label_card_num)
 
         if __name__ == "__main__":
             main() 

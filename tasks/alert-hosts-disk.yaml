@@ -63,7 +63,7 @@ spec:
 
                 for i, usage in enumerate(disk_usage_list):
                     if usage > threshold:
-                        message += (f"Disk {i + 1} usage {usage}% exceeds threshold {threshold}% on host {node_name}.")
+                        message += (f"disk{i + 1} usage exceeds threshold")
                         status = 'alerting'
                         value = str(usage)
             except KeyError as e:

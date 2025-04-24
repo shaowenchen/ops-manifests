@@ -58,7 +58,7 @@ spec:
                 mem_usage_int = int(mem_usage.strip('%').split('.')[0])
 
                 if mem_usage_int > threshold:
-                    message += (f"Memory usage {mem_usage_int}% exceeds threshold {threshold}% on host {node_name}.")
+                    message += (f"usage exceeds threshold")
                     status = 'alerting'
                     value = str(mem_usage_int)
             except KeyError as e:
