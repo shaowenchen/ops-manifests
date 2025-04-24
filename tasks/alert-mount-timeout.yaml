@@ -1,16 +1,16 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-    name: alert-mount-timeout
+    name: alert-mount-exception
     namespace: ops-system
 spec:
-    desc: check mount response timeout
+    desc: check mount response exception
     host: "alert-card="
     variables:
         threshold:
             default: "3"
     steps:
-        - name: alert-mount-timeout
+        - name: alert-mount-exception
           content: |
               #!/usr/bin/python
               import subprocess

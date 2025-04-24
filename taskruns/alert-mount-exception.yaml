@@ -1,8 +1,8 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: TaskRun
 metadata:
-  name: alert-mount-timeout
+  name: alert-mount-exception
   namespace: ops-system
 spec:
   crontab: "30 8 * * *"
-  taskRef: alert-mount-timeout
+  taskRef: alert-mount-exception
