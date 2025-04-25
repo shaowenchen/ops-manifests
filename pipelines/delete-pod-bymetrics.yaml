@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: delete-pod-bymetrics
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: 查询 Pod 的非 200 指标判断是否删除 Pod
+  tasks:
+    - name: 获取 Pod
+      taskRef: get-pod
+    - name: 获取 Metrics 非 200 增量
+      taskRef: get-metrics-pod-not200
+    - name: 删除异常指标的 Pod
+      taskRef: delete-pod-bymetrics

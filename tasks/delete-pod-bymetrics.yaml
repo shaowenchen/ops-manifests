@@ -1,0 +1,33 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: delete-pod-bymetrics
+  namespace: ops-system
+spec:
+  desc: restart or delete pod by specific metrics in cluster
+  host: anymaster
+  variables:
+    namespace:
+      display: namespace
+      required: true
+    pod:
+      display: pod name
+      required: true
+  steps:
+    - name: delete pod
+      content: |
+        NAMESPACE=${namespace}
+        POD_NAME=${pod}
+        Metrics=${metrics}
+        NEED_DELETE=false
+
+        metricsCount=$(echo $Metrics | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; print sum}')
+        if [ "$metricsCount" -gt 10 ]; then
+          NEED_DELETE=true
+        fi
+
+        if [ "$NEED_DELETE" = true ]; then
+          kubectl -n $NAMESPACE delete pod $POD_NAME
+        else
+          echo "Not hit metrics target in pod $POD_NAME"
+        fi
