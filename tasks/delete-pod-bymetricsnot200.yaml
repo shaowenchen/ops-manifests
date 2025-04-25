@@ -15,7 +15,7 @@ spec:
       required: true
     max:
       display: max metrics count
-      default: 80
+      value: 80
   steps:
     - name: delete pod
       content: |
