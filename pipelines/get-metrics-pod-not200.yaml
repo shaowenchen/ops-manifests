@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: get-metrics-pod-not200
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: get metrics from prometheus for pod not 200
+  tasks:
+    - name: get-metrics-pod-not200
+      taskRef: get-metrics-pod-not200
+

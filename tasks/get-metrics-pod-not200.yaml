@@ -1,0 +1,36 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-metrics-pod-not200
+  namespace: ops-system
+spec:
+  desc: get metrics from prometheus for pod not 200
+  host: anynode
+  variables:
+    prometheusapi:
+      display: prometheusapi
+      required: true
+      examples:
+      - "http://prometheus-server.kube-system.svc.cluster.local:9090"
+    pod:
+      display: pod name
+      required: true
+  steps:
+    - name: get pod
+      content: |
+        #!/bin/bash
+
+        pod="${pod}"
+        prometheusapi="${prometheusapi}"
+
+        response=$(curl -s -G \
+          --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[1m])" \
+          --data-urlencode 'start='"$(($(date +%s) - 300))" \
+          --data-urlencode 'end='"$(date +%s)" \
+          --data-urlencode 'step=30' \
+          "$prometheusapi/api/v1/query_range")
+
+        echo "$response" | jq -r '.data.result[].values[] | @tsv' | while IFS=$'\t' read -r timestamp value; do
+          datetime=$(date -d @"$timestamp" "+%m-%d %H:%M:%S")
+          echo "$datetime -> $value"
+        done
