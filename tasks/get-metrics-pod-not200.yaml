@@ -16,13 +16,14 @@ spec:
       display: pod name
       required: true
   steps:
-    - name: get pod
+    - name: get pod metrics not 200
       content: |
         #!/bin/bash
 
-        pod="${pod}"
-        prometheusapi="${prometheusapi}"
+        pod="${pod}"  # 从环境变量或脚本参数中获取
+        prometheusapi="${prometheusapi}"  # 从环境变量或脚本参数中获取
 
+        # 调用 Prometheus API 并获取 JSON 响应
         response=$(curl -s -G \
           --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[1m])" \
           --data-urlencode 'start='"$(($(date +%s) - 300))" \
@@ -30,7 +31,10 @@ spec:
           --data-urlencode 'step=30' \
           "$prometheusapi/api/v1/query_range")
 
+        # 使用 jq 解析 JSON 并格式化输出
         echo "$response" | jq -r '.data.result[].values[] | @tsv' | while IFS=$'\t' read -r timestamp value; do
+          # 将 Unix 时间戳转换为日期时间格式
           datetime=$(date -d @"$timestamp" "+%m-%d %H:%M:%S")
+          # 输出格式化结果
           echo "$datetime -> $value"
         done

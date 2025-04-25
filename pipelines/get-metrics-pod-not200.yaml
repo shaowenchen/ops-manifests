@@ -10,4 +10,3 @@ spec:
   tasks:
     - name: get-metrics-pod-not200
       taskRef: get-metrics-pod-not200
-
