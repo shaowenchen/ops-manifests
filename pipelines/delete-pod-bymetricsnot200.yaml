@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Pipeline
 metadata:
-  name: delete-pod-bymetrics
+  name: delete-pod-bymetricsnot200
   namespace: ops-system
   labels:
     ops/copilot: enabled
@@ -13,4 +13,4 @@ spec:
     - name: 获取 Metrics 非 200 增量
       taskRef: get-metrics-pod-not200
     - name: 删除异常指标的 Pod
-      taskRef: delete-pod-bymetrics
+      taskRef: delete-pod-bymetricsnot200

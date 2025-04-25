@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-  name: delete-pod-bymetrics
+  name: delete-pod-bymetricsnot200
   namespace: ops-system
 spec:
   desc: restart or delete pod by specific metrics in cluster
