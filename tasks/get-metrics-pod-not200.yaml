@@ -31,4 +31,4 @@ spec:
 
         values=$(echo "$response" | jq -r '.data.result[].values[][1]')
 
-        echo "$values"
+        echo -n "$values" | tr '\n' ' '
