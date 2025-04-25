@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 重启、删除集群中的某一个 Pod
+  desc: 强制删除 Pod
   tasks:
     - name: 白名单 Pod
       taskRef: check-whitelist
