@@ -16,7 +16,7 @@ spec:
       display: pod name
       required: true
   steps:
-    - name: get pod increase not 200 count recently 10min
+    - name: get pod increase not 200 count recently 300s
       content: |
         #!/bin/bash
         pod="${pod}"
@@ -24,7 +24,7 @@ spec:
 
         response=$(curl -s -G \
           --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[1m])" \
-          --data-urlencode 'start='"$(($(date +%s) - 600))" \
+          --data-urlencode 'start='"$(($(date +%s) - 300))" \
           --data-urlencode 'end='"$(date +%s)" \
           --data-urlencode 'step=30' \
           "$prometheusapi/api/v1/query_range")
