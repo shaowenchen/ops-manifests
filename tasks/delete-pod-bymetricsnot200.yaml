@@ -13,20 +13,16 @@ spec:
     pod:
       display: pod name
       required: true
-    max:
-      display: max metrics count
-      value: 80
   steps:
     - name: delete pod
       content: |
         NAMESPACE=${namespace}
         POD_NAME=${pod}
         Metrics=${metrics}
-        Max=${max}
         NEED_DELETE=false
 
         metricsCount=$(echo $Metrics | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; print sum}')
-        if [ "$metricsCount" -gt "$Max" ]; then
+        if [ "$metricsCount" -gt 80 ]; then
           NEED_DELETE=true
         fi
 
