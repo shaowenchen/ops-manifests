@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-  name: get-metrics-pod-not200-by-svc
+  name: get-metrics-pod-not200-bysvc
   namespace: ops-system
 spec:
   desc: get metrics from prometheus for pod not 200
