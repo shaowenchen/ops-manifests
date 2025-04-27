@@ -1,0 +1,50 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-metrics-pod-not200
+  namespace: ops-system
+spec:
+  desc: get metrics from prometheus for pod not 200
+  host: anynode
+  variables:
+    prometheusapi:
+      display: prometheusapi
+      required: true
+      examples:
+      - "http://prometheus-server.kube-system.svc.cluster.local:9090"
+    svc:
+      display: svc name
+      required: true
+  steps:
+    - name: get pod not 200 response count increase in last 5 minutes
+      content: |
+        #!/bin/bash
+        
+        svc="qwen2-vl-72b-v1"
+        prometheusapi="http://10.25.84.128:31794"
+        maxerrors=80
+        svc=${svc#atms-glb-}
+
+        response=$(curl -s -G \
+          --data-urlencode "query=sum(increase(istio_requests_total{destination_app=\"$svc\", response_code!=\"200\"}[300s])) by (pod)" \
+          --data-urlencode "time=$(date +%s)" \
+          "$prometheusapi/api/v1/query")
+
+
+        result=$(echo "$response" | jq -r '.data.result[] | "\(.metric.pod) \(.value[1])"')
+
+        top_pod=$(echo "$result" | sort -k2 -nr | head -n1)
+
+        if [ -n "$top_pod" ]; then
+          pod_name=$(echo "$top_pod" | awk '{print $1}')
+          errors=$(echo "$top_pod" | awk '{print int($2)}')
+
+          if [ "$errors" -gt $maxerrors ]; then
+            echo "pod:$pod_name"
+            exit 0
+          fi
+        fi
+        # every result as a line
+        echo "$result" | sort -k2 -nr
+
+

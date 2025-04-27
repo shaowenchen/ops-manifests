@@ -18,11 +18,10 @@ spec:
       content: |
         NAMESPACE=${namespace}
         POD_NAME=${pod}
-        Metrics="${metrics}"
+        COUNTS=${counts}
         NEED_DELETE=false
 
-        metricsCount=$(echo $Metrics | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; print sum}')
-        if [ "$metricsCount" -gt 80 ]; then
+        if [ "$counts" -gt 80 ]; then
           NEED_DELETE=true
         fi
 
