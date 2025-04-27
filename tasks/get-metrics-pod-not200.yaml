@@ -23,13 +23,13 @@ spec:
         prometheusapi="${prometheusapi}"
 
         response=$(curl -s -G \
-          --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[30])" \
+          --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[30s])" \
           --data-urlencode 'start='"$(($(date +%s) - 300))" \
           --data-urlencode 'end='"$(date +%s)" \
           --data-urlencode 'step=30' \
           "$prometheusapi/api/v1/query_range")
 
         values=$(echo "$response" | jq -r '.data.result[].values[][1]')
+        counts=$(echo "$values" | awk '{sum+=$1} END {print sum}')
 
-        counts=$(echo "$values" | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; print sum}')
-        echo "counts: $errors"
+        echo "counts:$counts"
