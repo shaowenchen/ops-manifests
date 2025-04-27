@@ -20,8 +20,8 @@ spec:
       content: |
         #!/bin/bash
         
-        svc="qwen2-vl-72b-v1"
-        prometheusapi="http://10.25.84.128:31794"
+        svc="${svc}"
+        prometheusapi="${prometheusapi}"
         maxerrors=80
         svc=${svc#atms-glb-}
 
