@@ -16,4 +16,4 @@ spec:
   steps:
     - name: delete pod
       content: |
-        kubectl delete pod --grace-period=0 --force -n ${namespace} ${pod}
+        kubectl delete pod --grace-period=0 --force -n ${namespace} ${pod} | grep -i -v "Warn" 
