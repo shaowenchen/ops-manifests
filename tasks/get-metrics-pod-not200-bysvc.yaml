@@ -24,6 +24,7 @@ spec:
         prometheusapi="${prometheusapi}"
         maxerrors=80
         svc=${svc#atms-glb-}
+        svc=$(echo "$svc" | sed -E 's/-v[0-9]+$/-v*/')
 
         response=$(curl -s -G \
           --data-urlencode "query=sum(increase(istio_requests_total{destination_app=\"$svc\", response_code!=\"200\"}[300s])) by (pod)" \
