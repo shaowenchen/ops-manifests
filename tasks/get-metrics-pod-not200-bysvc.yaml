@@ -44,7 +44,7 @@ spec:
             exit 0
           fi
         fi
-        # every result as a line
+        echo "Not hit any pod"
         echo "$result" | sort -k2 -nr
 
 
