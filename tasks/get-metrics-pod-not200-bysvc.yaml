@@ -31,7 +31,6 @@ spec:
           --data-urlencode "time=$(date +%s)" \
           "$prometheusapi/api/v1/query")
 
-
         result=$(echo "$response" | jq -r '.data.result[] | "\(.metric.pod) \(.value[1])"')
 
         top_pod=$(echo "$result" | sort -k2 -nr | head -n1)
@@ -45,7 +44,7 @@ spec:
             exit 0
           fi
         fi
-        echo "Not hit any pod"
-        echo "$result" | sort -k2 -nr
+        echo "Not hit any pod: "
+        echo "$result"
 
 
