@@ -11,7 +11,7 @@ spec:
     - name: 获取 svc
       taskRef: get-svc
     - name: 通过 svc 获取 pod 非 200 Metrics
-      taskRef: get-metrics-pod-not200-by-svc
+      taskRef: get-metrics-pod-not200-bysvc
     - name: 获取 pod 非 200 增量 metrics
       taskRef: get-metrics-pod-not200
     - name: 删除异常指标的 Pod
