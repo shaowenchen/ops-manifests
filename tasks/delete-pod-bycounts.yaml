@@ -1,10 +1,10 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-  name: delete-pod-bymetricsnot200
+  name: delete-pod-bycounts
   namespace: ops-system
 spec:
-  desc: restart or delete pod by specific metrics in cluster
+  desc: restart or delete pod by counts default 80
   host: anymaster
   variables:
     namespace:
