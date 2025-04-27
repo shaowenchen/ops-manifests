@@ -19,15 +19,14 @@ spec:
     - name: get pod not 200 response count increase in last 5 minutes
       content: |
         #!/bin/bash
-        
         svc="${svc}"
         prometheusapi="${prometheusapi}"
         maxerrors=80
         svc=${svc#atms-glb-}
-        svc=$(echo "$svc" | sed -E 's/-v[0-9]+$/-v.*/')
+        svc=$(echo "$svc" | sed -E 's/-v[0-9]+$//')
 
         response=$(curl -s -G \
-          --data-urlencode "query=sum(increase(istio_requests_total{destination_app=~\"$svc\", response_code!=\"200\"}[300s])) by (pod)" \
+          --data-urlencode "query=sum(increase(istio_requests_total{destination_app=~\"$svc.*\", response_code!=\"200\"}[300s])) by (pod)" \
           --data-urlencode "time=$(date +%s)" \
           "$prometheusapi/api/v1/query")
 
