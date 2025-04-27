@@ -21,7 +21,10 @@ spec:
         COUNTS=${counts}
         NEED_DELETE=false
 
-        if [ "$counts" -gt 80 ]; then
+        if [ -z "$COUNTS" ]; then
+          COUNTS=0
+        fi
+        if [ "$COUNTS" -gt 80 ]; then
           NEED_DELETE=true
         fi
 
