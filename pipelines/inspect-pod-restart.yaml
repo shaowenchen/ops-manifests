@@ -10,5 +10,7 @@ spec:
   tasks:
     - name: 获取 Pod
       taskRef: get-pod
-    - name: 查看 Pod 的日志
-      taskRef: get-pod-logs-byname
+    - name: 查看 Pod 重启前的错误日志
+      taskRef: get-pod-ago-error-logs-byname
+    - name: 查看 Pod 重启后的错误日志
+      taskRef: get-pod-error-logs-byname

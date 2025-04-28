@@ -1,0 +1,20 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-pod-error-ago-logs-byname
+  namespace: ops-system
+spec:
+  desc: get pod ago error logs in cluster
+  host: anymaster
+  variables:
+    namespace:
+      display: namespace
+      required: true
+    pod:
+      display: pod
+      required: true
+    topk:
+      default: "20"
+  steps:
+    - name: get pod ago topk error logs
+      content: kubectl logs -p --tail=${topk} -n ${namespace} ${pod} | grep -iE 'err|warn' | exit 0
