@@ -5,7 +5,7 @@ metadata:
   namespace: ops-system
 spec:
   desc: get metrics from prometheus for pod not 200
-  host: anynode
+  host: anymaster
   variables:
     prometheusapi:
       display: prometheusapi
@@ -19,31 +19,31 @@ spec:
     - name: get pod not 200 response count increase in last 5 minutes
       content: |
         #!/bin/bash
-        svc="${svc}"
+        mysvc="${svc}"
         prometheusapi="${prometheusapi}"
         maxerrors=80
-        svc=${svc#atms-glb-}
-        svc=$(echo "$svc" | sed -E 's/-v[0-9]+$//')
-
+        mysvc=$(echo "$mysvc" | awk '{gsub(/^atms-glb-/,""); print substr($0, 1, length($0)-1)}')
+        promql="sum(increase(istio_requests_total{reporter=\"destination\",destination_service_name=~\"$mysvc.*\", response_code!=\"200\"}[300s])) by (pod) > 0"
         response=$(curl -s -G \
-          --data-urlencode "query=sum(increase(istio_requests_total{destination_app=~\"$svc.*\", response_code!=\"200\"}[300s])) by (pod)" \
+          --data-urlencode "query=$promql" \
           --data-urlencode "time=$(date +%s)" \
           "$prometheusapi/api/v1/query")
 
         result=$(echo "$response" | jq -r '.data.result[] | "\(.metric.pod) \(.value[1])"')
-
         top_pod=$(echo "$result" | sort -k2 -nr | head -n1)
-
+        flag=0
         if [ -n "$top_pod" ]; then
           pod_name=$(echo "$top_pod" | awk '{print $1}')
           errors=$(echo "$top_pod" | awk '{print int($2)}')
 
-          if [ "$errors" -gt $maxerrors ]; then
+          if [ -n "$maxerrors" ] && [ "$errors" -gt "$maxerrors" ]; then
             echo "pod:$pod_name"
-            exit 0
+            flag=1
           fi
         fi
-        echo "Not hit any pod: "
-        echo "$result"
-
+        if [ $flag -eq 0 ]; then
+          echo "No pod hit"
+          echo "$result" | sort -k2 -nr
+          exit 1
+        fi
 

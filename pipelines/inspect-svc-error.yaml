@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Pipeline
 metadata:
-  name: inspect-error-svc
+  name: inspect-svc-error
   namespace: ops-system
   labels:
     ops/copilot: enabled

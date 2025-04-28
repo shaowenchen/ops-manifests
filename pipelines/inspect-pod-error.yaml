@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Pipeline
 metadata:
-  name: inspect-error-pod
+  name: inspect-pod-error
   namespace: ops-system
   labels:
     ops/copilot: enabled
@@ -10,8 +10,6 @@ spec:
   tasks:
     - name: 获取 Pod
       taskRef: get-pod
-    - name: 获取 Deployment
-      taskRef: get-deployment-bypod
     - name: 查看 Pod 错误日志
       taskRef: get-pod-error-logs-byname
     - name: 查看 Pod 的错误事件

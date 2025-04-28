@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: inspect-pod-restart
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: pod 重启时，用来查看 pod 的状态和事件
+  tasks:
+    - name: 获取 Pod
+      taskRef: get-pod
+    - name: 查看 Pod 的日志
+      taskRef: get-pod-logs-byname
