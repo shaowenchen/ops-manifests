@@ -12,6 +12,3 @@ spec:
       taskRef: get-pod
     - name: 查看 Pod 重启前的错误日志
       taskRef: get-pod-ago-error-logs-byname
-    - name: 查看 Pod 重启后的错误日志
-      taskRef: get-pod-error-logs-byname
-      runAlways: true
