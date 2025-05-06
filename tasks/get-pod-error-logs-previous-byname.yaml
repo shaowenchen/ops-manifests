@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-  name: get-pod-error-ago-logs-byname
+  name: get-pod-error-logs-previous-byname
   namespace: ops-system
 spec:
   desc: get pod ago error logs in cluster
