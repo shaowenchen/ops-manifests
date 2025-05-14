@@ -7,6 +7,9 @@ metadata:
     ops/copilot: enabled
 spec:
   desc: chat with llm and get the answer, summarize the answer
+  variables:
+    host:
+      default: anynode
   tasks:
     - name: chat
       taskRef: chat
