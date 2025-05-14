@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: chat
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: chat with llm and get the answer
+  tasks:
+    - name: chat
+      taskRef: chat

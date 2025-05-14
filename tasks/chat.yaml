@@ -1,0 +1,8 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: chat
+  namespace: ops-system
+spec:
+  desc: chat with llm and get the answer
+
