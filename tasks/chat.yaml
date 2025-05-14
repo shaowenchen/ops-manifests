@@ -4,5 +4,9 @@ metadata:
   name: chat
   namespace: ops-system
 spec:
-  desc: chat with llm and get the answer
-
+  desc: chat with llm and get the answer, summarize the answer
+  host: anynode
+  steps:
+    - name: chat
+      content: |
+        echo "holding"

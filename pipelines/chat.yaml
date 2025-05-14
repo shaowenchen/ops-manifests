@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: chat with llm and get the answer
+  desc: chat with llm and get the answer, summarize the answer
   tasks:
     - name: chat
       taskRef: chat
