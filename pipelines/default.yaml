@@ -1,15 +1,15 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Pipeline
 metadata:
-  name: chat
+  name: default
   namespace: ops-system
   labels:
     ops/copilot: enabled
 spec:
-  desc: chat with llm and get the answer, summarize the answer
+  desc: chat with llm, if you don't know what to do, just choose this
   variables:
     host:
       default: anynode
   tasks:
-    - name: chat
-      taskRef: chat
+    - name: default
+      taskRef: default
