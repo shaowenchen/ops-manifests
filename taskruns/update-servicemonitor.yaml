@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: update-servicemonitor
+  namespace: ops-system
+spec:
+  crontab: 30 3 * * *
+  taskRef: script
+  variables:
+    content: |
+      #!/bin/bash
+      git clone https://ghfast.top/https://github.com/shaowenchen/hubimage.git
+      kubectl apply -f hubimage/kubernetes/observation/servicemonitor/
+    host: anymaster
