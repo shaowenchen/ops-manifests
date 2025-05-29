@@ -16,3 +16,6 @@ spec:
     - name: Check LSPCI FF
       content: |
         if lspci | grep -q "rev ff"; then echo "ERROR - 'rev ff' found in lspci output"; else echo "OK - No 'rev ff' found"; fi
+    - name: Clear ECC Errors
+      content: |
+        nvidia-smi -p 1
