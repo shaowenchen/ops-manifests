@@ -7,17 +7,37 @@ spec:
   desc: get npu status using npu-smi in specified host
   steps:
     - name: Check npu-smi
-      content: command -v npu-smi
-    - name: NPU Number
-      content: npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}'
-    - name: NPU Model
-      content: npu-smi info -t board -i 0 -c 0 | grep -oP 'Chip Name\s*:\s*\K[^\n]+'
-    - name: NPU Memory\Clock\Temperature
       content: |
-        echo "$(npu-smi info -t memory -i 0 | awk '/HBM Capacity|HBM Clock Speed|HBM Temperature/ {print $NF}' | awk 'NR==1{printf "%d MB ", $0} NR==2{printf "%d MHz ", $0} NR==3{printf "%d C\n", $0}')"
+        command -v npu-smi
+    - name: NPU Number
+      content: |
+        npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}'
+    - name: NPU Model
+      content: |
+        npu-smi info -t board -i 0 -c 0 | grep -oP 'Chip Name\s*:\s*\K[^\n]+'
+    - name: NPU Status
+      content: |
+        count=$(npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        for i in $(seq 0 $((count - 1))); do
+          stats=$(npu-smi info -t memory -i $i | awk '
+            /HBM Capacity/ {cap=$NF}
+            /HBM Clock Speed/ {clk=$NF}
+            /HBM Temperature/ {temp=$NF}
+            END {printf "%s MB %s MHz %s C", cap, clk, temp}')
+          echo "NPU $i: $stats"
+        done
     - name: NPU NET Health
       content: |
         count=$(npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do
           hccn_tool -i $i -net_health -g
+        done
+    - name: NPU ECC Errors
+      content: |
+        count=$(npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        for i in $(seq 0 $((count - 1))); do
+          output=$(npu-smi info -t ecc -i $i)
+          if echo "$output" | grep -qE 'HBM (Single|Double) Bit (Error|Aggregate Total Err|Isolated Pages|Next-Isolated Pages) Count\s*:\s*[1-9]'; then
+            echo "$output"
+          fi
         done
