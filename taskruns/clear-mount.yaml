@@ -1,0 +1,8 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: clear-mount
+  namespace: ops-system
+spec:
+  crontab: "25 * * * *"
+  taskRef: clear-mount
