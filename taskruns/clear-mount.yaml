@@ -6,3 +6,5 @@ metadata:
 spec:
   crontab: "25 * * * *"
   taskRef: clear-mount
+  variables:
+    host: managed-by=ops
