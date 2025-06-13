@@ -5,6 +5,7 @@ metadata:
   namespace: ops-system
 spec:
   desc: clear mount
+  host: managed-by=ops
   steps:
     - name: clear-mount
       content: |
