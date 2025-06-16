@@ -1,10 +1,10 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
-  name: collect-gpu-log
+  name: collect-npu-log
   namespace: ops-system
 spec:
-  desc: run col_gpu_log.sh to collect gpu log and upload to s3
+  desc: run col_npu_log.sh to collect npu log and upload to s3
   runtimeImage: registry.cn-beijing.aliyuncs.com/shaowenchen/ops-cli:latest
   variables:
     ak:
@@ -23,18 +23,18 @@ spec:
       display: bucket
       required: true
   steps:
-    - name: run col_gpu_log.sh
+    - name: run col_npu_log.sh
       content: |
-        mkdir -p /tmp/collect-gpu-log-${TIME}
-        cd /tmp/collect-gpu-log-${TIME}
-        curl -sfL https://ghproxy.chenshaowen.com/https://raw.githubusercontent.com/shaowenchen/hubimage/main/ai/col_gpu_log.sh | bash
-        mv *.tar.gz collect-gpu-log-${HOSTNAME}-${TIME}.tar.gz
+        mkdir -p /tmp/collect-npu-log-${TIME}
+        cd /tmp/collect-npu-log-${TIME}
+        curl -sfL https://ghproxy.chenshaowen.com/https://raw.githubusercontent.com/shaowenchen/hubimage/main/diagnosis-gpu/col_npu_log.sh | bash
+        mv *.tar.gz collect-npu-log-${HOSTNAME}-${TIME}.tar.gz
     - name: upload to s3
-      remotefile: s3://collect-gpu-log/collect-gpu-log-${HOSTNAME}-${TIME}.tar.gz
-      localfile: /tmp/collect-gpu-log-${TIME}/collect-gpu-log-${HOSTNAME}-${TIME}.tar.gz
+      remotefile: s3://collect-npu-log/collect-npu-log-${HOSTNAME}-${TIME}.tar.gz
+      localfile: /tmp/collect-npu-log-${TIME}/collect-npu-log-${HOSTNAME}-${TIME}.tar.gz
       direction: upload
     - name: get 2h shared link
       content: |
         curl -sfL https://ks3util-version-update.ks3-cn-beijing.ksyuncs.com/2.6.0/ks3util-linux-amd64 -o /usr/local/bin/ks3util >/dev/null
         chmod +x /usr/local/bin/ks3util
-        /usr/local/bin/ks3util sign ks3://${bucket}/collect-gpu-log/collect-gpu-log-${HOSTNAME}-${TIME}.tar.gz --endpoint ${endpoint} --timeout 7200 -i ${ak} -k ${sk}
+        /usr/local/bin/ks3util sign ks3://${bucket}/collect-npu-log/collect-npu-log-${HOSTNAME}-${TIME}.tar.gz --endpoint ${endpoint} --timeout 7200 -i ${ak} -k ${sk}
