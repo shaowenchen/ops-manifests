@@ -9,6 +9,6 @@ spec:
   variables:
     content: |
       #!/bin/bash
-      git clone https://ghfast.top/https://github.com/shaowenchen/hubimage.git
-      kubectl apply -f hubimage/kubernetes/observation/servicemonitor/
+      git clone https://ghfast.top/https://github.com/shaowenchen/ops-hub.git
+      kubectl apply -f ops-hub/prometheus/servicemonitor
     host: anymaster

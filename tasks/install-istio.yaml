@@ -19,13 +19,13 @@ spec:
     - name: ${action} Istio
       content: ./istio-${version}/bin/istioctl --kubeconfig ${kubeconfig} install -y
     - name: ${action} default-telemetry
-      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/hubimage/master/istio/default-telemetry.yaml
+      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/ops-hub/master/istio/config/default-telemetry.yaml
     - name: ${action} disabled-mtls
-      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/hubimage/master/istio/disabled-mtls.yaml
+      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/ops-hub/master/istio/config/disabled-mtls.yaml
     - name: ${action} preserve-request-header-case
-      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/hubimage/master/istio/preserve-request-header-case.yaml
+      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/ops-hub/master/istio/config/preserve-request-header-case.yaml
     - name: ${action} ingressgateway-settings
-      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/hubimage/main/istio/ingressgateway-settings.yaml
+      content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/shaowenchen/ops-hub/master/istio/config/ingressgateway-settings.yaml
     - name: ${action} istio-default-virtualservice
       content: |
         kubectl --kubeconfig ${kubeconfig} ${action} -f - <<EOF

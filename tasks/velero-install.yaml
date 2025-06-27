@@ -10,7 +10,7 @@ spec:
     velero_version: 
       default: v1.9.2
     download_url: 
-      default: https://ghproxy.chenshaowen.com/https://github.com/vmware-tanzu/velero/releases/download/${velero_version}/velero-${velero_version}-linux-amd64.tar.gz
+      default: https://ghfast.top/https://github.com/vmware-tanzu/velero/releases/download/${velero_version}/velero-${velero_version}-linux-amd64.tar.gz
     region: 
       default: cn-north-4
     endpoint: 
@@ -42,4 +42,4 @@ spec:
       content: echo "aws_secret_access_key = ${sk}" >> velero-credentials
 
     - name: Install Velero Server
-      content: ./velero-${velero_version}-linux-amd64/velero install --image registry.cn-beijing.aliyuncs.com/opshub/velero:${velero_version} --plugins registry.cn-beijing.aliyuncs.com/opshub/velero-plugin-for-aws:v1.5.1 --provider aws  --bucket ${bucket} --namespace velero --secret-file ./velero-credentials --use-restic --backup-location-config region=${region},s3ForcePathStyle="true",s3Url=${endpoint} --snapshot-location-config region=${region}
+      content: ./velero-${velero_version}-linux-amd64/velero install --image registry.cn-beijing.aliyuncs.com/opshub/velero-velero:${velero_version} --plugins registry.cn-beijing.aliyuncs.com/opshub/velero-velero-plugin-for-aws:v1.5.1 --provider aws  --bucket ${bucket} --namespace velero --secret-file ./velero-credentials --use-restic --backup-location-config region=${region},s3ForcePathStyle="true",s3Url=${endpoint} --snapshot-location-config region=${region}

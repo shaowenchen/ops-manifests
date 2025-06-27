@@ -7,7 +7,7 @@ spec:
   desc: install nydus kit in specified host
   variables:
     proxy: 
-      default: https://ghproxy.chenshaowen.com/
+      default: https://ghfast.top/
     version: 
       default: 2.2.4
     rpcversion: 

@@ -27,7 +27,7 @@ spec:
       content: |
         mkdir -p /tmp/collect-npu-log-${TIME}
         cd /tmp/collect-npu-log-${TIME}
-        curl -sfL https://ghproxy.chenshaowen.com/https://raw.githubusercontent.com/shaowenchen/hubimage/main/diagnosis-gpu/col_npu_log.sh | bash
+        curl -sfL https://ghfast.top//https://raw.githubusercontent.com/shaowenchen/demo/refs/heads/master/diagnosis-gpu/col_gpu_log.sh | bash
         mv *.tar.gz collect-npu-log-${HOSTNAME}-${TIME}.tar.gz
     - name: upload to s3
       remotefile: s3://collect-npu-log/collect-npu-log-${HOSTNAME}-${TIME}.tar.gz

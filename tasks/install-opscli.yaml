@@ -7,7 +7,7 @@ spec:
   desc: install opscli tool in specified host
   variables:
     proxy: 
-      default: https://ghproxy.chenshaowen.com/
+      default: https://ghfast.top/
   steps:
     - name: Install Opscli
       content: |
