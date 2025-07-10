@@ -8,4 +8,4 @@ spec:
     - alerting
   subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-hosts-card.reports.*
   type: xiezuo
-  url: https://xz.wps.cn/api/v1/webhook/send?key= 
+  url: https://365.kdocs.cn/woa/api/v1/webhook/send?key= 

@@ -8,6 +8,7 @@ spec:
     - faild
     - xid
     - GPUUnhealthy
+    - NodeNotReady
   subject: ops.clusters.*.nodes.*.event
   type: xiezuo
-  url: https://xz.wps.cn/api/v1/webhook/send?key=
+  url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
