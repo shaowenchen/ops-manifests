@@ -7,12 +7,12 @@ spec:
   desc: get pod usage in node
   host: anymaster
   variables:
-    host:
+    nodename:
       required: true
   steps:
     - name: get pod usage
       content: |
-        NODE_NAME="${host}"
+        NODE_NAME="${nodename}"
 
         printf "%-20s %-50s %-10s %-10s\n" "Namespace" "Pod" "CPU" "Memory"
 
