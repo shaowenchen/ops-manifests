@@ -1,11 +1,11 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: alert-npu-drop-reports
+  name: alert-gpu-reports
   namespace: ops-system
 spec:
   keywords:
     - alerting
-  subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-npu-drop.reports.*
+  subject: ops.clusters.*.namespaces.ops-system.taskruns.*.reports.*
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
