@@ -1,13 +1,12 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: nodes
+  name: nodes-p0
   namespace: ops-system
 spec:
   keywords:
-    - faild
-    - xid
-    - GPUUnhealthy
+    - NodeNotReady
+    - NodeReady
   subject: ops.clusters.*.nodes.*.event
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
