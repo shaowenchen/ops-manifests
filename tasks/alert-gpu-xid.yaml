@@ -14,7 +14,8 @@ spec:
               import subprocess
               import requests
               import json
-              from datetime import datetime
+              import re
+              from datetime import datetime, timedelta
 
               message = ''
               error_count = 0
@@ -43,6 +44,28 @@ spec:
                       return line_info
                   return f'{message}\n{line_info}'
 
+              def parse_dmesg_timestamp(line):
+                  """解析dmesg时间戳，返回datetime对象"""
+                  # 匹配格式: [Tue Jul 15 17:16:15 2025]
+                  timestamp_pattern = r'\[([A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d{2}:\d{2}:\d{2} \d{4})\]'
+                  match = re.search(timestamp_pattern, line)
+                  if match:
+                      try:
+                          timestamp_str = match.group(1)
+                          # 解析时间字符串
+                          return datetime.strptime(timestamp_str, '%a %b %d %H:%M:%S %Y')
+                      except ValueError:
+                          return None
+                  return None
+
+              def is_within_last_hour(log_time):
+                  """检查日志时间是否在最近1小时内"""
+                  if log_time is None:
+                      return False
+                  current_time = datetime.now()
+                  one_hour_ago = current_time - timedelta(hours=1)
+                  return log_time >= one_hour_ago
+
               try:
                   # 执行 dmesg -T 获取系统日志
                   output = ''
@@ -58,7 +81,10 @@ spec:
                   xid_lines = []
                   for line in output.split('\n'):
                       if 'xid' in line.lower():
-                          xid_lines.append(line.strip())
+                          # 解析时间戳并检查是否在最近1小时内
+                          log_time = parse_dmesg_timestamp(line)
+                          if is_within_last_hour(log_time):
+                              xid_lines.append(line.strip())
                   
                   # 检查包含 "xid" 的行中是否包含 "error"
                   error_lines = []
@@ -69,15 +95,15 @@ spec:
                   
                   # 构建消息
                   if error_count > 0:
-                      message = f'Found {error_count} GPU XID error(s):'
+                      message = f'Found {error_count} GPU XID error(s) in the last hour:'
                       for error_line in error_lines:
                           message = build_message(message, error_line)
                       send('alerting', message, error_count)
                   else:
                       if len(xid_lines) > 0:
-                          send('normal', f'Found {len(xid_lines)} XID line(s) but no errors', 0)
+                          send('normal', f'Found {len(xid_lines)} XID line(s) in the last hour but no errors', 0)
                       else:
-                          send('normal', 'No XID lines found', 0)
+                          send('normal', 'No XID lines found in the last hour', 0)
                           
               except Exception as e:
                   send('alerting', str(e), -1)
