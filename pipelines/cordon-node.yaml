@@ -10,5 +10,3 @@ spec:
   tasks:
     - name: 禁用节点
       taskRef: cordon-node
-    - name: 查看节点
-      taskRef: get-node-status
