@@ -14,24 +14,47 @@ spec:
         POD_NAME="${pod}"
 
         echo "🔍 [1/5] 查找 Pod [$POD_NAME] 对应的容器 ID ..."
-        CONTAINER_ID=$(nerdctl -n k8s.io ps -a | grep "$POD_NAME" | awk '{print $1}')
-
-        if [ -z "$CONTAINER_ID" ]; then
+        CONTAINER_IDS=$(nerdctl -n k8s.io ps -a | grep "$POD_NAME" | grep -v "pause" | awk '{print $1}')
+        
+        if [ -z "$CONTAINER_IDS" ]; then
           echo "❌ 没找到容器，确认 Pod 名是否正确: [$POD_NAME]"
+          echo "所有相关容器（包括 pause 容器）:"
+          nerdctl -n k8s.io ps -a | grep "$POD_NAME" || echo "没有找到任何容器"
           exit 1
         fi
 
-        echo "✅ 容器 ID: $CONTAINER_ID"
+        # 获取第一个容器ID（通常是主容器）
+        CONTAINER_ID=$(echo "$CONTAINER_IDS" | head -1)
+        
+        echo "✅ 找到应用容器数量: $(echo "$CONTAINER_IDS" | wc -l)"
+        echo "✅ 应用容器 IDs:"
+        echo "$CONTAINER_IDS"
+        echo "✅ 使用第一个应用容器 ID: $CONTAINER_ID"
 
         echo "🔍 [2/5] 获取宿主机上的容器主进程 PID ..."
-        PID=$(nerdctl -n k8s.io inspect "$CONTAINER_ID" | grep -i '"Pid"' | grep -o '[0-9]\+' | head -1)
+        INSPECT_OUTPUT=$(nerdctl -n k8s.io inspect "$CONTAINER_ID" 2>/dev/null)
+        
+        if [ $? -ne 0 ]; then
+          echo "❌ 无法检查容器 [$CONTAINER_ID]，可能容器不存在或已停止"
+          exit 1
+        fi
+        
+        PID=$(echo "$INSPECT_OUTPUT" | grep -i '"Pid"' | grep -o '[0-9]\+' | head -1)
 
         if [ -z "$PID" ] || [ "$PID" -eq 0 ]; then
           echo "❌ 没找到有效的宿主机 PID"
+          echo "容器状态信息:"
+          echo "$INSPECT_OUTPUT" | head -20
           exit 1
         fi
 
         echo "✅ 宿主机 PID: $PID"
+
+        # 验证进程是否仍然存在
+        if ! ps -p "$PID" >/dev/null 2>&1; then
+          echo "❌ 进程 [$PID] 已不存在，可能容器已停止"
+          exit 1
+        fi
 
         echo "🔍 [3/5] 查找宿主机上的父进程 (PPID) ..."
         PPID=$(ps -o ppid= -p "$PID" | tr -d ' ')
