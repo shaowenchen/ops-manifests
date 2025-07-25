@@ -1,0 +1,57 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: inspect-pod-process
+  namespace: ops-system
+spec:
+  desc: inspect pod process
+  variables:
+    pod:
+      required: true
+  steps:
+    - name: inspect pod process
+      content: |
+        POD_NAME="${pod}"
+
+        echo "🔍 [1/5] 查找 Pod [$POD_NAME] 对应的容器 ID ..."
+        CONTAINER_ID=$(nerdctl -n k8s.io ps -a | grep "$POD_NAME" | awk '{print $1}')
+
+        if [ -z "$CONTAINER_ID" ]; then
+          echo "❌ 没找到容器，确认 Pod 名是否正确: [$POD_NAME]"
+          exit 1
+        fi
+
+        echo "✅ 容器 ID: $CONTAINER_ID"
+
+        echo "🔍 [2/5] 获取宿主机上的容器主进程 PID ..."
+        PID=$(nerdctl -n k8s.io inspect "$CONTAINER_ID" | grep -i '"Pid"' | grep -o '[0-9]\+' | head -1)
+
+        if [ -z "$PID" ] || [ "$PID" -eq 0 ]; then
+          echo "❌ 没找到有效的宿主机 PID"
+          exit 1
+        fi
+
+        echo "✅ 宿主机 PID: $PID"
+
+        echo "🔍 [3/5] 查找宿主机上的父进程 (PPID) ..."
+        PPID=$(ps -o ppid= -p "$PID" | tr -d ' ')
+        echo "✅ 父进程 PPID: $PPID"
+
+        echo "🔍 [4/5] 检查是否使用 GPU ..."
+        if command -v nvidia-smi &>/dev/null; then
+          GPU_PROCS=$(nvidia-smi pmon -c 1 | grep "$PID" || true)
+          if [ -n "$GPU_PROCS" ]; then
+            echo "✅ GPU 使用信息:"
+            echo "$GPU_PROCS"
+          else
+            echo "✅ 没有检测到 GPU 使用"
+          fi
+        else
+          echo "⚠️  没安装 nvidia-smi，跳过 GPU 检查"
+        fi
+
+        echo "🔍 [5/5] 查看挂载的存储信息 ..."
+        echo "✅ 容器宿主机进程的挂载点："
+        echo "-------------------------------------------------"
+        cat /proc/$PID/mounts
+        echo "-------------------------------------------------"
