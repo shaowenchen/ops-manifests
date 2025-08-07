@@ -52,7 +52,9 @@ spec:
                   # 2. check count from nvidia-smi
                   output = ''
                   try:
-                      output = subprocess.run(['nvidia-smi' , '-L'], universal_newlines=True, stdout=subprocess.PIPE).stdout
+                      output = subprocess.run(['nvidia-smi' , '-L'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('nvidia-smi 执行超时 10s'))
                   except:
                       pass
                   card_count = 0
