@@ -62,7 +62,7 @@ spec:
 
         echo "🔍 [4/5] 检查是否使用 GPU ..."
         if command -v nvidia-smi &>/dev/null; then
-          GPU_PROCS=$(nvidia-smi pmon -c 1 | grep "$PID" || true)
+          GPU_PROCS=$(timeout 10 nvidia-smi pmon -c 1 | grep "$PID" || true)
           if [ -n "$GPU_PROCS" ]; then
             echo "✅ GPU 使用信息:"
             echo "$GPU_PROCS"

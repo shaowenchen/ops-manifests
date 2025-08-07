@@ -44,7 +44,13 @@ spec:
                   if not os.path.exists('/usr/bin/nvidia-smi'):
                       raise Exception(build_message('找不到 nvidia-smi 命令'))
                   # 2. 
-                  output = subprocess.run(['nvidia-smi' , '--query-compute-apps=process_name,pid,used_memory', '--format=csv,noheader,nounits'], universal_newlines=True, stdout=subprocess.PIPE).stdout
+                  output = ''
+                  try:
+                      output = subprocess.run(['nvidia-smi' , '--query-compute-apps=process_name,pid,used_memory', '--format=csv,noheader,nounits'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('nvidia-smi 执行超时 10s'))
+                  except:
+                      pass
                   lines = [line for line in output.split('\n')]
                   
                   # 3. check zombie

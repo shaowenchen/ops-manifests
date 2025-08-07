@@ -20,7 +20,7 @@ spec:
               def get_pci_info():
                   try:
                       output = subprocess.run(['nvidia-smi', '-L'],
-                                              universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout
+                                              universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10).stdout
                       print(f"nvidia-smi output: {output}")
                       pci_bus_ids = re.findall(r'gpu (\S+):', output)
 
@@ -33,7 +33,9 @@ spec:
 
               def disable_gpu(pci_bus_id):
                   try:
-                      subprocess.run(['nvidia-smi', 'drain', '-p', pci_bus_id, '-m', '1'], check=True)
+                      subprocess.run(['nvidia-smi', 'drain', '-p', pci_bus_id, '-m', '1'], check=True, timeout=30)
+                  except subprocess.TimeoutExpired:
+                      print(f"nvidia-smi drain 执行超时 30s for {pci_bus_id}")
                   except Exception as e:
                       pass
 

@@ -10,10 +10,10 @@ spec:
       default: "8"
   steps:
     - name: Check nvidia-smi
-      content: nvidia-smi
+      content: timeout 10 nvidia-smi
       allowfailure: "true"
     - name: GPU Model
-      content: nvidia-smi --query-gpu=gpu_name --format=csv,noheader
+      content: timeout 10 nvidia-smi --query-gpu=gpu_name --format=csv,noheader
       allowfailure: "true"
     - name: Check lspci GPU Count
       allowfailure: "true"
@@ -22,7 +22,7 @@ spec:
     - name: Check nvidia-smi GPU Count
       allowfailure: "true"
       content: |
-        GPU_SMI_COUNT=$(nvidia-smi -L | grep NVIDIA| wc -l); if [ $GPU_SMI_COUNT -eq ${desired_gpu_count} ]; then echo "OK - nvidia-smi GPU count matches ${desired_gpu_count}"; else echo "ERROR - nvidia-smi GPU count mismatch: $GPU_SMI_COUNT vs ${desired_gpu_count}"; fi
+        GPU_SMI_COUNT=$(timeout 10 nvidia-smi -L | grep NVIDIA| wc -l); if [ $GPU_SMI_COUNT -eq ${desired_gpu_count} ]; then echo "OK - nvidia-smi GPU count matches ${desired_gpu_count}"; else echo "ERROR - nvidia-smi GPU count mismatch: $GPU_SMI_COUNT vs ${desired_gpu_count}"; fi
     - name: Revision FF
       allowfailure: "true"
       content: |
