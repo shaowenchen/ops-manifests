@@ -49,7 +49,13 @@ spec:
                       send('alerting', 'npu-smi not found')
                   # 2. check count from npu-smi
                   # npu-smi info |grep 910
-                  output = subprocess.run(['/usr/local/bin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE).stdout
+                  output = ''
+                  try:
+                      output = subprocess.run(['/usr/local/bin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('npu-smi 执行超时 10s'))
+                  except:
+                      pass
                   card_count = 0
                   lines = [line for line in output.split('\n') if '910B' in line]
                   for _, line in enumerate(lines):
@@ -62,7 +68,13 @@ spec:
                       message += ' npu-smi info display abnormal'
                       send('alerting', message)
                   # 3. lspci check, lspci |grep d80
-                  output = subprocess.run(['lspci'], universal_newlines=True, stdout=subprocess.PIPE).stdout
+                  output = ''
+                  try:
+                      output = subprocess.run(['lspci'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('lspci 执行超时 10s'))
+                  except:
+                      pass
                   card_count = 0
                   lines = [line for line in output.split('\n') if 'd80' in line]
                   for _, line in enumerate(lines):

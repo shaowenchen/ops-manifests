@@ -11,15 +11,15 @@ spec:
         command -v npu-smi
     - name: NPU Number
       content: |
-        npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}'
+        timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}'
     - name: NPU Model
       content: |
-        npu-smi info -t board -i 0 -c 0 | grep -oP 'Chip Name\s*:\s*\K[^\n]+'
+        timeout 10 npu-smi info -t board -i 0 -c 0 | grep -oP 'Chip Name\s*:\s*\K[^\n]+'
     - name: NPU Status
       content: |
-        count=$(npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do
-          stats=$(npu-smi info -t memory -i $i | awk '
+          stats=$(timeout 10 npu-smi info -t memory -i $i | awk '
             /HBM Capacity/ {cap=$NF}
             /HBM Clock Speed/ {clk=$NF}
             /HBM Temperature/ {temp=$NF}
@@ -28,15 +28,15 @@ spec:
         done
     - name: NPU NET Health
       content: |
-        count=$(npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do
-          hccn_tool -i $i -net_health -g
+          timeout 10 hccn_tool -i $i -net_health -g
         done
     - name: NPU ECC Errors
       content: |
-        count=$(npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do
-          output=$(npu-smi info -t ecc -i $i)
+          output=$(timeout 10 npu-smi info -t ecc -i $i)
           if echo "$output" | grep -qE 'HBM (Single|Double) Bit (Error|Aggregate Total Err|Isolated Pages|Next-Isolated Pages) Count\s*:\s*[1-9]'; then
             echo "$output"
           fi

@@ -46,7 +46,13 @@ spec:
             if not os.path.exists('/usr/local/sbin/npu-smi'):
                 raise Exception(build_message('找不到 npu-smi 命令'))
 
-            output = subprocess.run(['/usr/local/sbin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE).stdout
+            output = ''
+            try:
+                output = subprocess.run(['/usr/local/sbin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+            except subprocess.TimeoutExpired:
+                raise Exception(build_message('npu-smi 执行超时 10s'))
+            except:
+                pass
             message = ''
             lines = output.split('\n')
             for line in lines:
