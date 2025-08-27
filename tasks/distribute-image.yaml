@@ -15,33 +15,38 @@ spec:
       display: "Target host IP or hostname"
       required: true
       type: string
+    platform:
+      display: "Target platform/architecture (e.g., linux/amd64, linux/arm64)"
+      required: false
+      type: string
+      default: "linux/amd64"
   steps:
-    - name: pull-image
+    - name: distribute-image
       content: |
-        echo "Pulling image: ${image}"
+        #!/bin/bash
+        set -e
         
-        # Pull the image if it doesn't exist locally
-        if ! nerdctl images | grep -q "${image%:*}" | grep -q "${image#*:}"; then
+        echo "Starting image distribution process..."
+        echo "Image: ${image}"
+        echo "Target host: ${target_host}"
+        
+        # Step 1: Pull the image if it doesn't exist locally
+        echo "Step 1: Checking and pulling image..."
+        if ! nerdctl -n k8s.io images | grep -q "${image}"; then
           echo "Image ${image} not found locally, pulling from registry..."
-          nerdctl pull ${image}
+          echo "Target platform: ${platform}"
+          nerdctl -n k8s.io pull --platform ${platform} ${image}
         else
           echo "Image ${image} already exists locally"
         fi
         
-        echo "Image pull completed"
-        
-    - name: save-image-with-nerdctl
-      content: |
-        echo "Saving image using nerdctl..."
-        
-        # Create temporary directory for the image tar
+        # Step 2: Save image using nerdctl
+        echo "Step 2: Saving image using nerdctl..."
         TEMP_DIR="/tmp/image-distribution-$(date +%s)"
         mkdir -p $TEMP_DIR
-        
-        # Save image using nerdctl
         IMAGE_TAR="$TEMP_DIR/image.tar"
-        nerdctl save -o $IMAGE_TAR ${image}
         
+        nerdctl -n k8s.io save -o $IMAGE_TAR ${image}
         if [ $? -eq 0 ]; then
           echo "Image saved successfully to $IMAGE_TAR"
         else
@@ -49,13 +54,9 @@ spec:
           exit 1
         fi
         
-    - name: copy-image-to-target
-      content: |
-        echo "Copying image to target host: ${target_host}"
-        
-        # Copy the image tar to target host
+        # Step 3: Copy image to target host
+        echo "Step 3: Copying image to target host..."
         scp "$IMAGE_TAR" "${target_host}:/tmp/"
-        
         if [ $? -eq 0 ]; then
           echo "Image copied successfully to ${target_host}"
         else
@@ -63,26 +64,35 @@ spec:
           exit 1
         fi
         
-    - name: load-image-on-target
-      content: |
-        echo "Loading image on target host: ${target_host}"
+        # Step 4: Load image on target host
+        echo "Step 4: Loading image on target host..."
         
-        # Load the image on target host using nerdctl
-        ssh ${target_host} "nerdctl load -i /tmp/image.tar && rm -f /tmp/image.tar"
+        # Remove existing image with the same name if it exists (ignore errors)
+        echo "Removing any existing image with same name..."
+        ssh ${target_host} "nerdctl -n k8s.io rmi ${image} 2>/dev/null || echo 'No existing image to remove'"
+        echo "Image removal step completed"
         
+        # Load the new image
+        echo "Loading new image..."
+        ssh ${target_host} "nerdctl -n k8s.io load -i /tmp/image.tar && rm -f /tmp/image.tar"
         if [ $? -eq 0 ]; then
           echo "Image loaded successfully on ${target_host}"
+          
+          # Verify the loaded image architecture
+          echo "Verifying loaded image architecture..."
+          ssh ${target_host} "nerdctl -n k8s.io images --format 'table {{.Repository}}\t{{.Tag}}\t{{.Platform}}' | grep '${image}'"
+          
         else
           echo "Failed to load image on ${target_host}"
           exit 1
         fi
         
-    - name: cleanup-local
-      content: |
-        echo "Cleaning up local temporary files..."
-        
-        # Clean up local temporary files
+        # Step 5: Cleanup local files
+        echo "Step 5: Cleaning up local temporary files..."
         rm -rf $TEMP_DIR
         
-        echo "Cleanup completed"
-        echo "Image distribution to ${target_host} completed successfully"
+        echo "=========================================="
+        echo "Image distribution completed successfully!"
+        echo "Image: ${image}"
+        echo "Target host: ${target_host}"
+        echo "=========================================="
