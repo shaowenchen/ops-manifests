@@ -1,0 +1,88 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: distribute-image
+  namespace: ops-system
+spec:
+  desc: Distribute Docker images to target host using nerdctl save/load and scp
+  host: anymaster
+  variables:
+    image:
+      display: "Docker image name (e.g., nginx:latest)"
+      required: true
+      type: string
+    target_host:
+      display: "Target host IP or hostname"
+      required: true
+      type: string
+  steps:
+    - name: pull-image
+      content: |
+        echo "Pulling image: ${image}"
+        
+        # Pull the image if it doesn't exist locally
+        if ! nerdctl images | grep -q "${image%:*}" | grep -q "${image#*:}"; then
+          echo "Image ${image} not found locally, pulling from registry..."
+          nerdctl pull ${image}
+        else
+          echo "Image ${image} already exists locally"
+        fi
+        
+        echo "Image pull completed"
+        
+    - name: save-image-with-nerdctl
+      content: |
+        echo "Saving image using nerdctl..."
+        
+        # Create temporary directory for the image tar
+        TEMP_DIR="/tmp/image-distribution-$(date +%s)"
+        mkdir -p $TEMP_DIR
+        
+        # Save image using nerdctl
+        IMAGE_TAR="$TEMP_DIR/image.tar"
+        nerdctl save -o $IMAGE_TAR ${image}
+        
+        if [ $? -eq 0 ]; then
+          echo "Image saved successfully to $IMAGE_TAR"
+        else
+          echo "Failed to save image with nerdctl"
+          exit 1
+        fi
+        
+    - name: copy-image-to-target
+      content: |
+        echo "Copying image to target host: ${target_host}"
+        
+        # Copy the image tar to target host
+        scp $IMAGE_TAR ${target_host}:/tmp/
+        
+        if [ $? -eq 0 ]; then
+          echo "Image copied successfully to ${target_host}"
+        else
+          echo "Failed to copy image to ${target_host}"
+          exit 1
+        fi
+        
+    - name: load-image-on-target
+      content: |
+        echo "Loading image on target host: ${target_host}"
+        
+        # Load the image on target host using nerdctl
+        ssh ${target_host} "nerdctl load -i /tmp/image.tar && rm -f /tmp/image.tar"
+        
+        if [ $? -eq 0 ]; then
+          echo "Image loaded successfully on ${target_host}"
+        else
+          echo "Failed to load image on ${target_host}"
+          exit 1
+        fi
+        
+    - name: cleanup-local
+      content: |
+        echo "Cleaning up local temporary files..."
+        
+        # Clean up local temporary files
+        rm -rf $TEMP_DIR
+        
+        echo "Cleanup completed"
+        echo "Image distribution to ${target_host} completed successfully"
