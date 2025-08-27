@@ -54,7 +54,7 @@ spec:
         echo "Copying image to target host: ${target_host}"
         
         # Copy the image tar to target host
-        scp $IMAGE_TAR ${target_host}:/tmp/
+        scp "$IMAGE_TAR" "${target_host}:/tmp/"
         
         if [ $? -eq 0 ]; then
           echo "Image copied successfully to ${target_host}"
