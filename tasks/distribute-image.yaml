@@ -67,21 +67,38 @@ spec:
         # Step 4: Load image on target host
         echo "Step 4: Loading image on target host..."
         
-        # Remove existing image with the same name if it exists (ignore errors)
-        echo "Removing any existing image with same name..."
-        ssh ${target_host} "nerdctl -n k8s.io rmi ${image} 2>/dev/null || echo 'No existing image to remove'"
-        echo "Image removal step completed"
+        # Execute all target host operations in a single SSH session
+        echo "Executing all operations on target host..."
+        ssh ${target_host} "
+          echo 'Starting operations on target host...'
+          
+          # Remove existing image with the same name if it exists
+          echo 'Removing any existing image with same name...'
+          nerdctl -n k8s.io rmi ${image} 2>/dev/null || echo 'No existing image to remove'
+          echo 'Image removal step completed'
+          
+          # Load the new image
+          echo 'Loading new image...'
+          nerdctl -n k8s.io load -i /tmp/image.tar
+          if [ \$? -eq 0 ]; then
+            echo 'Image loaded successfully'
+            rm -f /tmp/image.tar
+            echo 'Temporary file cleaned up'
+            
+            # Verify the loaded image architecture
+            echo 'Verifying loaded image architecture...'
+            nerdctl -n k8s.io images --format 'table {{.Repository}}\t{{.Tag}}\t{{.Platform}}' | grep '${image}'
+            
+          else
+            echo 'Failed to load image'
+            exit 1
+          fi
+          
+          echo 'All operations completed on target host'
+        "
         
-        # Load the new image
-        echo "Loading new image..."
-        ssh ${target_host} "nerdctl -n k8s.io load -i /tmp/image.tar && rm -f /tmp/image.tar"
         if [ $? -eq 0 ]; then
           echo "Image loaded successfully on ${target_host}"
-          
-          # Verify the loaded image architecture
-          echo "Verifying loaded image architecture..."
-          ssh ${target_host} "nerdctl -n k8s.io images --format 'table {{.Repository}}\t{{.Tag}}\t{{.Platform}}' | grep '${image}'"
-          
         else
           echo "Failed to load image on ${target_host}"
           exit 1
