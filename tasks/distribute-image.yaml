@@ -24,92 +24,48 @@ spec:
     - name: distribute-image
       content: |
         #!/bin/bash
-        set -e
-        
-        echo "Starting image distribution process..."
-        echo "Image: ${image}"
-        echo "Target host: ${target_host}"
-        
-        # Step 1: Pull the image if it doesn't exist locally
-        echo "Step 1: Checking and pulling image..."
-        if ! nerdctl -n k8s.io images | grep -q "${image}"; then
-          echo "Image ${image} not found locally, pulling from registry..."
-          echo "Target platform: ${platform}"
-          nerdctl -n k8s.io pull --platform ${platform} ${image}
-        else
-          echo "Image ${image} already exists locally"
+        set -euo pipefail
+
+        imageT="${image}"
+        [[ "$imageT" != *:* ]] && imageT="${image}:latest"
+
+        if [[ "${platformT}" == "" ]]; then
+          platformT="linux/amd64"
         fi
-        
-        # Step 2: Save image using nerdctl
-        echo "Step 2: Saving image using nerdctl..."
-        TEMP_DIR="/tmp/image-distribution-$(date +%s)"
-        mkdir -p $TEMP_DIR
+
+        echo "image: $imageT"
+        echo "platformT: $platformT"
+
+        echo "[INFO] Distributing image $imageT to ${target_host}"
+
+        # 1. Pull if missing or cross-arch
+        if ! nerdctl -n k8s.io images --format '{{.Repository}}:{{.Tag}} {{.Platform}}' \
+            | grep -Fxq "$imageT $platformT"; then
+          echo "[INFO] Pulling image $imageT for platform $platformT..."
+          nerdctl -n k8s.io pull --platform "$platformT" "$imageT"
+        else
+          echo "[INFO] Local image $imageT matches target platform $platformT"
+        fi
+
+        # 2. Save
+        TEMP_DIR="/tmp/image-dist-$(date +%s)-$RANDOM"
+        mkdir -p "$TEMP_DIR"
         IMAGE_TAR="$TEMP_DIR/image.tar"
-        
-        nerdctl -n k8s.io save -o $IMAGE_TAR ${image}
-        if [ $? -eq 0 ]; then
-          echo "Image saved successfully to $IMAGE_TAR"
-        else
-          echo "Failed to save image with nerdctl"
-          exit 1
-        fi
-        
-        # Step 3: Copy image to target host
-        echo "Step 3: Copying image to target host..."
+        nerdctl -n k8s.io save -o "$IMAGE_TAR" "$imageT"
+
+        # 3. Copy to target
         scp "$IMAGE_TAR" "${target_host}:/tmp/"
-        if [ $? -eq 0 ]; then
-          echo "Image copied successfully to ${target_host}"
-        else
-          echo "Failed to copy image to ${target_host}"
-          exit 1
-        fi
-        
-        # Step 4: Load image on target host
-        echo "Step 4: Loading image on target host..."
-        
-        # Execute all target host operations in a single SSH session
-        echo "Executing all operations on target host..."
+
+        # 4. Load on target
         ssh ${target_host} "
-          echo 'Starting operations on target host...'
-          
-          # Remove existing image with the same name if it exists
-          echo 'Removing any existing image with same name...'
-          nerdctl -n k8s.io rmi ${image} 2>/dev/null || echo 'No existing image to remove'
-          echo 'Image removal step completed'
-          
-          # Load the new image
-          echo 'Loading new image...'
-          nerdctl -n k8s.io load -i /tmp/image.tar
-          if [ \$? -eq 0 ]; then
-            echo 'Image loaded successfully'
-            rm -f /tmp/image.tar
-            echo 'Temporary file cleaned up'
-            
-            # Verify the loaded image architecture
-            echo 'Verifying loaded image architecture...'
-            nerdctl -n k8s.io images --format 'table {{.Repository}}\t{{.Tag}}\t{{.Platform}}' | grep '${image}'
-            
-          else
-            echo 'Failed to load image'
-            exit 1
-          fi
-          
-          echo 'All operations completed on target host'
+          set -e
+          nerdctl -n k8s.io rmi $imageT 2>/dev/null || true
+          nerdctl -n k8s.io load -i /tmp/$(basename "$IMAGE_TAR")
+          rm -f /tmp/$(basename "$IMAGE_TAR")
+          nerdctl -n k8s.io images --format '{{.Repository}}:{{.Tag}} {{.Platform}}' | grep -Fx '$imageT'
         "
-        
-        if [ $? -eq 0 ]; then
-          echo "Image loaded successfully on ${target_host}"
-        else
-          echo "Failed to load image on ${target_host}"
-          exit 1
-        fi
-        
-        # Step 5: Cleanup local files
-        echo "Step 5: Cleaning up local temporary files..."
-        rm -rf $TEMP_DIR
-        
-        echo "=========================================="
-        echo "Image distribution completed successfully!"
-        echo "Image: ${image}"
-        echo "Target host: ${target_host}"
-        echo "=========================================="
+
+        # 5. Cleanup local
+        rm -rf "$TEMP_DIR"
+
+        echo "[SUCCESS] Image $imageT distributed to ${target_host}"
