@@ -24,9 +24,9 @@ spec:
 
         response=$(curl -s -G \
           --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[30s])" \
-          --data-urlencode 'start='"$(($(date +%s) - 300))" \
-          --data-urlencode 'end='"$(date +%s)" \
-          --data-urlencode 'step=30' \
+          --data-urlencode "start=$(($(date +%s) - 300))" \
+          --data-urlencode "end=$(date +%s)" \
+          --data-urlencode "step=30" \
           "$prometheusapi/api/v1/query_range")
 
         values=$(echo "$response" | jq -r '.data.result[].values[][1]')
