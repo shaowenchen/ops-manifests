@@ -23,7 +23,7 @@ spec:
         prometheusapi="${prometheusapi}"
         maxerrors=80
         mysvc=$(echo "$mysvc" | awk '{gsub(/^atms-glb-/,""); print substr($0, 1, length($0)-1)}')
-        promql="sum(increase(istio_requests_total{reporter=\"destination\",destination_service_name=~\"$mysvc.*\", response_code!=\"200\"}[300s])) by (pod) > 0"
+        promql="sum(increase(istio_requests_total{reporter=\"destination\",destination_service_name=~\"$mysvc.*\", response_code=~\"5..\"}[300s])) by (pod) > 0"
         response=$(curl -s -G \
           --data-urlencode "query=$promql" \
           --data-urlencode "time=$(date +%s)" \
