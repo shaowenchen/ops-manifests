@@ -36,7 +36,6 @@ spec:
             }
             response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.' + cluster,
                                      headers=headers, data=json.dumps(payload))
-            print(response.text)
 
         def get_all_clusters():
             try:
