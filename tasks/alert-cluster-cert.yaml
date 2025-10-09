@@ -1,0 +1,102 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: alert-cluster-cert
+  namespace: ops-system
+spec:
+  desc: alert-cluster-cert
+  host: anymaster
+  variables:
+    threshold:
+      default: "30"
+  steps:
+    - name: alert-cluster-cert
+      content: |
+        #!/usr/bin/python
+        import subprocess
+        import requests
+        import json
+        from datetime import datetime
+
+        threshold = int('${threshold}')
+
+        def send(status, message, cluster, value):
+            payload = {
+                'kind': '${TASKRUN}',
+                'type': 'TaskRunReport',
+                'status': status,
+                'message': message,
+                'cluster': cluster,
+                'threshold': '${threshold}',
+                'operator': '<',
+                'value': value
+            }
+            headers = {
+                'Content-Type': 'application/json'
+            }
+            response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.' + cluster,
+                                     headers=headers, data=json.dumps(payload))
+            print(response.text)
+
+        def get_all_clusters():
+            try:
+                cmd = "kubectl get cluster -A -o json"
+                result = subprocess.check_output(cmd, shell=True).decode('utf-8')
+                return json.loads(result)
+            except Exception as e:
+                print(f"Error getting clusters: {e}")
+                return None
+
+        def check_cert_days(cluster):
+            status = 'normal'
+            message = ''
+            cluster_name = cluster['metadata']['name']
+            value = ''
+            
+            try:
+                # Get certificate days from cluster status
+                cert_days = cluster.get('status', {}).get('certNotAfterDays', None)
+                
+                if cert_days is None:
+                    message = f"Certificate days information not available"
+                    status = 'unknown'
+                    value = 'N/A'
+                elif cert_days < threshold:
+                    message = f"Certificate will expire in {cert_days} days (threshold: {threshold} days)"
+                    status = 'alerting'
+                    value = str(cert_days)
+                else:
+                    message = f"Certificate is valid for {cert_days} days"
+                    status = 'normal'
+                    value = str(cert_days)
+                    
+            except Exception as e:
+                print(f"Error checking cert days for cluster {cluster_name}: {e}")
+                message = f"Error checking certificate days: {str(e)}"
+                status = 'unknown'
+                value = 'error'
+            
+            return status, message, cluster_name, value
+
+        def main():
+            clusters_data = get_all_clusters()
+
+            if clusters_data and 'items' in clusters_data:
+                for cluster in clusters_data['items']:
+                    # Check if cluster is healthy first
+                    heart_status = cluster.get('status', {}).get('heartStatus', '')
+                    
+                    status, message, cluster_name, value = check_cert_days(cluster)
+                    
+                    # Send alert if status is alerting or unknown
+                    if status == 'alerting':
+                        send(status, message, cluster_name, value)
+                    elif status == 'normal':
+                        # Optionally send normal status to clear previous alerts
+                        send(status, message, cluster_name, value)
+            else:
+                print("No cluster data found or error occurred")
+
+        if __name__ == "__main__":
+            main()
+

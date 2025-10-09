@@ -1,0 +1,8 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: alert-cluster-cert
+  namespace: ops-system
+spec:
+  crontab: "30 1 * * *"
+  taskRef: alert-cluster-cert
