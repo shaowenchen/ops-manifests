@@ -4,5 +4,5 @@ metadata:
   name: alert-cluster-cert
   namespace: ops-system
 spec:
-  crontab: "30 1 * * *"
+  crontab: "30 9 * * *"
   taskRef: alert-cluster-cert
