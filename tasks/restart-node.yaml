@@ -1,0 +1,26 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: restart-node
+  namespace: ops-system
+spec:
+  desc: restart node or host
+  variables:
+    cluster:
+      required: true
+    host:
+      required: true
+    username:
+      required: true
+  steps:
+    - name:
+      content: |
+        #!/bin/bash
+
+        URL="http://x.x.x.x/api/v1/copilot/execute?action=dropCardMachineHandler&cluster=${cluster}&host=${host}&username=${white}"
+
+        if ! curl -f --location "$URL" --header 'copilot-token: xxx'; then
+            echo "restart node or host failed"
+        else
+            echo "restart node or host success"
+        fi
