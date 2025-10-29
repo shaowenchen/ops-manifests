@@ -24,7 +24,6 @@ spec:
     - name: distribute-image
       content: |
         #!/bin/bash
-        set -euo pipefail
 
         imageT="${image}"
         [[ "$imageT" != *:* ]] && imageT="${image}:latest"
