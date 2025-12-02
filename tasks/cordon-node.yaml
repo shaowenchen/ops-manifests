@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: cordon-node
   namespace: ops-system
+  labels:
+    ops/copilot: enabled
 spec:
   desc: cordon node in cluster
   host: anymaster
@@ -11,5 +13,7 @@ spec:
       display: node name
       required: true
   steps:
+    - name: 白名单 Pod
+      taskRef: check-whitelist
     - name: cordon node
       content: kubectl cordon ${nodename}
