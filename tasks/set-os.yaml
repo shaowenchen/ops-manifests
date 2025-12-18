@@ -8,7 +8,7 @@ spec:
   steps:
     - name: install packages
       content: |
-        timeout 5 "apt-get install -y openssl socat conntrack ipset ebtables chrony ipvsadm > /dev/null 2>&1" || echo "install failed"
+        timeout 5 "DEBIAN_FRONTEND=noninteractive apt-get install -y openssl socat conntrack ipset ebtables chrony ipvsadm > /dev/null 2>&1" || echo "install failed"
     - name: Max PID
       content: |
         echo "kernel.pid_max=4194303 " >> /etc/sysctl.conf
