@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 恢复集群中的某一个节点
   tasks:
-    - name: 恢复节点
+    - name: uncordon-node
+      desc: Uncordon node in cluster
       taskRef: uncordon-node
-    - name: 查看节点
+    - name: view-node
+      desc: View node status
       taskRef: get-node-status

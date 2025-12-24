@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 删除指定的 KAS Job
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: 删除相关的 Pod
+    - name: delete-related-pod
+      desc: Delete related pods for KAS job
       taskRef: delete-kas-job

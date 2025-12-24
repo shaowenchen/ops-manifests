@@ -7,4 +7,5 @@ spec:
   desc: 执行脚本
   tasks:
     - name: script
+      desc: Execute script
       taskRef: script

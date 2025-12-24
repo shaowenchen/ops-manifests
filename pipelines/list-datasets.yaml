@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 列出命名空间下的数据集
   tasks:
-    - name: 列出数据集
+    - name: list-datasets
+      desc: List datasets in namespace
       taskRef: list-datasets

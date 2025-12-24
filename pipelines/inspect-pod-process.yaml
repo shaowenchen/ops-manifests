@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 查看 pod 的进程相关信息
   tasks:
-    - name: 获取 Pod 所在节点
+    - name: get-pod-node
+      desc: Get pod node information
       taskRef: get-pod-node
-    - name: 查看 Pod 进程信息
+    - name: view-pod-process-info
+      desc: View pod process information
       taskRef: inspect-pod-process

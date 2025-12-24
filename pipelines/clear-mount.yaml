@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 清理挂载点
   tasks:
-    - name: 清理挂载点
+    - name: clear-mount-point
+      desc: Clear mount points
       taskRef: clear-mount

@@ -7,4 +7,5 @@ spec:
   desc: 安装、卸载 argo events 组件
   tasks:
     - name: argo-events
+      desc: Install or uninstall argo events component
       taskRef: app-argo-events

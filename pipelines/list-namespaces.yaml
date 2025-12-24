@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 列出、查看所有的命名空间
   tasks:
-    - name: 列出所有命名空间
+    - name: list-all-namespaces
+      desc: List and view all namespaces
       taskRef: list-namespaces

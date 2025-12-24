@@ -8,11 +8,15 @@ metadata:
 spec:
   desc: svc 处于异常状态时，用来查看 svc 的错误日志和错误事件
   tasks:
-    - name: 获取 svc
+    - name: get-svc
+      desc: Get service information
       taskRef: get-svc
-    - name: 获取 Deployment
+    - name: get-deployment
+      desc: Get deployment by service
       taskRef: get-deployment-bysvc
-    - name: 查看 svc 错误日志
+    - name: view-svc-error-logs
+      desc: View service error logs
       taskRef: get-pod-error-logs-bysvc
-    - name: 查看 svc 的错误事件
+    - name: view-svc-error-events
+      desc: View service error events
       taskRef: list-error-events-bysvc

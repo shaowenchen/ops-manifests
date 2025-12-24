@@ -5,7 +5,8 @@ metadata:
   namespace: ops-system
 spec:
   keywords:
-    - FailedMount
+    include:
+      - FailedMount
   subject: ops.clusters.*.namespaces.*.pods.*.event
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=

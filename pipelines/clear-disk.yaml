@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 清理磁盘
   tasks:
-    - name: 清理磁盘
+    - name: clear-disk
+      desc: Clear disk
       taskRef: clear-disk

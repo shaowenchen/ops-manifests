@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 创建 namespace
   tasks:
-    - name: 创建 namespace
+    - name: create-namespace
+      desc: Create namespace
       taskRef: create-namespace

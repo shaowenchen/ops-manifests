@@ -61,7 +61,7 @@ spec:
                 print('fabricmanager服务未安装')
                 exit(0)
             if not check_fabricmanager_status():
-                message += 'status is not running\n'
+                message += 'status is not running'
                 raise Exception(message)
 
             log_file = '/var/log/fabricmanager.log'

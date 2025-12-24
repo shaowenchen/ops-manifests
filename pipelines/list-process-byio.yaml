@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 获取占用 IO 的进程
   tasks:
-    - name: 查看节点
+    - name: view-node
+      desc: View node status
       taskRef: get-node-status
-    - name: 获取占用 IO 的进程
+    - name: get-process-using-io
+      desc: Get processes using IO
       taskRef: list-process-byio

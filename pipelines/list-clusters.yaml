@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 列出、查看所有的集群
   tasks:
-    - name: 列出所有集群
+    - name: list-all-clusters
+      desc: List and view all clusters
       taskRef: list-clusters

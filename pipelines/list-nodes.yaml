@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 查看、列出某个集群的所有节点
   tasks:
-    - name: 列出集群的节点
+    - name: list-cluster-nodes
+      desc: List all nodes in cluster
       taskRef: list-nodes
-    - name: 列出集群的节点
+    - name: list-cluster-nodes
+      desc: List all nodes in cluster
       taskRef: list-nodes

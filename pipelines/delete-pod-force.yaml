@@ -8,9 +8,12 @@ metadata:
 spec:
   desc: 强制删除 Pod
   tasks:
-    - name: 白名单 Pod
+    - name: whitelist-pod
+      desc: Check whitelist for pod
       taskRef: check-whitelist
-    - name: 获取 Pod
+    - name: get-pod
+      desc: Get pod information
       taskRef: get-pod
-    - name: 删除 Pod
+    - name: delete-pod
+      desc: Force delete pod
       taskRef: delete-pod-force

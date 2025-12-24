@@ -6,7 +6,8 @@ metadata:
 spec:
   additional: "action: restart-kubelet-bypod"
   keywords:
-    - no free node
+    include:
+      - no free node
   subject: ops.clusters.*.namespaces.*.pods.*.event
   type: webhook
   url: http://x.x.x.x/webhook

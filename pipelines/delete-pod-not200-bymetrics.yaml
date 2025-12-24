@@ -8,9 +8,12 @@ metadata:
 spec:
   desc: 查询 Pod 的非 200 指标判断是否删除 Pod
   tasks:
-    - name: 获取 Pod
+    - name: get-pod
+      desc: Get pod information
       taskRef: get-pod
-    - name: 获取 Metrics 非 200 增量
+    - name: get-metrics-not200-increment
+      desc: Get metrics not 200 increment
       taskRef: get-metrics-pod-not200
-    - name: 删除异常指标的 Pod
+    - name: delete-abnormal-metric-pod
+      desc: Delete pod with abnormal metrics
       taskRef: delete-pod-bycounts

@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 列出集群中的某一个 Node 上的所有 Pod
   tasks:
-    - name: list pods
+    - name: list-pods
+      desc: List all pods on a specific node
       taskRef: list-pods-bynode

@@ -19,4 +19,5 @@ spec:
                   else
                       kubectl -n ops-system label host $host alert-card=npu --overwrite
                   fi
+                  kubectl -n ops-system label host $host alert-card-num=16
               done

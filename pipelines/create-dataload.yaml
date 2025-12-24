@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 预热数据集
   tasks:
-    - name: 创建数据集预热任务
+    - name: create-dataset-preload-task
+      desc: Create dataset preload task
       taskRef: create-dataload

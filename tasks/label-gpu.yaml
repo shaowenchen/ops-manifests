@@ -19,4 +19,5 @@ spec:
                   else
                       kubectl -n ops-system label host $host alert-card=gpu --overwrite
                   fi
+                  kubectl -n ops-system label host $host alert-card-num=8
               done

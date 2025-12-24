@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 重启、删除集群中的某一个 Pod
   tasks:
-    - name: 获取 Pod
+    - name: get-pod
+      desc: Get pod information
       taskRef: get-pod
-    - name: 删除 Pod
+    - name: delete-pod
+      desc: Delete pod
       taskRef: delete-pod

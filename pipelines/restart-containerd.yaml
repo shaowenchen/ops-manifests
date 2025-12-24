@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 重启 containerd
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: 重启 containerd
+    - name: restart-containerd
+      desc: Restart containerd
       taskRef: restart-containerd

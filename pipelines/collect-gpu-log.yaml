@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: Collect - 搜集 GPU 的相关日志
   tasks:
-    - name: 收集 GPU 日志
+    - name: collect-gpu-log
+      desc: Collect GPU related logs
       taskRef: collect-gpu-log

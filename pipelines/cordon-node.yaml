@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 禁用集群中的某个节点
   tasks:
-    - name: 白名单 Pod
+    - name: whitelist-pod
+      desc: Check whitelist for pod
       taskRef: check-whitelist
-    - name: 禁用节点
+    - name: cordon-node
+      desc: Cordon node in cluster
       taskRef: cordon-node

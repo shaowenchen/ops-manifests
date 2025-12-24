@@ -9,4 +9,5 @@ spec:
   desc: 重启节点或主机
   tasks:
     - name: restart-node
+      desc: Restart node or host
       taskRef: restart-node

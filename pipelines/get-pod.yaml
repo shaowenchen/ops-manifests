@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 查看 Pod 信息、状态
   tasks:
-    - name: get pod status
+    - name: get-pod-status
+      desc: View pod information and status
       taskRef: get-pod

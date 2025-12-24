@@ -5,11 +5,12 @@ metadata:
   namespace: ops-system
 spec:
   keywords:
-    - faild
-    - xid
-    - GPUUnhealthy
-    - NodeNotSchedulable
-    - NodeSchedulable
+    include:
+      - faild
+      - xid
+      - GPUUnhealthy
+      - NodeNotSchedulable
+      - NodeSchedulable
   subject: ops.clusters.*.nodes.>
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=

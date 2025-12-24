@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: pod 处于 Pending 状态时，用来查看 pod 事件
   tasks:
-    - name: 获取 Pod
+    - name: get-pod
+      desc: Get pod information
       taskRef: get-pod
-    - name: 查看 Pod 的错误事件
+    - name: view-pod-error-events
+      desc: View pod error events when pending
       taskRef: list-error-events-bypod

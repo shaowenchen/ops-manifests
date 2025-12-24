@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: restart fabricmanager
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: 重启 fabricmanager
+    - name: restart-fabricmanager
+      desc: Restart fabricmanager
       taskRef: restart-fabricmanager

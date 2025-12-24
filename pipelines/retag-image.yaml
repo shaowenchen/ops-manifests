@@ -8,8 +8,10 @@ metadata:
 spec:
   desc: 转存、retag 容器镜像
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: retag image
+    - name: retag-image
+      desc: Transfer and retag container image
       taskRef: retag-image
 

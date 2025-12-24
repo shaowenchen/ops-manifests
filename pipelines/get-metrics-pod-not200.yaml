@@ -9,4 +9,5 @@ spec:
   desc: get metrics from prometheus for pod not 200
   tasks:
     - name: get-metrics-pod-not200
+      desc: Get metrics from prometheus for pod not 200
       taskRef: get-metrics-pod-not200

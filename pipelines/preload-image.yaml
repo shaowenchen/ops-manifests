@@ -9,4 +9,5 @@ spec:
   desc: Preload Image - 在集群预热镜像
   tasks:
     - name: preload
+      desc: Preload images in cluster
       taskRef: preload-image

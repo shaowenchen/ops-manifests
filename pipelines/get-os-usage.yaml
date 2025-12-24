@@ -6,5 +6,6 @@ metadata:
 spec:
   desc: 查看系统资源使用情况
   tasks:
-    - name: get os usage
+    - name: get-os-usage
+      desc: Get OS resource usage
       taskRef: get-os-usage

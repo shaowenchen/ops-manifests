@@ -8,9 +8,12 @@ metadata:
 spec:
   desc: 重启 Pod 所在节点的 kubelet
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: 获取 Pod 所在节点
+    - name: get-pod-node
+      desc: Get pod node information
       taskRef: get-pod-node
-    - name: 重启 kubelet
+    - name: restart-kubelet
+      desc: Restart kubelet on pod node
       taskRef: restart-kubelet

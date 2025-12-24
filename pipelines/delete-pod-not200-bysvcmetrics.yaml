@@ -12,9 +12,12 @@ spec:
       desc: pod name
       required: false
   tasks:
-    - name: 通过 svc 获取 pod 非 200 Metrics
+    - name: get-pod-not200-metrics-by-svc
+      desc: Get pod not 200 metrics by service
       taskRef: get-metrics-pod-not200-bysvc
-    - name: 获取 pod 非 200 增量 metrics
+    - name: get-pod-not200-increment-metrics
+      desc: Get pod not 200 increment metrics
       taskRef: get-metrics-pod-not200
-    - name: 删除异常指标的 Pod
+    - name: delete-abnormal-metric-pod
+      desc: Delete pod with abnormal metrics
       taskRef: delete-pod-bycounts

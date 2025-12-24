@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 查看、列出所有的流水线
   tasks:
-    - name: 列出所有集群
+    - name: list-all-pipelines
+      desc: List and view all pipelines
       taskRef: list-pipelines-for-copilot

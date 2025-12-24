@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 重启节点的 gpu-manager 容器
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: 重启 gpu-manager 容器
+    - name: restart-gpu-manager-container
+      desc: Restart gpu-manager container on node
       taskRef: restart-gpu-manager

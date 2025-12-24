@@ -8,7 +8,9 @@ metadata:
 spec:
   desc: 删除 host 对象
   tasks:
-    - name: 白名单检测
+    - name: whitelist-check
+      desc: Check whitelist
       taskRef: check-whitelist
-    - name: 删除指定的 host
+    - name: delete-specified-host
+      desc: Delete specified host
       taskRef: delete-host

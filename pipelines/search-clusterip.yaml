@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 查看、搜索集群的 IP
   tasks:
-    - name: search clusterip
+    - name: search-clusterip
+      desc: Search and view cluster IPs
       taskRef: search-clusterip

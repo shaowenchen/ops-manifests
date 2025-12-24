@@ -9,4 +9,5 @@ spec:
   desc: 清理异常的 Pod
   tasks:
     - name: clear-pod
+      desc: Clear abnormal pods
       taskRef: clear-pod

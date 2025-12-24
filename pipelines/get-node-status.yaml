@@ -8,5 +8,6 @@ metadata:
 spec:
   desc: 查看节点是否就绪
   tasks:
-    - name: 查询节点状态
+    - name: query-node-status
+      desc: Query node readiness status
       taskRef: get-node-status
