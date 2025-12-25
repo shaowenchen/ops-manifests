@@ -9,5 +9,5 @@ spec:
     topk: 
       default: "10"
   steps:
-    - name: list process by io
+    - name: list-process-by-io
       content: iotop -b | head -$((${topk}+1))

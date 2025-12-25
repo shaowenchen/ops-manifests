@@ -12,6 +12,6 @@ spec:
     topk: 
       default: "10"
   steps:
-    - name: list topK usage cpu of pods in specified namespace
+    - name: list-topk-usage-cpu-of-pods-in-specified-namespace
       content: |
         kubectl top pod -n ${namespace}  --sort-by=cpu | head -$((${topk}+1))

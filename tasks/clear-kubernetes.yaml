@@ -11,24 +11,24 @@ spec:
       display: namespace
       required: true
   steps:
-    - name: clear Evicted pod
+    - name: clear-evicted-pod
       content: kubectl get pods -n ${namespace} -o wide | grep Evicted | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"
-    - name: clear Error pod
+    - name: clear-error-pod
       content: kubectl get pods -n ${namespace} -o wide | grep Error | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"
-    - name: clear Completed pod
+    - name: clear-completed-pod
       content: kubectl get pods -n ${namespace} -o wide | grep Completed | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"
-    - name: clear ErrImagePull pod
+    - name: clear-errimagepull-pod
       content: kubectl get pods -n ${namespace} -o wide | grep ErrImagePull | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"
-    - name: clear ImagePullBackOff pod
+    - name: clear-imagepullbackoff-pod
       content: kubectl get pods -n ${namespace} -o wide | grep ImagePullBackOff | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"
-    - name: clear CrashLoopBackOff pod
+    - name: clear-crashloopbackoff-pod
       content: kubectl get pods -n ${namespace} -o wide | grep CrashLoopBackOff | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"
-    - name: clear Terminating pod
+    - name: clear-terminating-pod
       content: kubectl get pods -n ${namespace} -o wide | grep Terminating | awk '{print $1}' | xargs -r -L1 kubectl delete pod -n ${namespace} --grace-period=0 --force
       allowfailure: "true"

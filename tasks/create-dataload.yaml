@@ -18,7 +18,7 @@ spec:
       desc: path of the dataset
       required: true
   steps:
-    - name: create dataload
+    - name: create-dataload
       content: |
         kubectl create -f - <<EOF
         apiVersion: data.fluid.io/v1alpha1

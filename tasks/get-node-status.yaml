@@ -11,8 +11,8 @@ spec:
       display: node name
       required: true
   steps:
-    - name: get node status
+    - name: get-node-status
       content: kubectl get nodes ${nodename} -o wide
-    - name: get usage
+    - name: get-usage
       content: kubectl top nodes ${nodename}
 

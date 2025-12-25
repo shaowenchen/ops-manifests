@@ -14,7 +14,7 @@ spec:
       display: pod name
       required: true
   steps:
-    - name: delete pod
+    - name: delete-pod
       content: |
         NAMESPACE=${namespace}
         POD_NAME=${pod}

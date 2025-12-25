@@ -9,6 +9,6 @@ spec:
     proxy: 
       default: https://ghfast.top/
   steps:
-    - name: Install Opscli
+    - name: install-opscli
       content: |
         curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops/main/getcli.sh | VERSION=latest PROXY=${proxy} sh -

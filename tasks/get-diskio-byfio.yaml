@@ -17,19 +17,19 @@ spec:
     size:
       default: "100m"
   steps:
-    - name: Rand_Read_Testing
+    - name: rand-read-testing
       content: fio -direct=${direct} -iodepth=128 -rw=randread -ioengine=${ioengine} -bs=${bs} -size=${size} -numjobs=1 -runtime=1000 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Rand_Read_Testing
-    - name: Rand_Write_Testing
+    - name: rand-write-testing
       content: fio -direct=${direct} -iodepth=128 -rw=randwrite -ioengine=${ioengine} -bs=${bs} -size=${size} -numjobs=1 -runtime=1000 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Rand_Write_Testing
-    - name: Sequ_Read_Testing
+    - name: sequ-read-testing
       content: fio -direct=${direct} -iodepth=32 -rw=read -ioengine=${ioengine} -bs=128k -size=${size} -numjobs=1 -runtime=1000 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Sequ_Read_Testing
-    - name: Sequ_Write_Testing
+    - name: sequ-write-testing
       content: fio -direct=${direct} -iodepth=32 -rw=write -ioengine=${ioengine} -bs=128k -size=${size} -numjobs=1 -runtime=1000 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Sequ_Write_Testing
-    - name: Rand_Read_IOPS_Testing
+    - name: rand-read-iops-testing
       content: fio -direct=${direct} -iodepth=32 -rw=randread -ioengine=${ioengine} -bs=${bs} -size=${size} -numjobs=1 -runtime=1000 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Read_IOPS_Testing
-    - name: Rand_Write_IOPS_Testing
+    - name: rand-write-iops-testing
       content: fio -direct=${direct} -iodepth=32 -rw=randwrite -ioengine=${ioengine} -bs=${bs} -size=${size} -numjobs=1 -runtime=1000 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Write_IOPS_Testing
-    - name: Rand_Read_Latency_Testing
+    - name: rand-read-latency-testing
       content: fio -direct=${direct} -iodepth=1 -rw=randread -ioengine=${ioengine} -bs=${bs} -size=${size} -numjobs=1 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Rand_Read_Latency_Testing
-    - name: Rand_Write_Latency_Testing
+    - name: rand-write-latency-testing
       content: fio -direct=${direct} -iodepth=1 -rw=randwrite -ioengine=${ioengine} -bs=${bs} -size=${size} -numjobs=1 -group_reporting -filename=${filename} --allow_mounted_write=1 -name=Rand_Write_Latency_Testing

@@ -12,12 +12,12 @@ spec:
       regex: "^[0-9]*$"
       required: true
   steps:
-    - name: list pod about job
+    - name: list-pod-about-job
       content: |
         kubectl get pod -n kas-job -l job_name=kas-job-${task}
-    - name: delete pod about job
+    - name: delete-pod-about-job
       content: |
         kubectl delete pod -n kas-job -l job_name=kas-job-${task}
-    - name: list pod about job
+    - name: list-pod-about-job-2
       content: |
         kubectl get pod -n kas-job -l job_name=kas-job-${task}

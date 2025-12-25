@@ -11,9 +11,9 @@ spec:
       display: node name
       required: true
   steps:
-    - name: Cordon Node
+    - name: cordon-node
       content: kubectl cordon ${nodename}
-    - name: Drain Node
+    - name: drain-node
       content: kubectl drain ${nodename} --ignore-daemonsets
-    - name: Show Pod on Node
+    - name: show-pod-on-node
       content: kubectl get pod -A |grep ${nodename}

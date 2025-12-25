@@ -12,9 +12,9 @@ spec:
     kubeconfig: 
       default: "/etc/kubernetes/admin.conf"
   steps:
-    - name: ${action} openebs
+    - name: action-openebs
       content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://openebs.github.io/charts/openebs-operator.yaml
-    - name: set default class
+    - name: set-default-class
       content: |
         kubectl --kubeconfig ${kubeconfig} patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
       when: ${action}==apply

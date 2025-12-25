@@ -15,7 +15,7 @@ spec:
       examples:
         - white1,white2,white3
   steps:
-    - name: check whitelist
+    - name: check-whitelist
       content: |
         #!/usr/bin/python
         white="${white}"

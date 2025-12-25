@@ -6,7 +6,7 @@ metadata:
 spec:
   desc: set a faster mirror for os
   steps:
-    - name: install required packages
+    - name: install-required-packages
       content: |
         PROXY="https://ghfast.top/" &&
         curl -sfL "$PROXY"https://raw.githubusercontent.com/shaowenchen/ops-hub/master/mirror/ubuntu/get.sh | sh -

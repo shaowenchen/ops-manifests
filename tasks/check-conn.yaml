@@ -11,7 +11,7 @@ spec:
       examples:
         - 1.1.1.1,2.2.2.2
   steps:
-    - name: Check connection
+    - name: check-connection
       content: |
         targets=$(echo "${targets}" | awk -F, '{for (i=1; i<=NF; i++) print $i}')
         for target in $targets; do

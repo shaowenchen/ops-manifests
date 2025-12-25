@@ -7,6 +7,6 @@ spec:
   desc: list all nodes in cluster
   host: anymaster
   steps:
-    - name: list nodes
+    - name: list-nodes
       content: |
         kubectl get nodes -o wide | awk '{print $1, $2, $4, $6}'

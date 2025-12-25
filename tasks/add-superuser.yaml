@@ -13,22 +13,22 @@ spec:
       required: true
       display: password
   steps:
-    - name: add user
+    - name: add-user
       content: useradd ${name}
       allowfailure: "true"
-    - name: mkdir home
+    - name: mkdir-home
       content: mkdir /home/${name}
       allowfailure: "true"
-    - name: chown user
+    - name: chown-user
       content: chown -R ${name} /home/${name}
       allowfailure: "true"
-    - name: mkdir .ssh
+    - name: mkdir-ssh
       content: mkdir -p /home/${name}/.ssh
       allowfailure: "true"
-    - name: set password
+    - name: set-password
       content: echo ${passwd} | sudo passwd ${name} --stdin  &>/dev/null
       when: ${password} != ""
       allowfailure: "true"
-    - name: set sudo
+    - name: set-sudo
       content: echo "${name} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${name}
       allowfailure: "true"

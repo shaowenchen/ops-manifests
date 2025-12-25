@@ -11,7 +11,7 @@ spec:
     action:
       default: apply
   steps:
-    - name: take action
+    - name: take-action
       content: |
         export KUBECONFIG=/host/root/.kube/config
 

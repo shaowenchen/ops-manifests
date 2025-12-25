@@ -14,9 +14,9 @@ spec:
     kubeconfig: 
       default: "/etc/kubernetes/admin.conf"
   steps:
-    - name: add helm repo
+    - name: add-helm-repo
       content: helm --kubeconfig ${kubeconfig} repo add grafana https://grafana.github.io/helm-charts
-    - name: update helm repo
+    - name: update-helm-repo
       content: helm --kubeconfig ${kubeconfig} repo update
-    - name: ${action} grafana
+    - name: action-grafana
       content: helm --kubeconfig ${kubeconfig} ${action} grafana -n ${namespace} grafana/grafana --create-namespace

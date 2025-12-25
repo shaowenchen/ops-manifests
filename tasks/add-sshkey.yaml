@@ -13,9 +13,9 @@ spec:
       display: SSH Key Path
       default: ~/.ssh/authorized_keys
   steps:
-    - name: Add Key to ${keypath}
+    - name: add-key-to-keypath
       content: echo "${keycontent}" >> ${keypath}
-    - name: allow root login
+    - name: allow-root-login
       content: sed -i 's/^PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
-    - name: restart sshd
+    - name: restart-sshd
       content: systemctl restart sshd

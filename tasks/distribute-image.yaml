@@ -10,15 +10,12 @@ spec:
     image:
       display: "Docker image name (e.g., nginx:latest)"
       required: true
-      type: string
     target_host:
       display: "Target host IP or hostname"
       required: true
-      type: string
     platform:
       display: "Target platform/architecture (e.g., linux/amd64, linux/arm64)"
       required: false
-      type: string
       default: "linux/amd64"
   steps:
     - name: distribute-image

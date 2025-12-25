@@ -10,6 +10,6 @@ spec:
     nodename:
       required: true
   steps:
-    - name: get node details
+    - name: get-node-details
       content: kubectl describe node ${nodename}
 

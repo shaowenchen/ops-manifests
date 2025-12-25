@@ -14,5 +14,5 @@ spec:
     version:
       default: "1"
   steps:
-    - name: Restore all
+    - name: restore-all
       content: ./velero-${velero_version}-linux-amd64/velero restore create  ${cluster_name}-${version}-restore --from-backup  ${cluster_name}-${version}

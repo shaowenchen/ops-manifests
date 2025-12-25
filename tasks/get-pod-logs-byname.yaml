@@ -16,5 +16,5 @@ spec:
     topk: 
       default: "20"
   steps:
-    - name: get pod topk logs
+    - name: get-pod-topk-logs
       content: kubectl logs --tail=${topk} -n ${namespace} ${pod}

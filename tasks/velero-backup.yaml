@@ -16,5 +16,5 @@ spec:
     velero_version: 
       default: v1.9.2
   steps:
-    - name: Backup specified namespace
+    - name: backup-specified-namespace
       content: ./velero-${velero_version}-linux-amd64/velero backup create ${cluster_name}-${version} --include-namespaces ${namespace}

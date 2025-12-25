@@ -14,5 +14,5 @@ spec:
       display: pod name
       required: true
   steps:
-    - name: get pod details info
+    - name: get-pod-details-info
       content: kubectl describe pod ${pod} -n ${namespace}

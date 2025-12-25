@@ -10,30 +10,30 @@ spec:
       display: host
       required: true
   steps:
-    - name: Kernel Version
+    - name: kernel-version
       content: uname -r
-    - name: CPU Usage Percent/Load/Total
+    - name: cpu-usage-percent-load-total
       content: echo `grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {printf ("%.2f",usage)}'`%/`top -bn1 | grep load | awk '{printf "%.2f\n", $(NF-2)}'`/`grep -c "model name" /proc/cpuinfo`
-    - name: Mem Usage Percent/Total
+    - name: mem-usage-percent-total
       content: echo `free -m | awk 'NR==2{printf "%.2f%%\n", $3*100/$2 }'`/`free -h | awk '/^Mem:/{print $2}'`
-    - name: Disk Usage Percent/Total
+    - name: disk-usage-percent-total
       content: timeout 5 df -H | grep -vE '^Filesystem|tmpfs|cdrom|loop|udev' | awk '{ print $5 "/" $2 " " $1 }' |grep " "/
       allowfailure: "true"
-    - name: TCP TIME_WAIT Usage/Total
+    - name: tcp-time-wait-usage-total
       content: echo `netstat -an | grep TIME_WAIT | wc -l`/`cat /proc/sys/net/ipv4/tcp_max_tw_buckets`
-    - name: NF_Conntrack Usage/Total
+    - name: nf-conntrack-usage-total
       content: echo `cat /proc/sys/net/netfilter/nf_conntrack_count`/`cat /proc/sys/net/netfilter/nf_conntrack_max`
-    - name: PID Usage
+    - name: pid-usage
       content: echo `ps -eLf | wc -l` `cat /proc/sys/kernel/pid_max` | awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
-    - name: Thread Usage
+    - name: thread-usage
       content: echo `ps -eLf | wc -l` `cat /proc/sys/kernel/threads-max` | awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
-    - name: ARP Router
+    - name: arp-router
       content: echo `/usr/sbin/arp -an | wc -l` `/sbin/sysctl net.ipv4.neigh.default.gc_thresh1 | awk '{print $3}'` |awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
-    - name: Open Files Number
+    - name: open-files-number
       content: cat /proc/sys/fs/file-nr |awk '{printf "%.2f%%/%s\n", $1*100/$3, $3}'
-    - name: User Instances
+    - name: user-instances
       content: echo `find /proc/*/fd/* -type l -lname 'anon_inode:inotify' -print 2>/dev/null | cut -d/ -f3 |xargs -I '{}' -- ps --no-headers -o '%U' -p '{}' | sort | uniq -c | sort -nr | awk 'BEGIN {max = 0} {if ($1+0 > max+0) max=$1} END {print max}'` `/sbin/sysctl fs.inotify.max_user_instances|awk '{print $3}'` |awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
-    - name: User Watches
+    - name: user-watches
       content: echo `find /proc/*/fd/* -type l -lname 'anon_inode:inotify' -print 2>/dev/null | cut -d/ -f3 |xargs -I '{}' -- ps --no-headers -o '%U %p %c' -p '{}' | sort | uniq -c | sort -nr | awk 'BEGIN {max = 0} {if ($1+0 > max+0) max=$1} END {print max}'` `/sbin/sysctl fs.inotify.max_user_watches|awk '{print $3}'` |awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
-    - name: User Processes
+    - name: user-processes
       content: echo `ps -U root -u root -o comm= | wc -l`/`cat /proc/1/limits |grep processes | awk '{ print $4}'`

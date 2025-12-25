@@ -15,6 +15,6 @@ spec:
     namespace:
       value: ops-system
   steps:
-    - name: delete host
+    - name: delete-host
       content: |
         kubectl delete host ${hostname} -n ${namespace}

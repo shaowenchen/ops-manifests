@@ -10,10 +10,10 @@ spec:
       required: true
       default: "false"
   steps:
-    - name: Backup Etc Hosts
+    - name: backup-etc-hosts
       content: |
         cp /etc/hosts /etc/hosts.bak.$(date +%F_%T)
-    - name: Add Etc Hosts from kubectl
+    - name: add-etc-hosts-from-kubectl
       content: |
         kubectl get nodes -o wide | tail -n +2 | awk '{print $6, $1}' | while read ip hostname; do
           ipDomain=$(echo $ip | sed 's/\./-/g')
@@ -31,7 +31,7 @@ spec:
           fi
         done
       when: ${clear} == "false"
-    - name: Remove Etc Hosts
+    - name: remove-etc-hosts
       content: |
         kubectl get nodes -o wide | tail -n +2 | awk '{print $6, $1}' | while read ip hostname; do
           ipDomain=$(echo $ip | sed 's/\./-/g')

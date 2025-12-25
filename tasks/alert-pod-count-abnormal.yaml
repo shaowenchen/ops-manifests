@@ -10,7 +10,7 @@ spec:
         threshold:
             default: "20"
     steps:
-        - name: alert abnormal pod counts
+        - name: alert-abnormal-pod-counts
           content: |
               #!/usr/bin/python
               import os

@@ -26,20 +26,20 @@ spec:
       desc: secret key
       required: true
   steps:
-    - name: Download Velero Client
+    - name: download-velero-client
       content: wget ${download_url}
 
-    - name: Install Velero Client
+    - name: install-velero-client
       content: tar xvf velero-${velero_version}-linux-amd64.tar.gz
 
-    - name: Generate Credential - 1
+    - name: generate-credential-1
       content: echo "[default]" > velero-credentials
 
-    - name: Generate Credential - 2
+    - name: generate-credential-2
       content: echo "aws_access_key_id = ${ak}" >> velero-credentials
 
-    - name: Generate Credential - 3
+    - name: generate-credential-3
       content: echo "aws_secret_access_key = ${sk}" >> velero-credentials
 
-    - name: Install Velero Server
+    - name: install-velero-server
       content: ./velero-${velero_version}-linux-amd64/velero install --image registry.cn-beijing.aliyuncs.com/opshub/velero-velero:${velero_version} --plugins registry.cn-beijing.aliyuncs.com/opshub/velero-velero-plugin-for-aws:v1.5.1 --provider aws  --bucket ${bucket} --namespace velero --secret-file ./velero-credentials --use-restic --backup-location-config region=${region},s3ForcePathStyle="true",s3Url=${endpoint} --snapshot-location-config region=${region}

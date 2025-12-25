@@ -6,5 +6,5 @@ metadata:
 spec:
   desc: add /usr/local/bin to PATH for specified host
   steps:
-    - name: Set /usr/local/bin to PATH
+    - name: set-usr-local-bin-to-path
       content: echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile

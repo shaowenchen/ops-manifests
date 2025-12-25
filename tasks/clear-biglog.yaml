@@ -17,8 +17,8 @@ spec:
     logname: 
       default: "*log*"
   steps:
-    - name: find ${logname} under ${logpath} with size > ${size}
+    - name: find-big-log
       content: find ${logpath} -type f -name "${logname}" -size +${size} -exec du -h {} \; 2>/dev/null || true
-    - name: clear log
+    - name: clear-log
       content: find ${logpath} -type f -name "${logname}" -size +${size} -exec sh -c 'for file do echo "cleaned $file" >&2; echo "" > "$file"; done' sh {} +
       when: ${clear}

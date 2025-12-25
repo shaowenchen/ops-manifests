@@ -12,6 +12,6 @@ spec:
     topk: 
       default: "20"
   steps:
-    - name: list topK usage memory of pods
+    - name: list-topk-usage-memory-of-pods
       content: |
         kubectl top pod -n ${namespace} --sort-by=memory | head -$((${topk}+1))

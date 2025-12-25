@@ -10,7 +10,7 @@ spec:
     nodename:
       required: true
   steps:
-    - name: get pod usage
+    - name: get-pod-usage
       content: |
         NODE_NAME="${nodename}"
 

@@ -6,31 +6,31 @@ metadata:
 spec:
   desc: clear disk more
   steps:
-    - name: before clear
+    - name: before-clear
       content: |
         timeout 5 df -H | grep -vE '^Filesystem|tmpfs|cdrom|loop|udev' | awk '{ print $5 "/" $2 " " $1 }' |grep " "/
-    - name: clear image
+    - name: clear-image
       content: (nerdctl --namespace k8s.io image prune -a -f 2>/dev/null || docker image prune -a -f 2>/dev/null || true) | grep "Untagged" || true
-    - name: clear container
+    - name: clear-container
       content: nerdctl --namespace k8s.io container prune -a -f 2>/dev/null || docker container prune -a -f 2>/dev/null || true
-    - name: clear network
+    - name: clear-network
       content: nerdctl --namespace k8s.io network prune -a -f 2>/dev/null || docker network prune -a -f 2>/dev/null || true
-    - name: clear volume
+    - name: clear-volume
       content: nerdctl --namespace k8s.io volume prune -a -f 2>/dev/null || docker volume prune -a -f 2>/dev/null || true
-    - name: clear > 100M log in /var/log
+    - name: clear-100m-log-in-varlog
       content: find /var/log -type f -name "*log*" -size +100M -exec sh -c 'for file do echo "cleaned $file" >&2; echo "" > "$file"; done' sh {} + 2>/dev/null || true
-    - name: clear > 100M log in /data/run
+    - name: clear-100m-log-in-datarun
       content: find /data/run -type f \( -name "*.log" -o -name "*.log.[0-9]*" \) -size +100M -exec sh -c 'for file do echo "cleaned $file" >&2; echo "" > "$file"; done' sh {} + 2>/dev/null || true
-    - name: clear .cache
+    - name: clear-cache
       content: find /data/containerd/ -type f -size +1G -path '*/.cache/*' -exec rm -f {} \;
       allowfailure: "true"
-    - name: clear jfs cache
+    - name: clear-jfs-cache
       content: |
         find /data*/jfs*/*/raw/chunks -maxdepth 3 -type d -mmin +360 -exec rm -rf {} + 2>/dev/null || true
         find /data*/jfs*/*/*/raw/chunks -maxdepth 3 -type d -mmin +360 -exec rm -rf {} + 2>/dev/null || true
         find /data*/jfs*/*/*/*/raw/chunks -maxdepth 3 -type d -mmin +360 -exec rm -rf {} + 2>/dev/null || true
         find /data*/jfs*/*/*/*/*/raw/chunks -maxdepth 3 -type d -mmin +360 -exec rm -rf {} + 2>/dev/null || true
         find /var/lib/jfs/cache*/raw/chunks -maxdepth 3 -type d -mmin +360 -exec rm -rf {} + 2>/dev/null || true
-    - name: after clear
+    - name: after-clear
       content: |
         timeout 5 df -H | grep -vE '^Filesystem|tmpfs|cdrom|loop|udev' | awk '{ print $5 "/" $2 " " $1 }' |grep " "/

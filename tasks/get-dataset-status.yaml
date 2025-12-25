@@ -14,18 +14,18 @@ spec:
       display: dataset
       desc: dataset name
   steps:
-    - name: get dataset status
+    - name: get-dataset-status
       content: |
         kubectl -n ${namespace} get dataset ${dataset}
-    - name: get runtime status
+    - name: get-runtime-status
       content: |
         kubectl -n ${namespace} get juicefsruntimes.data.fluid.io ${dataset} || kubectl -n ${namespace} get jindoruntimes.data.fluid.io ${dataset} || true
-    - name: get pvc status
+    - name: get-pvc-status
       content: |
         kubectl -n ${namespace} get pvc ${dataset}
-    - name: get worker pod status
+    - name: get-worker-pod-status
       content: |
         kubectl -n ${namespace} get pod -l fluid.io/dataset=${namespace}-${dataset},role=juicefs-worker -o wide
-    - name: get fuse pod status
+    - name: get-fuse-pod-status
       content: |
         kubectl -n ${namespace} get pod -l release=${dataset},role=juicefs-fuse -o wide

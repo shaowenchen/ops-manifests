@@ -7,6 +7,6 @@ spec:
   desc: clear ops task pod
   host: anymaster
   steps:
-    - name: clear pod
+    - name: clear-pod
       content: |
         kubectl -n ops-system delete pod -l ops/task=true  --field-selector=status.phase!=Running

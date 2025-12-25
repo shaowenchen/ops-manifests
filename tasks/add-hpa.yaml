@@ -22,5 +22,5 @@ spec:
     cpu_percent:
       default: "80"
   steps:
-    - name: add hpa for
+    - name: add-hpa
       content: kubectl autoscale ${resource_type} ${name} --min=${min} --max=${max} --cpu-percent=${cpu_percent}

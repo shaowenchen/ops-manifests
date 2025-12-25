@@ -12,7 +12,7 @@ spec:
     - name: check-fabricmanager-status
       content: |
         systemctl is-active nvidia-fabricmanager
-    - name: check-fabricmanager-activeEnterTimestamp
+    - name: check-fabricmanager-active-enter-timestamp
       content: |
         systemctl show nvidia-fabricmanager -p ActiveEnterTimestamp
 

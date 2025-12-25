@@ -14,7 +14,7 @@ spec:
       display: pod name
       required: true
   steps:
-    - name: delete pod
+    - name: delete-pod
       content: |
         status=$(kubectl get pod -n ${namespace} ${pod} | awk 'NR==2 {print $2}')
         ready=$(echo $status | cut -d'/' -f1)

@@ -6,6 +6,6 @@ metadata:
 spec:
   desc: get public ip
   steps:
-    - name: get public ip
+    - name: get-public-ip
       content: |
         curl -s ifconfig.me

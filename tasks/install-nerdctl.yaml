@@ -13,23 +13,23 @@ spec:
     arch: 
       default: amd64
   steps:
-    - name: Check nerdctl
+    - name: check-nerdctl
       content: |
         if [ -x "$(command -v nerdctl)" ]; then
           echo "nerdctl is already installed"
           exit 1
         fi
-    - name: Download nerdctl
+    - name: download-nerdctl
       content: wget ${proxy}https://github.com/containerd/nerdctl/releases/download/v${version}/nerdctl-${version}-linux-${arch}.tar.gz
-    - name: Extract
+    - name: extract
       content: tar -xzf nerdctl-${version}-linux-${arch}.tar.gz
-    - name: Move
+    - name: move
       content: mv nerdctl /usr/local/bin/nerdctl
-    - name: Clean
+    - name: clean
       content: rm -rf nerdctl-${version}-linux-${arch}.tar.gz containerd-rootless-setuptool.sh containerd-rootless.sh
-    - name: make etc dir
+    - name: make-etc-dir
       content: mkdir -p /etc/nerdctl
     - name: config
       content: echo 'namespace = "k8s.io"' > /etc/nerdctl/nerdctl.toml
-    - name: Verson
+    - name: version
       content: nerdctl --version

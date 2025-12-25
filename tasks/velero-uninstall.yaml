@@ -7,7 +7,7 @@ spec:
   desc: uninstall Velero
   host: anymaster
   steps:
-    - name: Uninstall Velero Server
+    - name: uninstall-velero-server
       content: kubectl delete namespace/velero clusterrolebinding/velero & kubectl delete crds -l component=velero
-    - name: Clear Env
+    - name: clear-env
       content: rm -rf velero*

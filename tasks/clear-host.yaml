@@ -7,6 +7,6 @@ spec:
   desc: clear host
   host: anymaster
   steps:
-    - name: clear host
+    - name: clear-host
       content: |
         kubectl get hosts -A | grep "Failed" | awk '{print $2}' | xargs -I {} kubectl delete host -n ops-system {}

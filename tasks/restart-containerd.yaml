@@ -12,6 +12,6 @@ spec:
     - name: check-containerd-status
       content: |
         systemctl is-active containerd
-    - name: check-containerd-activeEnterTimestamp
+    - name: check-containerd-active-enter-timestamp
       content: |
         systemctl show containerd -p ActiveEnterTimestamp

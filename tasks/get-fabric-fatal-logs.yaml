@@ -9,5 +9,5 @@ spec:
     topk: 
       default: "10"
   steps:
-    - name: get fabric fatal logs
+    - name: get-fabric-fatal-logs
       content: journalctl -u nvidia-fabricmanager.service |grep fatal | head -n ${topk}

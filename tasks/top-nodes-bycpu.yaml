@@ -10,5 +10,5 @@ spec:
     topk: 
       default: "5"
   steps:
-    - name: list topK usage cpu of nodes
+    - name: list-topk-usage-cpu-of-nodes
       content: kubectl top node --sort-by=cpu | head -$((${topk}+1))

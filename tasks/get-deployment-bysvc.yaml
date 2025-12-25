@@ -14,7 +14,7 @@ spec:
       display: namespace
       required: true
   steps:
-    - name: get svc deployment
+    - name: get-svc-deployment
       content: |
         APP_SELECTOR=$(kubectl get svc ${svc} -n ${namespace} -o jsonpath='{.spec.selector.app}')
 

@@ -11,6 +11,6 @@ spec:
       required: true
       display: pod name
   steps:
-    - name: Check pod existed
+    - name: check-pod-existed
       content: |
         found=$(kubectl get pods --all-namespaces | awk -v pn="${pod}" '$2 ~ pn {print $1; exit}'); [ -n "$found" ] && echo "Pod ${pod} found in $found" && exit 0 || echo "Pod ${pod} not found" && exit 1

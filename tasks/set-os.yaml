@@ -6,23 +6,23 @@ metadata:
 spec:
   desc: set a better kernel parameters for kubernetes host
   steps:
-    - name: install packages
+    - name: install-packages
       content: |
         timeout 5 "DEBIAN_FRONTEND=noninteractive apt-get install -y openssl socat conntrack ipset ebtables chrony ipvsadm > /dev/null 2>&1" || echo "install failed"
-    - name: Max PID
+    - name: max-pid
       content: |
         echo "kernel.pid_max=4194303 " >> /etc/sysctl.conf
-    - name: Max Thread
+    - name: max-thread
       content: |
         echo "kernel.threads-max=4194303 " >> /etc/sysctl.conf
-    - name: Max Conntrack
+    - name: max-conntrack
       content: |
         echo "net.netfilter.nf_conntrack_max=6400000" >> /etc/sysctl.conf
         echo "net.netfilter.nf_conntrack_tcp_be_liberal=1" >> /etc/sysctl.conf
         echo "net.netfilter.nf_conntrack_tcp_loose=1" >> /etc/sysctl.conf
         echo "net.netfilter.nf_conntrack_buckets=1600512" >> /etc/sysctl.conf
         echo "net.netfilter.nf_conntrack_tcp_timeout_time_wait=30" >> /etc/sysctl.conf
-    - name: Max ARP Router
+    - name: max-arp-router
       content: |
         echo "net.ipv4.neigh.default.gc_thresh1=80000" >> /etc/sysctl.conf
         echo "net.ipv4.neigh.default.gc_thresh2=90000" >> /etc/sysctl.conf
@@ -36,18 +36,18 @@ spec:
         echo "fs.file-max=2097152" >> /etc/sysctl.conf
         echo "fs.inotify.max_user_instances=8192" >> /etc/sysctl.conf
         echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
-    - name: set pipe-user-pages-soft
+    - name: set-pipe-user-pages-soft
       content: |+
         echo "fs.pipe-user-pages-soft=262144" >> /etc/sysctl.conf 
-    - name: apply change
+    - name: apply-change
       content: sysctl -p > /dev/null 2>&1 && echo "sysctl apply success" || echo "sysctl apply failed"
-    - name: max user processes
+    - name: max-user-processes
       content: |
         sed -i "/soft nproc/d" /etc/security/limits.conf ;
         echo "* soft nproc  262144" >> /etc/security/limits.conf  
         sed -i "/* hard nproc/d" /etc/security/limits.conf ;
         echo "* hard nproc  262144" >> /etc/security/limits.conf
-    - name: max user processes
+    - name: max-user-nofile
       content: |
         sed -i "/soft nofile/d" /etc/security/limits.conf ;
         echo "* soft nofile  1048576" >> /etc/security/limits.conf  

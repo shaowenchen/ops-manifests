@@ -16,7 +16,7 @@ spec:
       display: svc name
       required: true
   steps:
-    - name: get pod not 200 response count increase in last 5 minutes
+    - name: get-pod-not-200-response-count-increase-in-last-5-minutes
       content: |
         #!/bin/bash
         mysvc="${svc}"

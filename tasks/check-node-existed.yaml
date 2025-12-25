@@ -11,6 +11,6 @@ spec:
       display: node name
       required: true
   steps:
-    - name: Check node existed
+    - name: check-node-existed
       content: |
         found="false"; if [ -z "$node" ]; then echo "node is existed"; else if kubectl get node ${nodename} &>/dev/null; then echo "Node ${nodename} is existed"; found="true"; else echo "Node ${nodename} is not existed"; fi; fi

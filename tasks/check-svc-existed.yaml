@@ -14,7 +14,7 @@ spec:
       display: namespace
       required: true
   steps:
-    - name: Check svc existed
+    - name: check-svc-existed
       content: |
         if [ -z "${svc}" ]; then
           echo "svc is not set"

@@ -11,6 +11,6 @@ spec:
       display: namespace
       required: true
   steps:
-    - name: get status
+    - name: get-status
       content: |
         kubectl -n ${namespace} get dataload

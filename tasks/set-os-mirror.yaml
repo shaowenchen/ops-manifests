@@ -9,5 +9,5 @@ spec:
     proxy: 
       default: https://ghfast.top/
   steps:
-    - name: Set mirror
+    - name: set-mirror
       content: curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops-hub/master/mirror/get.sh | sh -

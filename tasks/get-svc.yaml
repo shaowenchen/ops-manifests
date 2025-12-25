@@ -14,6 +14,6 @@ spec:
       display: svc name
       required: true
   steps:
-    - name: get svc
+    - name: get-svc
       content: |
         kubectl get svc ${svc} -n ${namespace}

@@ -10,6 +10,6 @@ spec:
     namespace:
       required: true
   steps:
-    - name: create namespace
+    - name: create-namespace
       content: |
         kubectl create namespace ${namespace}

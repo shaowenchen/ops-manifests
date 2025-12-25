@@ -16,5 +16,5 @@ spec:
     topk:
       default: "10"
   steps:
-    - name: list pod events
+    - name: list-pod-events
       content: kubectl get events -n ${namespace} |grep ${pod} | awk '{$1=$2=$3=$4=""; print $0}' | head -n ${topk}

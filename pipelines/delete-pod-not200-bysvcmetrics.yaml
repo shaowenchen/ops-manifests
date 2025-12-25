@@ -8,7 +8,7 @@ metadata:
 spec:
   desc: 通过 svc 查询 Pod 的非 200 指标判断是否删除 Pod
   variables:
-    - name: pod
+    pod:
       desc: pod name
       required: false
   tasks:

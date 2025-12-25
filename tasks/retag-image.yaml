@@ -13,7 +13,7 @@ spec:
       display: destination image
       required: true
   steps:
-    - name: retag image
+    - name: retag-image
       content: |
         # alias nerdctl=docker
         docker pull "${source}" > /dev/null

@@ -9,7 +9,7 @@ spec:
     pod:
       required: true
   steps:
-    - name: inspect pod process
+    - name: inspect-pod-process
       content: |
         POD_NAME="${pod}"
 

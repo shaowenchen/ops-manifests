@@ -11,6 +11,6 @@ spec:
       display: namespace
       required: true
   steps:
-    - name: get datasets
+    - name: get-datasets
       content: |
         kubectl -n ${namespace} get dataset

@@ -6,16 +6,16 @@ metadata:
 spec:
   desc: get npu status using npu-smi in specified host
   steps:
-    - name: Check npu-smi
+    - name: check-npu-smi
       content: |
         command -v npu-smi
-    - name: NPU Number
+    - name: npu-number
       content: |
         timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}'
-    - name: NPU Model
+    - name: npu-model
       content: |
         timeout 10 npu-smi info -t board -i 0 -c 0 | grep -oP 'Chip Name\s*:\s*\K[^\n]+'
-    - name: NPU Status
+    - name: npu-status
       content: |
         count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do
@@ -26,13 +26,13 @@ spec:
             END {printf "%s MB %s MHz %s C", cap, clk, temp}')
           echo "NPU $i: $stats"
         done
-    - name: NPU NET Health
+    - name: npu-net-health
       content: |
         count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do
           timeout 10 hccn_tool -i $i -net_health -g
         done
-    - name: NPU ECC Errors
+    - name: npu-ecc-errors
       content: |
         count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
         for i in $(seq 0 $((count - 1))); do

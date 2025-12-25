@@ -11,5 +11,5 @@ spec:
       display: node name
       required: true
   steps:
-    - name: cordon node
+    - name: cordon-node
       content: kubectl cordon ${nodename}

@@ -11,7 +11,7 @@ spec:
       display: cluster ip
       required: true
   steps:
-    - name: search clusterip
+    - name: search-clusterip
       content: |
         # Search IP in nodes
         node_ip=$(kubectl get nodes -A -o wide | grep -w "${clusterip}")

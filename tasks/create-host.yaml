@@ -7,7 +7,7 @@ spec:
   desc: create host
   host: anymaster
   steps:
-    - name: create host
+    - name: create-host
       content: |
         kubectl get nodes -o wide > /tmp/ops-hosts
         /usr/local/bin/opscli create host -i /tmp/ops-hosts --secretref host-secret

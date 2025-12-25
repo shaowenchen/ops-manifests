@@ -14,5 +14,5 @@ spec:
     kubeconfig: 
       default: "/etc/kubernetes/admin.conf"
   steps:
-    - name: ${action} longhorn
+    - name: action-longhorn
       content: kubectl --kubeconfig ${kubeconfig} ${action} -f https://raw.githubusercontent.com/longhorn/longhorn/v${version}/deploy/longhorn.yaml

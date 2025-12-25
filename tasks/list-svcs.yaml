@@ -10,5 +10,5 @@ spec:
     namespace:
       required: true
   steps:
-    - name: get svc info
+    - name: get-svc-info
       content: kubectl get svc -A -o=custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,IP:.spec.clusterIP,PORT:.spec.ports[*].targetPort' 

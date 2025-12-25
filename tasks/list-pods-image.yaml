@@ -10,9 +10,9 @@ spec:
     namespace:
       required: true
   steps:
-    - name: list pods image
+    - name: list-pods-image
       when: ${namespace} != "all"
       content: kubectl get pod -o custom-columns='POD-NAME:.metadata.name,NAMESPACE:.metadata.namespace,CONTAINER-IMAGES:.spec.containers[*].image' -n ${namespace}
-    - name: list all pod image
+    - name: list-all-pod-image
       when: ${namespace} == "all"
       content: kubectl get pod -o custom-columns='POD-NAME:.metadata.name,NAMESPACE:.metadata.namespace,CONTAINER-IMAGES:.spec.containers[*].image' -A

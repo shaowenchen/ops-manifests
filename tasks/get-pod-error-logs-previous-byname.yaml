@@ -16,5 +16,5 @@ spec:
     topk:
       default: "20"
   steps:
-    - name: get pod ago topk error logs
+    - name: get-pod-ago-topk-error-logs
       content: kubectl logs -p --tail=${topk} -n ${namespace} ${pod} | grep -iE 'err|warn' | exit 0

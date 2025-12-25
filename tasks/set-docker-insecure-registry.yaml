@@ -11,11 +11,11 @@ spec:
       required: true
       default: registry:5000
   steps:
-    - name: Make Docker Etc Dir
+    - name: make-docker-etc-dir
       content: mkdir -p /etc/docker
-    - name: Make Daemon.json
+    - name: make-daemon-json
       content: test -f /etc/docker/daemon.json || echo '{}' > /etc/docker/daemon.json
-    - name: Set Docker Insecure Registry
+    - name: set-docker-insecure-registry
       content: |
         if ! jq -e '.["insecure-registries"] | index("${registry}") != null' /etc/docker/daemon.json > /dev/null; then
           cp /etc/docker/daemon.json /etc/docker/daemon.json.bak
@@ -24,7 +24,7 @@ spec:
         else
           echo "The registry ${registry} is already in the insecure-registries list"
         fi
-    - name: Reload Docker
+    - name: reload-docker
       content: systemctl reload docker
-    - name: Show Docker config
+    - name: show-docker-config
       content: cat /etc/docker/daemon.json

@@ -10,7 +10,7 @@ spec:
     velero_version: 
       default: v1.9.2
   steps:
-    - name: Backup Status
+    - name: backup-status
       content: ./velero-${velero_version}-linux-amd64/velero get backups
-    - name: Restore Status
+    - name: restore-status
       content: ./velero-${velero_version}-linux-amd64/velero get restores

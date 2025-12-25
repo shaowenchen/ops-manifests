@@ -6,7 +6,7 @@ metadata:
 spec:
   desc: pull from remote file    
   steps:
-    - name: Pull File
+    - name: pull-file
       remotefile: "/etc/hosts"
       localfile: "./hosts"
       direction: download
