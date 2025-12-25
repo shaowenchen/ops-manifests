@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Create namespace
+  desc: create namespace
   tasks:
     - name: create-namespace
-      desc: Create namespace
+      desc: create namespace
       taskRef: create-namespace

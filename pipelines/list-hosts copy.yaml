@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: List all hosts in the ops-system namespace
+  desc: list all hosts in the ops-system namespace
   tasks:
     - name: list-hosts
-      desc: List all hosts in the ops-system namespace
+      desc: list all hosts in the ops-system namespace
       taskRef: list-hosts

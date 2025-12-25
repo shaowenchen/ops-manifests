@@ -9,8 +9,8 @@ spec:
   desc: restart fabricmanager
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: restart-fabricmanager
-      desc: Restart fabricmanager
+      desc: restart fabricmanager
       taskRef: restart-fabricmanager

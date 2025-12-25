@@ -6,14 +6,14 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Restart kubelet on the node where the pod is located
+  desc: restart kubelet on the node where the pod is located
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: get-pod-node
-      desc: Get pod node information
+      desc: get pod node information
       taskRef: get-pod-node
     - name: restart-kubelet
-      desc: Restart kubelet on pod node
+      desc: restart kubelet on pod node
       taskRef: restart-kubelet

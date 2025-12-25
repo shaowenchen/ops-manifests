@@ -4,8 +4,8 @@ metadata:
   name: script
   namespace: ops-system
 spec:
-  desc: Execute script
+  desc: execute script
   tasks:
     - name: script
-      desc: Execute script
+      desc: execute script
       taskRef: script

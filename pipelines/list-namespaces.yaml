@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: List and view all namespaces
+  desc: list and view all namespaces
   tasks:
     - name: list-all-namespaces
-      desc: List and view all namespaces
+      desc: list and view all namespaces
       taskRef: list-namespaces

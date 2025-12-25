@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Collect GPU related logs
+  desc: collect gpu related logs
   tasks:
     - name: collect-gpu-log
-      desc: Collect GPU related logs
+      desc: collect gpu related logs
       taskRef: collect-gpu-log

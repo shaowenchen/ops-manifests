@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Restart node or host
+  desc: restart node or host
   tasks:
     - name: restart-node
-      desc: Restart node or host
+      desc: restart node or host
       taskRef: restart-node

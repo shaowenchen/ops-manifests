@@ -6,18 +6,18 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Query Pod non-200 metrics by service to determine if Pod should be deleted
+  desc: query pod non-200 metrics by service to determine if pod should be deleted
   variables:
     pod:
       desc: pod name
       required: false
   tasks:
     - name: get-pod-not200-metrics-by-svc
-      desc: Get pod not 200 metrics by service
+      desc: get pod not 200 metrics by service
       taskRef: get-metrics-pod-not200-bysvc
     - name: get-pod-not200-increment-metrics
-      desc: Get pod not 200 increment metrics
+      desc: get pod not 200 increment metrics
       taskRef: get-metrics-pod-not200
     - name: delete-abnormal-metric-pod
-      desc: Delete pod with abnormal metrics
+      desc: delete pod with abnormal metrics
       taskRef: delete-pod-bycounts

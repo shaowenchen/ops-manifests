@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Restart gpu-manager container on node
+  desc: restart gpu-manager container on node
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: restart-gpu-manager-container
-      desc: Restart gpu-manager container on node
+      desc: restart gpu-manager container on node
       taskRef: restart-gpu-manager

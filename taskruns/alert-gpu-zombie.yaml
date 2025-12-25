@@ -4,5 +4,6 @@ metadata:
   name: alert-gpu-zombie
   namespace: ops-system
 spec:
+  desc: alert gpu zombie every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-gpu-zombie

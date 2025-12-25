@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Uncordon a node in the cluster
+  desc: uncordon a node in the cluster
   tasks:
     - name: uncordon-node
-      desc: Uncordon node in cluster
+      desc: uncordon node in cluster
       taskRef: uncordon-node
     - name: view-node
-      desc: View node status
+      desc: view node status
       taskRef: get-node-status

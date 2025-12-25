@@ -4,5 +4,6 @@ metadata:
   name: alert-gpu-driver
   namespace: ops-system
 spec:
+  desc: alert gpu driver every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-gpu-driver

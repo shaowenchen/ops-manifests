@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Cordon a node in the cluster
+  desc: cordon a node in the cluster
   tasks:
     - name: whitelist-pod
-      desc: Check whitelist for pod
+      desc: check whitelist for pod
       taskRef: check-whitelist
     - name: cordon-node
-      desc: Cordon node in cluster
+      desc: cordon node in cluster
       taskRef: cordon-node

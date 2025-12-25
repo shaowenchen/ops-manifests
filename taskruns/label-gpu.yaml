@@ -4,5 +4,6 @@ metadata:
   name: label-gpu
   namespace: ops-system
 spec:
+  desc: label gpu every 15 minutes
   crontab: "*/15 * * * *"
   taskRef: label-gpu

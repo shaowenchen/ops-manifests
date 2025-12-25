@@ -4,5 +4,6 @@ metadata:
   name: alert-gpu-fabric
   namespace: ops-system
 spec:
+  desc: alert gpu fabric every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-gpu-fabric

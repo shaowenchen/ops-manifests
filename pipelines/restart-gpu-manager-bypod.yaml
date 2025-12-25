@@ -6,14 +6,14 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Restart gpu-manager container on the node where the pod is located
+  desc: restart gpu-manager container on the node where the pod is located
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: get-pod-node
-      desc: Get pod node information
+      desc: get pod node information
       taskRef: get-pod-node
     - name: restart-gpu-manager-container
-      desc: Restart gpu-manager container on pod node
+      desc: restart gpu-manager container on pod node
       taskRef: restart-gpu-manager

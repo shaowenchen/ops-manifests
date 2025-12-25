@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View pod information and status
+  desc: view pod information and status
   tasks:
     - name: get-pod-status
-      desc: View pod information and status
+      desc: view pod information and status
       taskRef: get-pod

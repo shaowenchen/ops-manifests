@@ -4,8 +4,8 @@ metadata:
   name: app-volcano
   namespace: ops-system
 spec:
-  desc: Install or uninstall volcano component
+  desc: install or uninstall volcano component
   tasks:
     - name: volcano
-      desc: Install or uninstall volcano component
+      desc: install or uninstall volcano component
       taskRef: app-volcano

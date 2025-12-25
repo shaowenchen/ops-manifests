@@ -4,9 +4,9 @@ metadata:
   name: app-hccl-controller
   namespace: ops-system
 spec:
-  desc: Install or uninstall hccl-controller component
+  desc: install or uninstall hccl-controller component
   tasks:
     - name: hccl-controller
-      desc: Install or uninstall hccl-controller component
+      desc: install or uninstall hccl-controller component
       taskRef: app-hccl-controller
 

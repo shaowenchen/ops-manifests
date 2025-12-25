@@ -6,14 +6,14 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Force delete pod
+  desc: force delete pod
   tasks:
     - name: whitelist-pod
-      desc: Check whitelist for pod
+      desc: check whitelist for pod
       taskRef: check-whitelist
     - name: get-pod
-      desc: Get pod information
+      desc: get pod information
       taskRef: get-pod
     - name: delete-pod
-      desc: Force delete pod
+      desc: force delete pod
       taskRef: delete-pod-force

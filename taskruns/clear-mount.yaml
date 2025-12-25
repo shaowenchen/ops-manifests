@@ -4,6 +4,7 @@ metadata:
   name: clear-mount
   namespace: ops-system
 spec:
+  desc: clear mount every hour at 25 minutes
   crontab: "25 * * * *"
   taskRef: clear-mount
   variables:

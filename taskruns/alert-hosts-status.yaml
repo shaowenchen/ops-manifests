@@ -4,5 +4,6 @@ metadata:
   name: alert-hosts-status
   namespace: ops-system
 spec:
+  desc: alert hosts status every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-hosts-status 

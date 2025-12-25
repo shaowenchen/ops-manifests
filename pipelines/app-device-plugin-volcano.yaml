@@ -4,9 +4,9 @@ metadata:
   name: app-device-plugin-volcano
   namespace: ops-system
 spec:
-  desc: Install or uninstall device plugin volcano component
+  desc: install or uninstall device plugin volcano component
   tasks:
     - name: device-plugin-volcano
-      desc: Install or uninstall device plugin volcano component
+      desc: install or uninstall device plugin volcano component
       taskRef: app-device-plugin-volcano
 

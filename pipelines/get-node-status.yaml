@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Check if node is ready
+  desc: check if node is ready
   tasks:
     - name: query-node-status
-      desc: Query node readiness status
+      desc: query node readiness status
       taskRef: get-node-status

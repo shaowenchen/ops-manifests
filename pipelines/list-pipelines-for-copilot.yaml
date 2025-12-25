@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View and list all pipelines
+  desc: view and list all pipelines
   tasks:
     - name: list-all-pipelines
-      desc: List and view all pipelines
+      desc: list and view all pipelines
       taskRef: list-pipelines-for-copilot

@@ -6,17 +6,17 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View service error logs and error events when service is in abnormal state
+  desc: view service error logs and error events when service is in abnormal state
   tasks:
     - name: get-svc
-      desc: Get service information
+      desc: get service information
       taskRef: get-svc
     - name: get-deployment
-      desc: Get deployment by service
+      desc: get deployment by service
       taskRef: get-deployment-bysvc
     - name: view-svc-error-logs
-      desc: View service error logs
+      desc: view service error logs
       taskRef: get-pod-error-logs-bysvc
     - name: view-svc-error-events
-      desc: View service error events
+      desc: view service error events
       taskRef: list-error-events-bysvc

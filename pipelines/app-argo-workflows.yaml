@@ -4,8 +4,8 @@ metadata:
   name: app-argo-workflows
   namespace: ops-system
 spec:
-  desc: Install or uninstall argo workflows component
+  desc: install or uninstall argo workflows component
   tasks:
     - name: argo-workflows
-      desc: Install or uninstall argo workflows component
+      desc: install or uninstall argo workflows component
       taskRef: app-argo-workflows

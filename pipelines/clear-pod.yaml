@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Clear abnormal pods
+  desc: clear abnormal pods
   tasks:
     - name: clear-pod
-      desc: Clear abnormal pods
+      desc: clear abnormal pods
       taskRef: clear-pod

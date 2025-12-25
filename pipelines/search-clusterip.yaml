@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View and search cluster IPs
+  desc: view and search cluster IPs
   tasks:
     - name: search-clusterip
-      desc: Search and view cluster IPs
+      desc: search and view cluster IPs
       taskRef: search-clusterip

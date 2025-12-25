@@ -6,12 +6,12 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Transfer and retag container images
+  desc: transfer and retag container images
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: retag-image
-      desc: Transfer and retag container image
+      desc: transfer and retag container image
       taskRef: retag-image
 

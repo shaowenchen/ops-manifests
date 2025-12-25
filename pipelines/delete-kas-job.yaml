@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Delete specified KAS job
+  desc: delete specified kas job
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: delete-related-pod
-      desc: Delete related pods for KAS job
+      desc: delete related pods for kas job
       taskRef: delete-kas-job

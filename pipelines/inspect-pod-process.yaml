@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View pod process related information
+  desc: view pod process related information
   tasks:
     - name: get-pod-node
-      desc: Get pod node information
+      desc: get pod node information
       taskRef: get-pod-node
     - name: view-pod-process-info
-      desc: View pod process information
+      desc: view pod process information
       taskRef: inspect-pod-process

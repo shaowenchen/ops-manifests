@@ -4,5 +4,6 @@ metadata:
   name: label-npu
   namespace: ops-system
 spec:
+  desc: label npu every 15 minutes
   crontab: "*/15 * * * *"
   taskRef: label-npu

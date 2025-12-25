@@ -4,7 +4,7 @@ metadata:
   name: list-hosts
   namespace: ops-system
 spec:
-  desc: List all hosts in the ops-system namespace
+  desc: list all hosts in the ops-system namespace
   host: anymaster
   steps:
     - name: get-hosts

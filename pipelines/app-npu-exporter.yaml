@@ -4,9 +4,9 @@ metadata:
   name: app-npu-exporter
   namespace: ops-system
 spec:
-  desc: Install or uninstall npu-exporter component
+  desc: install or uninstall npu-exporter component
   tasks:
     - name: npu-exporter
-      desc: Install or uninstall npu-exporter component
+      desc: install or uninstall npu-exporter component
       taskRef: app-npu-exporter
 

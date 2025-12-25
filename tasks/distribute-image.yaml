@@ -4,7 +4,7 @@ metadata:
   name: distribute-image
   namespace: ops-system
 spec:
-  desc: Distribute Docker images to target host using nerdctl save/load and scp
+  desc: distribute docker images to target host using nerdctl save/load and scp
   host: anymaster
   variables:
     image:

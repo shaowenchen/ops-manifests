@@ -4,5 +4,6 @@ metadata:
   name: clear-pod-terminating
   namespace: ops-system
 spec:
+  desc: clear pod terminating every hour at 45 minutes
   crontab: "45 * * * *"
   taskRef: clear-pod-terminating

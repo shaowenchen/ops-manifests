@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View pod status and events when pod restarts
+  desc: view pod status and events when pod restarts
   tasks:
     - name: get-pod
-      desc: Get pod information
+      desc: get pod information
       taskRef: get-pod
     - name: view-pod-restart-error-logs
-      desc: View pod error logs before restart
+      desc: view pod error logs before restart
       taskRef: get-pod-error-logs-previous-byname

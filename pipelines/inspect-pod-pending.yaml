@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View pod events when pod is in Pending state
+  desc: view pod events when pod is in Pending state
   tasks:
     - name: get-pod
-      desc: Get pod information
+      desc: get pod information
       taskRef: get-pod
     - name: view-pod-error-events
-      desc: View pod error events when pending
+      desc: view pod error events when pending
       taskRef: list-error-events-bypod

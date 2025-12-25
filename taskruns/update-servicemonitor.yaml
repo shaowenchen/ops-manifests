@@ -4,6 +4,7 @@ metadata:
   name: update-servicemonitor
   namespace: ops-system
 spec:
+  desc: update servicemonitor every day at 3:30
   crontab: 30 3 * * *
   taskRef: script
   variables:

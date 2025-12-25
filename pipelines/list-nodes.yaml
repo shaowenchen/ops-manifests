@@ -6,11 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View and list all nodes in a cluster
+  desc: view and list all nodes in a cluster
   tasks:
     - name: list-cluster-nodes
-      desc: List all nodes in cluster
-      taskRef: list-nodes
-    - name: list-cluster-nodes
-      desc: List all nodes in cluster
+      desc: list all nodes in cluster
       taskRef: list-nodes

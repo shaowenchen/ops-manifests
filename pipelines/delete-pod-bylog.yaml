@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Restart or delete a pod in the cluster
+  desc: restart or delete a pod in the cluster
   tasks:
     - name: get-pod
-      desc: Get pod information
+      desc: get pod information
       taskRef: get-pod
     - name: delete-pod
-      desc: Delete pod by log
+      desc: delete pod by log
       taskRef: delete-pod-bylog

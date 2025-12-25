@@ -4,8 +4,8 @@ metadata:
   name: app-argo-events
   namespace: ops-system
 spec:
-  desc: Install or uninstall argo events component
+  desc: install or uninstall argo events component
   tasks:
     - name: argo-events
-      desc: Install or uninstall argo events component
+      desc: install or uninstall argo events component
       taskRef: app-argo-events

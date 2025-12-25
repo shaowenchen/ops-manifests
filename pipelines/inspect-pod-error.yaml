@@ -6,14 +6,14 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View pod error logs and error events when pod is in abnormal state
+  desc: view pod error logs and error events when pod is in abnormal state
   tasks:
     - name: get-pod
-      desc: Get pod information
+      desc: get pod information
       taskRef: get-pod
     - name: view-pod-error-logs
-      desc: View pod error logs
+      desc: view pod error logs
       taskRef: get-pod-error-logs-byname
     - name: view-pod-error-events
-      desc: View pod error events
+      desc: view pod error events
       taskRef: list-error-events-bypod

@@ -9,5 +9,5 @@ spec:
   desc: analysis disk usage of /dev/sd* and /dev/nvme*
   tasks:
     - name: analysis-disk-usage
-      desc: Analysis disk usage of /dev/sd* and /dev/nvme*
+      desc: analysis disk usage of /dev/sd* and /dev/nvme*
       taskRef: analysis-disk-usage

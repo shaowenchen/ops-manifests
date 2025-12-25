@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Delete host object
+  desc: delete host object
   tasks:
     - name: whitelist-check
-      desc: Check whitelist
+      desc: check whitelist
       taskRef: check-whitelist
     - name: delete-specified-host
-      desc: Delete specified host
+      desc: delete specified host
       taskRef: delete-host

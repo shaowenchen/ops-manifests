@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: View dataset status
+  desc: view dataset status
   tasks:
     - name: query-dataset-status
-      desc: Query dataset status
+      desc: query dataset status
       taskRef: get-dataset-status

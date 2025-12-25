@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: List all pods on a specific node in the cluster
+  desc: list all pods on a specific node in the cluster
   tasks:
     - name: list-pods
-      desc: List all pods on a specific node
+      desc: list all pods on a specific node
       taskRef: list-pods-bynode

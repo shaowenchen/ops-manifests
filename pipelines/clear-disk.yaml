@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Clear disk
+  desc: clear disk
   tasks:
     - name: clear-disk
-      desc: Clear disk
+      desc: clear disk
       taskRef: clear-disk

@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: List and view all clusters
+  desc: list and view all clusters
   tasks:
     - name: list-all-clusters
-      desc: List and view all clusters
+      desc: list and view all clusters
       taskRef: list-clusters

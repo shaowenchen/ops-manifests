@@ -4,5 +4,6 @@ metadata:
   name: alert-mount-exception
   namespace: ops-system
 spec:
+  desc: alert mount exception every day at 8:30
   crontab: "30 8 * * *"
   taskRef: alert-mount-exception

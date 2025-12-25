@@ -6,14 +6,14 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Query pod non-200 metrics to determine if pod should be deleted
+  desc: query pod non-200 metrics to determine if pod should be deleted
   tasks:
     - name: get-pod
-      desc: Get pod information
+      desc: get pod information
       taskRef: get-pod
     - name: get-metrics-not200-increment
-      desc: Get metrics not 200 increment
+      desc: get metrics not 200 increment
       taskRef: get-metrics-pod-not200
     - name: delete-abnormal-metric-pod
-      desc: Delete pod with abnormal metrics
+      desc: delete pod with abnormal metrics
       taskRef: delete-pod-bycounts

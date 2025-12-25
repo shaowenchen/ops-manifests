@@ -4,5 +4,6 @@ metadata:
   name: drain-error-gpu
   namespace: ops-system
 spec:
+  desc: drain error gpu every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: drain-error-gpu

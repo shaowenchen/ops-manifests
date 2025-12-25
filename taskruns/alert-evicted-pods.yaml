@@ -4,6 +4,7 @@ metadata:
   name: alert-evicted-pods
   namespace: ops-system
 spec:
+  desc: alert evicted pods every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-evicted-pods
   variables:

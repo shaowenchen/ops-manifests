@@ -6,11 +6,11 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Get processes using IO
+  desc: get processes using io
   tasks:
     - name: view-node
-      desc: View node status
+      desc: view node status
       taskRef: get-node-status
     - name: get-process-using-io
-      desc: Get processes using IO
+      desc: get processes using io
       taskRef: list-process-byio

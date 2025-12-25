@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Collect NPU related logs
+  desc: collect npu related logs
   tasks:
     - name: collect-npu-log
-      desc: Collect NPU related logs
+      desc: collect npu related logs
       taskRef: collect-npu-log

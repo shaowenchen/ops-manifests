@@ -4,5 +4,6 @@ metadata:
   name: alert-gpu-xid
   namespace: ops-system
 spec:
+  desc: alert gpu xid every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-gpu-xid

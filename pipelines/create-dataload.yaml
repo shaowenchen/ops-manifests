@@ -6,8 +6,8 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Preload dataset
+  desc: preload dataset
   tasks:
     - name: create-dataset-preload-task
-      desc: Create dataset preload task
+      desc: create dataset preload task
       taskRef: create-dataload

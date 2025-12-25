@@ -4,6 +4,7 @@ metadata:
   name: alert-network-status
   namespace: ops-system
 spec:
+  desc: alert network status every hour at 30 minutes
   crontab: "30 * * * *"
   taskRef: alert-network-status
   variables:

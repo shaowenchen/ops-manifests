@@ -9,5 +9,5 @@ spec:
   desc: set os kernel parameters
   tasks:
     - name: set-os-kernel-parameters
-      desc: Set OS kernel parameters
+      desc: set os kernel parameters
       taskRef: set-os
