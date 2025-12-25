@@ -1,0 +1,30 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: sync-image
+  namespace: ops-system
+spec:
+  desc: sync image
+  variables:
+    source:
+      display: source image
+      required: true
+    destination:
+      display: destination image
+      required: true
+  mounts:
+    - hostPath: /run/containerd/containerd.sock
+      mountPath: /run/containerd/containerd.sock
+    - secret:
+        name: ops-secret
+        mountPath: /root/.docker
+  steps:
+    - name: pull-image
+      content: |
+        nerdctl pull ${source}
+    - name: tag-image
+      content: |
+        nerdctl tag ${source} ${destination}
+    - name: push-image
+      content: |
+        nerdctl push ${destination}
