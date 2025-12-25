@@ -18,12 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Determine tag name
         id: tag
         run: |
@@ -42,26 +38,27 @@ jobs:
             exit 1
           fi
           
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "Branch: $BRANCH_NAME -> Tag: $TAG_NAME"
 
-      - name: Delete existing tag if exists
+      - name: Delete existing release if exists
         run: |
           TAG_NAME="${{ steps.tag.outputs.tag_name }}"
-          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME exists, deleting..."
-            git tag -d "$TAG_NAME" || true
-            git push origin ":refs/tags/$TAG_NAME" || true
+          
+          # Delete release if exists using GitHub CLI
+          RELEASE_ID=$(gh api repos/${{ github.repository }}/releases/tags/$TAG_NAME --jq '.id' 2>/dev/null || echo "")
+          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+            echo "Release for tag $TAG_NAME exists (ID: $RELEASE_ID), deleting..."
+            gh api repos/${{ github.repository }}/releases/$RELEASE_ID -X DELETE || echo "Failed to delete release, continuing..."
           else
-            echo "Tag $TAG_NAME does not exist, will create new one"
+            echo "No release found for tag $TAG_NAME"
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create and push tag
-        run: |
-          TAG_NAME="${{ steps.tag.outputs.tag_name }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG_NAME" -m "Update $TAG_NAME tag from ${{ steps.tag.outputs.branch_name }} branch"
-          git push origin "$TAG_NAME"
-          echo "Successfully created/updated tag: $TAG_NAME"
+      - name: Tag Repo
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
