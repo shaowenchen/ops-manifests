@@ -11,6 +11,6 @@ spec:
       display: content
       default: "uname -a"
   steps:
-    - name: run script
+    - name: run-script
       content: |
         ${content}

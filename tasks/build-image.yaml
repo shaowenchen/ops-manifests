@@ -1,0 +1,33 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: build-image
+  namespace: ops-system
+spec:
+  desc: build image
+  variables:
+    repo:
+      display: repository url
+      required: true
+    image:
+      display: image name
+      required: true
+  mounts:
+    - hostPath: /var/run/docker.sock
+      mountPath: /var/run/docker.sock
+    - hostPath: /run/containerd/containerd.sock
+      mountPath: /run/containerd/containerd.sock
+    - secret:
+        name: image-secret
+        mountPath: /root/.docker
+  steps:
+    - name: git-clone
+      content: |
+        git clone ${repo} .
+    - name: build-image
+      runtimeImage: docker:dind
+      content: |
+        nerdctl build -t ${image} .
+    - name: push-image
+      content: |
+        nerdctl push ${image}
