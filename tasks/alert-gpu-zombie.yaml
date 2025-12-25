@@ -36,19 +36,19 @@ spec:
 
               def build_message(message, card_id=''):
                   if card_id == '':
-                      return f'异常信息: {message}\n'
-                  return f'异常位置: {card_id}\n异常信息: {message}\n'
+                      return f'Abnormal info: {message}\n'
+                  return f'Abnormal location: {card_id}\nAbnormal info: {message}\n'
 
               try:
                   # 1. check nvidia-smi exists /usr/bin/nvidia-sm
                   if not os.path.exists('/usr/bin/nvidia-smi'):
-                      raise Exception(build_message('找不到 nvidia-smi 命令'))
+                      raise Exception(build_message('nvidia-smi command not found'))
                   # 2. 
                   output = ''
                   try:
                       output = subprocess.run(['nvidia-smi' , '--query-compute-apps=process_name,pid,used_memory', '--format=csv,noheader,nounits'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
                   except subprocess.TimeoutExpired:
-                      raise Exception(build_message('nvidia-smi 执行超时 10s'))
+                      raise Exception(build_message('nvidia-smi execution timeout 10s'))
                   except:
                       pass
                   lines = [line for line in output.split('\n')]
@@ -63,7 +63,7 @@ spec:
                       for line in alertLines:
                           pid = line.split(', ')[1]
                           num = line.split(', ')[-1]
-                          message += build_message('有僵尸进程 ' + pid + ' 占用显卡 ' + num + 'MB')
+                          message += build_message('Zombie process ' + pid + ' using GPU ' + num + 'MB')
                   
               except Exception as e:
                   if len(message) == 0:

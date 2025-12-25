@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 禁用集群中的某个节点
+  desc: Cordon a node in the cluster
   tasks:
     - name: whitelist-pod
       desc: Check whitelist for pod

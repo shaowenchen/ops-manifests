@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: svc 处于异常状态时，用来查看 svc 的错误日志和错误事件
+  desc: View service error logs and error events when service is in abnormal state
   tasks:
     - name: get-svc
       desc: Get service information

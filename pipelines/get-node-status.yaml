@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 查看节点是否就绪
+  desc: Check if node is ready
   tasks:
     - name: query-node-status
       desc: Query node readiness status

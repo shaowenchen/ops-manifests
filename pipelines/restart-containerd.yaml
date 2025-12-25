@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 重启 containerd
+  desc: Restart containerd
   tasks:
     - name: whitelist-check
       desc: Check whitelist

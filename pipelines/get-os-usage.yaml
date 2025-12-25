@@ -4,7 +4,7 @@ metadata:
   name: get-os-usage
   namespace: ops-system
 spec:
-  desc: 查看系统资源使用情况
+  desc: View system resource usage
   tasks:
     - name: get-os-usage
       desc: Get OS resource usage

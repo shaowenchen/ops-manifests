@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 删除指定的 KAS Job
+  desc: Delete specified KAS job
   tasks:
     - name: whitelist-check
       desc: Check whitelist

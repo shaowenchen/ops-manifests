@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 列出集群中的某一个 Node 上的所有 Pod
+  desc: List all pods on a specific node in the cluster
   tasks:
     - name: list-pods
       desc: List all pods on a specific node

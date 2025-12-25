@@ -4,7 +4,7 @@ metadata:
   name: script
   namespace: ops-system
 spec:
-  desc: 执行脚本
+  desc: Execute script
   tasks:
     - name: script
       desc: Execute script

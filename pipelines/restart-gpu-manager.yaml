@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 重启节点的 gpu-manager 容器
+  desc: Restart gpu-manager container on node
   tasks:
     - name: whitelist-check
       desc: Check whitelist

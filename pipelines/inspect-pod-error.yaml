@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: pod 处于异常状态时，用来查看 pod 的错误日志和错误事件
+  desc: View pod error logs and error events when pod is in abnormal state
   tasks:
     - name: get-pod
       desc: Get pod information

@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 获取占用 IO 的进程
+  desc: Get processes using IO
   tasks:
     - name: view-node
       desc: View node status

@@ -45,21 +45,21 @@ spec:
                   return f'{message}\n{line_info}'
 
               def parse_dmesg_timestamp(line):
-                  """解析dmesg时间戳，返回datetime对象"""
-                  # 匹配格式: [Tue Jul 15 17:16:15 2025]
+                  """Parse dmesg timestamp, return datetime object"""
+                  # Match format: [Tue Jul 15 17:16:15 2025]
                   timestamp_pattern = r'\[([A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d{2}:\d{2}:\d{2} \d{4})\]'
                   match = re.search(timestamp_pattern, line)
                   if match:
                       try:
                           timestamp_str = match.group(1)
-                          # 解析时间字符串
+                          # Parse time string
                           return datetime.strptime(timestamp_str, '%a %b %d %H:%M:%S %Y')
                       except ValueError:
                           return None
                   return None
 
               def is_within_last_hour(log_time):
-                  """检查日志时间是否在最近1小时内"""
+                  """Check if log time is within the last hour"""
                   if log_time is None:
                       return False
                   current_time = datetime.now()
@@ -67,7 +67,7 @@ spec:
                   return log_time >= one_hour_ago
 
               try:
-                  # 执行 dmesg -T 获取系统日志
+                  # Execute dmesg -T to get system logs
                   output = ''
                   try:
                       result = subprocess.run(['dmesg', '-T'], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -77,23 +77,23 @@ spec:
                   except Exception as e:
                       raise Exception(f'Failed to execute dmesg: {str(e)}')
                   
-                  # 过滤包含 "xid" 的行
+                  # Filter lines containing "xid"
                   xid_lines = []
                   for line in output.split('\n'):
                       if 'xid' in line.lower():
-                          # 解析时间戳并检查是否在最近1小时内
+                          # Parse timestamp and check if within last hour
                           log_time = parse_dmesg_timestamp(line)
                           if is_within_last_hour(log_time):
                               xid_lines.append(line.strip())
                   
-                  # 检查包含 "xid" 的行中是否包含 "error"
+                  # Check if lines containing "xid" also contain "error"
                   error_lines = []
                   for line in xid_lines:
                       if 'error' in line.lower():
                           error_lines.append(line)
                           error_count += 1
                   
-                  # 构建消息
+                  # Build message
                   if error_count > 0:
                       message = f'Found {error_count} GPU XID error(s) in the last hour:'
                       for error_line in error_lines:

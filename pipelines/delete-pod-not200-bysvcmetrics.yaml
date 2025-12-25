@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 通过 svc 查询 Pod 的非 200 指标判断是否删除 Pod
+  desc: Query Pod non-200 metrics by service to determine if Pod should be deleted
   variables:
     pod:
       desc: pod name

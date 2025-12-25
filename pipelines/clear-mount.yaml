@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 清理挂载点
+  desc: Clear mount points
   tasks:
     - name: clear-mount-point
       desc: Clear mount points

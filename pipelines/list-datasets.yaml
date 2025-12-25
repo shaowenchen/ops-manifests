@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 列出命名空间下的数据集
+  desc: List datasets in namespace
   tasks:
     - name: list-datasets
       desc: List datasets in namespace

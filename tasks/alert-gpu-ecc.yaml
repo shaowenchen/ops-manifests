@@ -39,19 +39,19 @@ spec:
 
               def build_message(message, card_id=''):
                   if card_id == '':
-                      return f'异常信息: {message}\n'
-                  return f'异常位置: {card_id}\n异常信息: {message}\n'
+                      return f'Abnormal info: {message}\n'
+                  return f'Abnormal location: {card_id}\nAbnormal info: {message}\n'
 
               try:
                   # 1. check nvidia-smi exists /usr/bin/nvidia-sm
                   if not os.path.exists('/usr/bin/nvidia-smi'):
-                      raise Exception(build_message('找不到 nvidia-smi 命令'))
+                      raise Exception(build_message('nvidia-smi command not found'))
                   # 2. check ecc from nvidia-smi
                   output = ''
                   try:
                       output = subprocess.run(['nvidia-smi'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
                   except subprocess.TimeoutExpired:
-                      raise Exception(build_message('nvidia-smi 执行超时 10s'))
+                      raise Exception(build_message('nvidia-smi execution timeout 10s'))
                   except:
                       pass
                   message = ''

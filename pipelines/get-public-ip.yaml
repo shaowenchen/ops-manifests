@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 获取出口、公网 IP
+  desc: Get egress and public IP
   tasks:
     - name: get-public-ip
       desc: Get egress and public IP

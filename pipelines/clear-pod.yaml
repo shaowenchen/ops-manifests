@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 清理异常的 Pod
+  desc: Clear abnormal pods
   tasks:
     - name: clear-pod
       desc: Clear abnormal pods

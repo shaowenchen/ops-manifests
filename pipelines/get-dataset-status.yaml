@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 查看数据集的状态
+  desc: View dataset status
   tasks:
     - name: query-dataset-status
       desc: Query dataset status

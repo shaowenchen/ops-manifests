@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 列出、查看所有的命名空间
+  desc: List and view all namespaces
   tasks:
     - name: list-all-namespaces
       desc: List and view all namespaces

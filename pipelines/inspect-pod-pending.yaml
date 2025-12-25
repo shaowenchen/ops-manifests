@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: pod 处于 Pending 状态时，用来查看 pod 事件
+  desc: View pod events when pod is in Pending state
   tasks:
     - name: get-pod
       desc: Get pod information

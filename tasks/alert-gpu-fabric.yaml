@@ -58,7 +58,7 @@ spec:
 
         try:
             if not is_fabricmanager_installed():
-                print('fabricmanager服务未安装')
+                print('fabricmanager service not installed')
                 exit(0)
             if not check_fabricmanager_status():
                 message += 'status is not running'
@@ -66,7 +66,7 @@ spec:
 
             log_file = '/var/log/fabricmanager.log'
             if not os.path.exists(log_file):
-                print('日志文件不存在')
+                print('Log file does not exist')
                 exit(0)
             
             current_time = datetime.now()
@@ -86,7 +86,7 @@ spec:
                             error_logs.append(line.strip())
 
             if error_logs:
-                message += '错误日志:\n' + '\n'.join(error_logs) + '\n'
+                message += 'Error logs:\n' + '\n'.join(error_logs) + '\n'
                 raise Exception(message)
 
         except Exception as e:

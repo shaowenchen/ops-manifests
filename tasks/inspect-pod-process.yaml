@@ -13,68 +13,68 @@ spec:
       content: |
         POD_NAME="${pod}"
 
-        echo "🔍 [1/5] 查找 Pod [$POD_NAME] 对应的容器 ID ..."
+        echo "🔍 [1/5] Finding container ID for Pod [$POD_NAME] ..."
         CONTAINER_IDS=$(nerdctl -n k8s.io ps -a | grep "$POD_NAME" | grep -v "pause" | awk '{print $1}')
         
         if [ -z "$CONTAINER_IDS" ]; then
-          echo "❌ 没找到容器，确认 Pod 名是否正确: [$POD_NAME]"
-          echo "所有相关容器（包括 pause 容器）:"
-          nerdctl -n k8s.io ps -a | grep "$POD_NAME" || echo "没有找到任何容器"
+          echo "❌ Container not found, please verify Pod name: [$POD_NAME]"
+          echo "All related containers (including pause containers):"
+          nerdctl -n k8s.io ps -a | grep "$POD_NAME" || echo "No containers found"
           exit 1
         fi
 
-        # 获取第一个容器ID（通常是主容器）
+        # Get the first container ID (usually the main container)
         CONTAINER_ID=$(echo "$CONTAINER_IDS" | head -1)
         
-        echo "✅ 找到应用容器数量: $(echo "$CONTAINER_IDS" | wc -l)"
-        echo "✅ 应用容器 IDs:"
+        echo "✅ Found application container count: $(echo "$CONTAINER_IDS" | wc -l)"
+        echo "✅ Application container IDs:"
         echo "$CONTAINER_IDS"
-        echo "✅ 使用第一个应用容器 ID: $CONTAINER_ID"
+        echo "✅ Using first application container ID: $CONTAINER_ID"
 
-        echo "🔍 [2/5] 获取宿主机上的容器主进程 PID ..."
+        echo "🔍 [2/5] Getting container main process PID on host ..."
         INSPECT_OUTPUT=$(nerdctl -n k8s.io inspect "$CONTAINER_ID" 2>/dev/null)
         
         if [ $? -ne 0 ]; then
-          echo "❌ 无法检查容器 [$CONTAINER_ID]，可能容器不存在或已停止"
+          echo "❌ Cannot inspect container [$CONTAINER_ID], container may not exist or has stopped"
           exit 1
         fi
         
         PID=$(echo "$INSPECT_OUTPUT" | grep -i '"Pid"' | grep -o '[0-9]\+' | head -1)
 
         if [ -z "$PID" ] || [ "$PID" -eq 0 ]; then
-          echo "❌ 没找到有效的宿主机 PID"
-          echo "容器状态信息:"
+          echo "❌ No valid host PID found"
+          echo "Container status information:"
           echo "$INSPECT_OUTPUT" | head -20
           exit 1
         fi
 
-        echo "✅ 宿主机 PID: $PID"
+        echo "✅ Host PID: $PID"
 
-        # 验证进程是否仍然存在
+        # Verify if the process still exists
         if ! ps -p "$PID" >/dev/null 2>&1; then
-          echo "❌ 进程 [$PID] 已不存在，可能容器已停止"
+          echo "❌ Process [$PID] no longer exists, container may have stopped"
           exit 1
         fi
 
-        echo "🔍 [3/5] 查找宿主机上的父进程 (PPID) ..."
+        echo "🔍 [3/5] Finding parent process (PPID) on host ..."
         PPID=$(ps -o ppid= -p "$PID" | tr -d ' ')
-        echo "✅ 父进程 PPID: $PPID"
+        echo "✅ Parent process PPID: $PPID"
 
-        echo "🔍 [4/5] 检查是否使用 GPU ..."
+        echo "🔍 [4/5] Checking GPU usage ..."
         if command -v nvidia-smi &>/dev/null; then
           GPU_PROCS=$(timeout 10 nvidia-smi pmon -c 1 | grep "$PID" || true)
           if [ -n "$GPU_PROCS" ]; then
-            echo "✅ GPU 使用信息:"
+            echo "✅ GPU usage information:"
             echo "$GPU_PROCS"
           else
-            echo "✅ 没有检测到 GPU 使用"
+            echo "✅ No GPU usage detected"
           fi
         else
-          echo "⚠️  没安装 nvidia-smi，跳过 GPU 检查"
+          echo "⚠️  nvidia-smi not installed, skipping GPU check"
         fi
 
-        echo "🔍 [5/5] 查看挂载的存储信息 ..."
-        echo "✅ 容器宿主机进程的挂载点："
+        echo "🔍 [5/5] Viewing mounted storage information ..."
+        echo "✅ Container host process mount points:"
         echo "-------------------------------------------------"
         cat /proc/$PID/mounts
         echo "-------------------------------------------------"

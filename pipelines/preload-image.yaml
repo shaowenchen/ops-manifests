@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: Preload Image - 在集群预热镜像
+  desc: Preload images in cluster
   tasks:
     - name: preload
       desc: Preload images in cluster

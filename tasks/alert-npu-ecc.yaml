@@ -39,18 +39,18 @@ spec:
 
         def build_message(message, device_id=''):
             if device_id == '':
-                return f'异常信息: {message}\n'
-            return f'异常位置: {device_id}\n异常信息: {message}\n'
+                return f'Abnormal info: {message}\n'
+            return f'Abnormal location: {device_id}\nAbnormal info: {message}\n'
 
         try:
             if not os.path.exists('/usr/local/sbin/npu-smi'):
-                raise Exception(build_message('找不到 npu-smi 命令'))
+                raise Exception(build_message('npu-smi command not found'))
 
             output = ''
             try:
                 output = subprocess.run(['/usr/local/sbin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
             except subprocess.TimeoutExpired:
-                raise Exception(build_message('npu-smi 执行超时 10s'))
+                raise Exception(build_message('npu-smi execution timeout 10s'))
             except:
                 pass
             message = ''

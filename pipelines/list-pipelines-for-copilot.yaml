@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 查看、列出所有的流水线
+  desc: View and list all pipelines
   tasks:
     - name: list-all-pipelines
       desc: List and view all pipelines

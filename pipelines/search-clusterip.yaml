@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 查看、搜索集群的 IP
+  desc: View and search cluster IPs
   tasks:
     - name: search-clusterip
       desc: Search and view cluster IPs

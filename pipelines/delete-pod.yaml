@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 重启、删除集群中的某一个 Pod
+  desc: Restart or delete a pod in the cluster
   tasks:
     - name: get-pod
       desc: Get pod information

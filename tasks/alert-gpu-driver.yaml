@@ -37,10 +37,10 @@ spec:
             print(response.text)
 
         def get_nvidia_driver_version():
-            """通过多种方式获取NVIDIA驱动版本"""
+            """Get NVIDIA driver version through multiple methods"""
             version_info = None
             
-            # 方法1: 使用 nvidia-smi
+            # Method 1: Use nvidia-smi
             try:
                 result = subprocess.run(['nvidia-smi', '--query-gpu=driver_version', '--format=csv,noheader,nounits'], 
                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
@@ -48,21 +48,21 @@ spec:
                     version_info = result.stdout.strip().split('\n')[0].strip()
                     return version_info
             except Exception as e:
-                print(f"nvidia-smi方法失败: {e}")
+                print(f"nvidia-smi method failed: {e}")
 
-            # 方法2: 读取 /proc/driver/nvidia/version
+            # Method 2: Read /proc/driver/nvidia/version
             try:
                 with open('/proc/driver/nvidia/version', 'r') as f:
                     content = f.read()
-                    # 解析类似 "NVRM version: NVIDIA UNIX x86_64 Kernel Module  470.182.03"
+                    # Parse format like "NVRM version: NVIDIA UNIX x86_64 Kernel Module  470.182.03"
                     match = re.search(r'Kernel Module\s+(\d+\.\d+(?:\.\d+)?)', content)
                     if match:
                         version_info = match.group(1)
                         return version_info
             except Exception as e:
-                print(f"读取/proc/driver/nvidia/version失败: {e}")
+                print(f"Failed to read /proc/driver/nvidia/version: {e}")
 
-            # 方法3: 使用 modinfo nvidia
+            # Method 3: Use modinfo nvidia
             try:
                 result = subprocess.run(['modinfo', 'nvidia'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
                 if result.returncode == 0:
@@ -71,50 +71,50 @@ spec:
                             version_info = line.split(':', 1)[1].strip()
                             return version_info
             except Exception as e:
-                print(f"modinfo方法失败: {e}")
+                print(f"modinfo method failed: {e}")
 
             return None
 
         def check_gpu_devices():
-            """检查是否有GPU设备"""
+            """Check if GPU devices exist"""
             try:
-                # 检查是否有NVIDIA GPU设备
+                # Check if NVIDIA GPU devices exist
                 result = subprocess.run(['lspci', '|', 'grep', '-i', 'nvidia'], shell=True,
                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 if result.returncode == 0 and result.stdout.strip():
                     return True
                 
-                # 检查 /dev/nvidia* 设备文件
+                # Check /dev/nvidia* device files
                 nvidia_devices = [f for f in os.listdir('/dev') if f.startswith('nvidia')]
                 if nvidia_devices:
                     return True
                     
                 return False
             except Exception as e:
-                print(f"检查GPU设备失败: {e}")
+                print(f"Failed to check GPU devices: {e}")
                 return False
 
         try:
-            # 首先检查是否有GPU设备
+            # First check if GPU devices exist
             if not check_gpu_devices():
-                message = '未检测到NVIDIA GPU设备'
+                message = 'NVIDIA GPU device not detected'
                 print(message)
                 send('normal', message, 'no_gpu_device')
                 exit(0)
 
-            # 获取驱动版本
+            # Get driver version
             current_version = get_nvidia_driver_version()
             if not current_version:
-                message = '无法获取NVIDIA驱动版本，驱动未正确安装'
-                print(f"告警: {message}")
+                message = 'Unable to get NVIDIA driver version, driver not properly installed'
+                print(f"Alert: {message}")
                 send('alerting', message, 'not_installed')
             else:
-                message = f'GPU驱动已安装，版本: {current_version}'
+                message = f'GPU driver installed, version: {current_version}'
                 print(message)
                 send('normal', message, current_version)
 
         except Exception as e:
             if len(message) == 0:
                 message = str(e)
-            print(f"错误: {message}")
+            print(f"Error: {message}")
             send('alerting', message, 'error')

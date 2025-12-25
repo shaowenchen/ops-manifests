@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 查看 pod 的进程相关信息
+  desc: View pod process related information
   tasks:
     - name: get-pod-node
       desc: Get pod node information

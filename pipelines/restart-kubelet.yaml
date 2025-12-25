@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 重启 kubelet
+  desc: Restart kubelet
   tasks:
     - name: whitelist-check
       desc: Check whitelist

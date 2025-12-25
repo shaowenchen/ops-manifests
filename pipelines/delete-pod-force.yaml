@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 强制删除 Pod
+  desc: Force delete pod
   tasks:
     - name: whitelist-pod
       desc: Check whitelist for pod

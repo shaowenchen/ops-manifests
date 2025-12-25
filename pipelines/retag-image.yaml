@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: 转存、retag 容器镜像
+  desc: Transfer and retag container images
   tasks:
     - name: whitelist-check
       desc: Check whitelist

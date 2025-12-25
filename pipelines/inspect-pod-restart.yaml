@@ -6,7 +6,7 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
-  desc: pod 重启时，用来查看 pod 的状态和事件
+  desc: View pod status and events when pod restarts
   tasks:
     - name: get-pod
       desc: Get pod information
