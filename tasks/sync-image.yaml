@@ -12,11 +12,14 @@ spec:
     destination:
       display: destination image
       required: true
+    secret_name:
+      display: secret name
+      required: true
   mounts:
     - hostPath: /run/containerd/containerd.sock
       mountPath: /run/containerd/containerd.sock
     - secret:
-        name: ops-secret
+        name: ${secret_name}
         mountPath: /root/.docker
   steps:
     - name: pull-image

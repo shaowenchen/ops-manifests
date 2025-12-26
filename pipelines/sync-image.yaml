@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: sync-image
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: sync image
+  tasks:
+    - name: sync-image
+      taskRef: sync-image
