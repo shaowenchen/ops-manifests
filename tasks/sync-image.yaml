@@ -5,6 +5,7 @@ metadata:
   namespace: ops-system
 spec:
   desc: sync image
+  runtimeImage: registry.cn-beijing.aliyuncs.com/opshub/ghcr-io-containerd-nerdctl
   variables:
     source:
       display: source image
