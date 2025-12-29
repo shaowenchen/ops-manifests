@@ -1,3 +1,7 @@
+# kubectl create secret generic ops-secret \
+#   --type=kubernetes.io/dockerconfigjson \
+#   --from-file=.dockerconfigjson=$HOME/.docker/config.json \
+#   -n ops-system
 apiVersion: crd.chenshaowen.com/v1
 kind: Task
 metadata:
