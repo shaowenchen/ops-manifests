@@ -34,8 +34,13 @@ spec:
             headers = {
                 'Content-Type': 'application/json'
             }
-            response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/clusters.' + cluster + '.findings',
-                                     headers=headers, data=json.dumps(payload))
+            # Always send to findings
+            requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/clusters.' + cluster + '.findings',
+                          headers=headers, data=json.dumps(payload))
+            # If alerting, also send to alerts
+            if status == 'alerting':
+                requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/clusters.' + cluster + '.alerts',
+                              headers=headers, data=json.dumps(payload))
 
         def get_all_clusters():
             try:
@@ -43,7 +48,6 @@ spec:
                 result = subprocess.check_output(cmd, shell=True).decode('utf-8')
                 return json.loads(result)
             except Exception as e:
-                print(f"Error getting clusters: {e}")
                 return None
 
         def check_cert_days(cluster):
@@ -70,7 +74,6 @@ spec:
                     value = str(cert_days)
                     
             except Exception as e:
-                print(f"Error checking cert days for cluster {cluster_name}: {e}")
                 message = f"Error checking certificate days: {str(e)}"
                 status = 'unknown'
                 value = 'error'
@@ -94,7 +97,7 @@ spec:
                         # Optionally send normal status to clear previous alerts
                         send(status, message, cluster_name, value)
             else:
-                print("No cluster data found or error occurred")
+                pass
 
         if __name__ == "__main__":
             main()

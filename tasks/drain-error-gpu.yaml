@@ -51,9 +51,16 @@ spec:
                     headers = {
                         'Content-Type': 'application/json'
                     }
+                    # Always send to findings
                     response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.' + host + '.findings',
                                             headers=headers, data=json.dumps(payload))
                     print(response.text)
+                    # If alerting, also send to alerts
+                    if status == 'alerting':
+                        response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.' + host + '.alerts',
+                                                headers=headers, data=json.dumps(payload))
+                        print(response.text)
+                        print(response.text)
 
               def main():
                   try:

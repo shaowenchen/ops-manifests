@@ -35,9 +35,15 @@ spec:
             headers = {
                 'Content-Type': 'application/json'
             }
+            # Always send to findings
             response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/hosts.' + host + '.findings',
                                      headers=headers, data=json.dumps(payload))
             print(response.text)
+            # If alerting, also send to alerts
+            if status == 'alerting':
+                response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/hosts.' + host + '.alerts',
+                                         headers=headers, data=json.dumps(payload))
+                print(response.text)
 
         def get_all_hosts():
             try:
@@ -81,8 +87,11 @@ spec:
                     if host['status']['heartStatus'] == 'Failed':
                         continue
                     status, message, hostname, value = check_disk_usage(host)
+                    # Always send to findings (both normal and alerting)
                     if status == 'alerting':
                         send(status, message, hostname, value)
+                    else:
+                        send('normal', message or 'Disk usage is normal', hostname, value or '0')
 
         if __name__ == "__main__":
             main() 

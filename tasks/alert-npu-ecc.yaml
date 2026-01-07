@@ -27,15 +27,20 @@ spec:
                 'type': 'TaskRunReport',
                 'kind': '${TASKRUN}',
                 'threshold': str(threshold),
-                'operator': '>'
+                'operator': '>',
                 'status': status,
                 'message': message
             }
             headers = {
                 'Content-Type': 'application/json'
             }
+            # Always send to findings
             response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
             print(response.text)
+            # If alerting, also send to alerts
+            if status == 'alerting':
+                response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts', headers=headers, data=json.dumps(payload))
+                print(response.text)
 
         def build_message(message, device_id=''):
             if device_id == '':

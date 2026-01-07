@@ -25,8 +25,13 @@ spec:
                   headers = {
                       'Content-Type': 'application/json'
                   }
+                  # Always send to findings
                   response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/' + dataset_namespace + '/events/datasets.' + dataset_name + '.findings', headers=headers, data=json.dumps(payload))
                   print(response.text)
+                  # If alerting, also send to alerts
+                  if status == 'alerting':
+                      response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/' + dataset_namespace + '/events/datasets.' + dataset_name + '.alerts', headers=headers, data=json.dumps(payload))
+                      print(response.text)
 
               try:
                   cmd = "kubectl get crd | grep dataset"

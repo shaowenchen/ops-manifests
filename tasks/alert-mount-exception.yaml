@@ -32,12 +32,21 @@ spec:
                       'Content-Type': 'application/json'
                   }
                   try:
+                      # Always send to findings
                       response = requests.post(
                           '${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings',
                           headers=headers,
                           data=json.dumps(payload)
                       )
                       print(response.text)
+                      # If alerting, also send to alerts
+                      if status == 'alerting':
+                          response = requests.post(
+                              '${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts',
+                              headers=headers,
+                              data=json.dumps(payload)
+                          )
+                          print(response.text)
                   except Exception as e:
                       print(f"Failed to send alert: {str(e)}")
 
