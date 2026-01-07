@@ -5,8 +5,10 @@ metadata:
   namespace: ops-system
 spec:
   keywords:
+    matchMode: ALL
     include:
       - alerting
-  subject: ops.clusters.*.namespaces.ops-system.taskruns.drain-error-gpu.reports.*
+      - drain-error-gpu
+  subject: ops.clusters.*.nodes.*.findings
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=

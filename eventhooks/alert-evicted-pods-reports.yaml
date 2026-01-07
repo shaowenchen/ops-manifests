@@ -5,12 +5,13 @@ metadata:
   namespace: ops-system
 spec:
   keywords:
+    matchMode: ALL
     include:
       - alerting
-      - evicted
+      - alert-evicted-pods
     exclude:
       - healthcheck
       - test
-  subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-evicted-pods.reports
+  subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-evicted-pods.findings
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=xxxx

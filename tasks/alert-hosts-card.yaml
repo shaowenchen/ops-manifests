@@ -29,7 +29,7 @@ spec:
             headers = {
                 'Content-Type': 'application/json'
             }
-            response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.' + host,
+            response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/hosts.' + host + '.findings',
                                      headers=headers, data=json.dumps(payload))
             print(response.text)
 

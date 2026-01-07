@@ -5,9 +5,11 @@ metadata:
   namespace: ops-system
 spec:
   keywords:
+    matchMode: ALL
     include:
       - alerting
-  subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-hosts-disk.reports.*
+      - alert-hosts-disk
+  subject: ops.clusters.*.namespaces.ops-system.hosts.*.findings
   type: webhook
   url: http://x.x.x.x/webhook
   additional: "action: clear-disk" 

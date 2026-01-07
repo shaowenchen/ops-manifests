@@ -40,7 +40,7 @@ spec:
                       'Content-Type': 'application/json'
                   }
                   u = url.replace('http://', '').replace('https://', '').replace('/', '').replace('.', '-')
-                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/taskruns.${TASKRUN}.reports.' + u, headers=headers, data=json.dumps(payload))
+                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
                   print(response.text)
 
               try:

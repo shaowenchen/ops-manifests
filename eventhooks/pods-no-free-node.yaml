@@ -8,6 +8,6 @@ spec:
   keywords:
     include:
       - no free node
-  subject: ops.clusters.*.namespaces.*.pods.*.event
+  subject: ops.clusters.*.namespaces.*.pods.*.events
   type: webhook
   url: http://x.x.x.x/webhook

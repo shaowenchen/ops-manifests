@@ -8,6 +8,6 @@ spec:
     include:
       - Evicted
       - OOMKilled
-  subject: ops.clusters.*.namespaces.*.pods.*.event
+  subject: ops.clusters.*.namespaces.*.pods.*.events
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
