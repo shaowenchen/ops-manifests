@@ -1,14 +1,14 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: drain-error-gpu-reports
+  name: alert-hosts-mem
   namespace: ops-system
 spec:
   keywords:
     matchMode: ALL
     include:
       - alerting
-      - drain-error-gpu
-  subject: ops.clusters.*.nodes.*.findings
+      - alert-hosts-mem
+  subject: ops.clusters.*.namespaces.ops-system.hosts.*.findings
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=

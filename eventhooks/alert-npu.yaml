@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: alert-npu-reports
+  name: alert-npu
   namespace: ops-system
 spec:
   keywords:

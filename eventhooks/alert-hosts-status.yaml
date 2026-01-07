@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: alert-hosts-status-reports
+  name: alert-hosts-status
   namespace: ops-system
 spec:
   keywords:
@@ -11,4 +11,4 @@ spec:
       - alert-hosts-status
   subject: ops.clusters.*.namespaces.ops-system.hosts.*.findings
   type: xiezuo
-  url: https://365.kdocs.cn/woa/api/v1/webhook/send?key= 
+  url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=

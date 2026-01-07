@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: alert-gpu-reports
+  name: alert-gpu
   namespace: ops-system
 spec:
   keywords:

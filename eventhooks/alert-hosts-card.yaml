@@ -1,15 +1,14 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: alert-hosts-disk-reports
+  name: alert-hosts-card
   namespace: ops-system
 spec:
   keywords:
     matchMode: ALL
     include:
       - alerting
-      - alert-hosts-disk
+      - alert-hosts-card
   subject: ops.clusters.*.namespaces.ops-system.hosts.*.findings
-  type: webhook
-  url: http://x.x.x.x/webhook
-  additional: "action: clear-disk" 
+  type: xiezuo
+  url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
