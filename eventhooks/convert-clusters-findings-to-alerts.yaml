@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: convert-clusters-findings-to-alerts
+  namespace: ops-system
+spec:
+  type: event
+  subject: ops.clusters.*.namespaces.ops-system.clusters.*.findings
+  keywords:
+    include:
+      - alerting
+  url: alerts

@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: convert-pods-events-to-alerts
+  namespace: ops-system
+spec:
+  type: event
+  subject: ops.clusters.*.namespaces.*.pods.*.events
+  keywords:
+    include:
+      - ImagePullBackOff
+  url: alerts
