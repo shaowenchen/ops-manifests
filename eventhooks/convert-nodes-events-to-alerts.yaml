@@ -8,5 +8,6 @@ spec:
   subject: ops.clusters.*.nodes.*.events
   keywords:
     include:
-      - NodeNotReady
+      - ".*(NodeNotReady|NotReady|Unreachable|MemoryPressure|DiskPressure|PIDPressure|NetworkUnavailable|Error|Failed).*"
+    matchType: REGEX
   url: alerts
