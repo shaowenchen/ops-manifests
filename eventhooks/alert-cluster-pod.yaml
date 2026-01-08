@@ -4,10 +4,10 @@ metadata:
   name: alert-cluster-pod
   namespace: ops-system
 spec:
-  type: event
   subject: ops.clusters.*.namespaces.*.pods.*.alerts
   keywords:
     include:
       - ".*(kube|etcd|calico).*"
     matchType: REGEX
-  url: alerts
+  type: xiezuo
+  url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
