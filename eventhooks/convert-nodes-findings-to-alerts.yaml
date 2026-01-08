@@ -8,5 +8,5 @@ spec:
   subject: ops.clusters.*.nodes.*.findings
   keywords:
     include:
-      - NodeNotReady
+      - alerting
   url: alerts

@@ -8,5 +8,5 @@ spec:
   subject: ops.clusters.*.nodes.*.events
   keywords:
     include:
-      - alerting
+      - NodeNotReady
   url: alerts
