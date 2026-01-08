@@ -1,0 +1,19 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: convert-kube-events-to-alerts
+  namespace: ops-system
+spec:
+  type: event
+  subject: ops.clusters.*.namespaces.*.pods.*.events
+  url: alerts
+  keywords:
+    include:
+      - kube
+      - BackOff
+      - OOMKilled
+      - Evicted
+      - NetworkNotReady
+      - Unhealthy
+      - Error
+      - Failed
