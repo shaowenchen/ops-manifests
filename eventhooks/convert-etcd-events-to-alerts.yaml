@@ -5,5 +5,15 @@ metadata:
   namespace: ops-system
 spec:
   type: event
-  subject: ops.clusters.*.namespaces.kube-system.pods.etcd-*.events
+  subject: ops.clusters.*.namespaces.*.pods.*.events
   url: alerts
+  keywords:
+    include:
+      - etcd
+      - BackOff
+      - OOMKilled
+      - Evicted
+      - NetworkNotReady
+      - Unhealthy
+      - Error
+      - Failed
