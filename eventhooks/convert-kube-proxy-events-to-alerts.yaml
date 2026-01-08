@@ -1,0 +1,9 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: convert-kube-proxy-events-to-alerts
+  namespace: ops-system
+spec:
+  type: event
+  subject: ops.clusters.*.namespaces.kube-system.pods.kube-proxy-*.events
+  url: alerts
