@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: EventHooks
 metadata:
-  name: convert-cluster-pods-events-to-alerts
+  name: convert-clusters-pods-events-to-alerts
   namespace: ops-system
 spec:
   type: event
