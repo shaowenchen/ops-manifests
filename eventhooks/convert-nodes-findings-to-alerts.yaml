@@ -9,4 +9,4 @@ spec:
   keywords:
     include:
       - alerting
-  url: alerts
+  url: ops.clusters.*.nodes.*.alerts

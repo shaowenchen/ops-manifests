@@ -10,4 +10,4 @@ spec:
     include:
       - ".*(NodeNotReady|NotReady|Unreachable|MemoryPressure|DiskPressure|PIDPressure|NetworkUnavailable|Error|Failed).*"
     matchType: REGEX
-  url: alerts
+  url: ops.clusters.*.nodes.*.alerts
