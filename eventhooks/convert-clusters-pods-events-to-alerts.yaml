@@ -8,6 +8,8 @@ spec:
   subject: ops.clusters.*.namespaces.*.pods.*.events
   keywords:
     include:
-      - "(?=.*(kube|etcd|calico|csi|fluid)).*(BackOff|OOMKilled|Evicted|NetworkNotReady|Unhealthy|Error|Failed|ImagePullBackOff).*"
+      - ".*(kube-|etcd-|calico-|csi-|fluid-).*"
+      - ".*(BackOff|OOMKilled|Evicted|NetworkNotReady|Unhealthy|Error|Failed|ImagePullBackOff).*"
     matchType: REGEX
+    matchMode: ALL
   url: ops.clusters.*.namespaces.*.pods.*.alerts
