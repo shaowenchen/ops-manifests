@@ -8,6 +8,6 @@ spec:
   subject: ops.clusters.*.namespaces.*.pods.*.events
   keywords:
     include:
-      - ".*(ImagePullBackOff|OutOfcpu|OutOfmemory).*"
+      - ".*(BackOff|OOMKilled|Evicted|NetworkNotReady|Unhealthy|Error|Failed|ImagePullBackOff).*"
     matchType: REGEX
   url: ops.clusters.*.namespaces.*.pods.*.alerts

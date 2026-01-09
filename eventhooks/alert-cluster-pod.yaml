@@ -7,7 +7,7 @@ spec:
   subject: ops.clusters.*.namespaces.*.pods.*.alerts
   keywords:
     include:
-      - ".*(kube|etcd|calico).*"
+      - ".*(kube-apiserver-|kube-controller-manager-|kube-scheduler-|kube-proxy-|etcd-|calico-|csi-|fluid-).*"
     matchType: REGEX
   type: xiezuo
   url: https://365.kdocs.cn/woa/api/v1/webhook/send?key=
