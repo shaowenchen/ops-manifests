@@ -10,7 +10,7 @@ spec:
       required: true
     host:
       required: true
-    username:
+    white:
       required: true
   steps:
     - name:
