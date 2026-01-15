@@ -6,6 +6,9 @@ metadata:
 spec:
   desc: set a better kernel parameters for kubernetes host
   steps:
+    - name: update-packages
+      content: |
+        timeout 5 "DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1" || echo "update failed"
     - name: install-packages
       content: |
         timeout 5 "DEBIAN_FRONTEND=noninteractive apt-get install -y openssl socat conntrack ipset ebtables chrony ipvsadm > /dev/null 2>&1" || echo "install failed"
