@@ -1,0 +1,58 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: list-nodes-resource
+  namespace: ops-system
+spec:
+  desc: list nodes resource in cluster
+  host: anymaster
+  variables:
+    nodename:
+      required: false
+  steps:
+    - name: list-nodes-resource
+      content: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        NODE_NAME="${nodename:-}"
+
+        if [[ -n "$NODE_NAME" && "$NODE_NAME" != "" ]]; then
+          nodes="$NODE_NAME"
+        else
+          nodes=$(kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+        fi
+
+        for node in $nodes; do
+          echo "================================================"
+          echo "NODE: $node"
+          printf "%-32s %-10s %-12s %-10s %-10s\n" \
+            "RESOURCE" "CAPACITY" "ALLOCATABLE" "REQUESTS" "LIMITS"
+          
+          # Get capacity and allocatable
+          kubectl get node "$node" -o json |
+          jq -r '
+            .status.capacity as $cap |
+            .status.allocatable as $all |
+            ($cap | keys[]) as $k |
+            "\($k) \($cap[$k]) \($all[$k])"
+          ' |
+          while read -r res cap all; do
+            
+            # Get requests and limits from describe node (includes custom resources)
+            line=$(kubectl describe node "$node" | awk -v r="$res" '
+              $1==r {print $2, $3}
+            ')
+            
+            if [[ -n "$line" ]]; then
+              req=$(echo "$line" | awk '{print $1}')
+              lim=$(echo "$line" | awk '{print $2}')
+            else
+              req="0"
+              lim="0"
+            fi
+            
+            printf "%-32s %-10s %-12s %-10s %-10s\n" \
+              "$res" "$cap" "$all" "$req" "$lim"
+          done
+        done
