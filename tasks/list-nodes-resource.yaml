@@ -7,49 +7,295 @@ spec:
   desc: list nodes resource in cluster
   host: anymaster
   variables:
-    nodename:
+    nodefilter:
       required: false
+    percent:
+      default: "80"
   steps:
     - name: list-nodes-resource
       content: |
-        NODE_NAME="${nodename:-}"
-
-        if [[ -n "$NODE_NAME" && "$NODE_NAME" != "" ]]; then
-          nodes="$NODE_NAME"
+        NODE_FILTER="${nodefilter:-}"
+        PERCENT_THRESHOLD="${percent:-80}"
+        
+        all_nodes=$(kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+        
+        if [[ -z "$NODE_FILTER" || "$NODE_FILTER" == "" ]]; then
+          nodes="$all_nodes"
         else
-          nodes=$(kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+          nodes=$(echo "$all_nodes" | grep -i "$NODE_FILTER" || true)
         fi
-
+        
+        convert_cpu() {
+          local value="$1"
+          if [[ -z "$value" || "$value" == "0" ]]; then
+            echo "0"
+            return
+          fi
+          local num=$(echo "$value" | grep -oE '[0-9]+' | head -1)
+          local unit=$(echo "$value" | sed 's/[0-9]//g' | tr -d ' ')
+          if [[ "$unit" == "m" ]]; then
+            local cores=$(awk "BEGIN {printf \"%.2f\", $num / 1000}")
+            local cores_int=$(awk "BEGIN {printf \"%.0f\", $cores}")
+            if awk "BEGIN {exit !($cores == $cores_int)}" 2>/dev/null; then
+              echo "${cores_int}"
+            else
+              echo "${cores}" | sed 's/\.0*$//' | sed 's/\.$//'
+            fi
+          else
+            echo "$num"
+          fi
+        }
+        
+        convert_memory() {
+          local value="$1"
+          if [[ -z "$value" || "$value" == "0" ]]; then
+            echo "0GB"
+            return
+          fi
+          local num=$(echo "$value" | grep -oE '[0-9]+' | head -1)
+          local unit=$(echo "$value" | sed 's/[0-9]//g' | tr -d ' ')
+          case "$unit" in
+            Ki) local gb=$(awk "BEGIN {printf \"%.2f\", $num / 1048576}") ;;
+            Mi) local gb=$(awk "BEGIN {printf \"%.2f\", $num / 1024}") ;;
+            Gi) local gb="$num" ;;
+            *) local gb=$(awk "BEGIN {printf \"%.2f\", $num / 1048576}") ;;
+          esac
+          local gb_int=$(awk "BEGIN {printf \"%.0f\", $gb}")
+          if awk "BEGIN {exit !($gb == $gb_int)}" 2>/dev/null; then
+            echo "${gb_int}GB"
+          else
+            echo "${gb}GB" | sed 's/\.0*$//' | sed 's/\.$//'
+          fi
+        }
+        
+        format_with_color() {
+          local value="$1"
+          local percent="$2"
+          if [[ -n "$percent" && "$percent" != "0" && "$percent" != "" ]]; then
+            if awk "BEGIN {exit !($percent >= $PERCENT_THRESHOLD)}" 2>/dev/null; then
+              local red=$(tput setaf 1 2>/dev/null || echo "")
+              local reset=$(tput sgr0 2>/dev/null || echo "")
+              if [[ -n "$red" && -n "$reset" ]]; then
+                echo "${red}${value}${reset}"
+              else
+                echo "$value"
+              fi
+            else
+              echo "$value"
+            fi
+          else
+            echo "$value"
+          fi
+        }
+        
         for node in $nodes; do
           echo "================================================"
           echo "NODE: $node"
-          printf "%-32s %-10s %-12s %-10s %-10s\n" \
+          printf "%-32s %-12s %-12s %-20s %-20s\n" \
             "RESOURCE" "CAPACITY" "ALLOCATABLE" "REQUESTS" "LIMITS"
           
-          # Get capacity and allocatable
-          kubectl get node "$node" -o json |
-          jq -r '
+          node_json=$(kubectl get node "$node" -o json)
+          describe_output=$(kubectl describe node "$node")
+          
+          echo "$node_json" | jq -r '
             .status.capacity as $cap |
             .status.allocatable as $all |
             ($cap | keys[]) as $k |
-            "\($k) \($cap[$k]) \($all[$k])"
-          ' |
-          while read -r res cap all; do
+            select($k != "ephemeral-storage" and $k != "hugepages-1Gi" and $k != "hugepages-2Mi") |
+            "\($k)|\($cap[$k])|\($all[$k])"
+          ' | while IFS='|' read -r res cap all; do
             
-            # Get requests and limits from describe node (includes custom resources)
-            line=$(kubectl describe node "$node" | awk -v r="$res" '
-              $1==r {print $2, $3}
-            ')
-            
-            if [[ -n "$line" ]]; then
-              req=$(echo "$line" | awk '{print $1}')
-              lim=$(echo "$line" | awk '{print $2}')
+            if [[ "$res" == "pods" ]]; then
+              pod_count=$(kubectl get pods --all-namespaces --field-selector spec.nodeName="$node" --no-headers 2>/dev/null | wc -l | tr -d ' ')
+              if [[ -n "$all" && "$all" != "0" ]]; then
+                pod_percent=$(awk "BEGIN {printf \"%.0f\", ($pod_count * 100) / $all}")
+                pod_req_text="${pod_count} (${pod_percent}%)"
+                pod_lim_text="${pod_count} (${pod_percent}%)"
+                pod_req=$(format_with_color "$pod_req_text" "$pod_percent")
+                pod_lim=$(format_with_color "$pod_lim_text" "$pod_percent")
+                printf "%-32s %-12s %-12s %-20b %-20b\n" \
+                  "$res" "$cap" "$all" "$pod_req" "$pod_lim"
+              fi
             else
-              req="0"
-              lim="0"
+              req_lim=$(echo "$describe_output" | awk -v r="$res" '
+                BEGIN {found=0}
+                /^Allocated resources:/ {found=1; next}
+                found && /^  Resource/ {next}
+                found && /^  --------/ {next}
+                found && $1==r {
+                  req = $2
+                  lim = ""
+                  if (NF >= 3) {
+                    if ($3 ~ /^\(/) {
+                      req = req " " $3
+                      for (i=4; i<=NF; i++) {
+                        lim = lim " " $i
+                      }
+                    } else if ($3 ~ /%\)$/) {
+                      req = req " " $3
+                      for (i=4; i<=NF; i++) {
+                        lim = lim " " $i
+                      }
+                    } else {
+                      lim = $3
+                      if (NF >= 4 && $4 !~ /^\(/) {
+                        lim = lim " " $4
+                      } else if (NF >= 4) {
+                        lim = lim " " $4
+                        for (i=5; i<=NF; i++) {
+                          lim = lim " " $i
+                        }
+                      }
+                    }
+                  }
+                  gsub(/^ /, "", lim)
+                  print req "|" lim
+                  exit
+                }
+              ')
+              
+              if [[ -n "$req_lim" ]]; then
+                req_raw=$(echo "$req_lim" | awk -F'|' '{print $1}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+                lim_raw=$(echo "$req_lim" | awk -F'|' '{print $2}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+                
+                if [[ "$res" == "cpu" ]]; then
+                  cap_formatted=$(convert_cpu "$cap")
+                  all_formatted=$(convert_cpu "$all")
+                  
+                  if [[ -n "$req_raw" && "$req_raw" != "" ]]; then
+                    req_val=$(echo "$req_raw" | grep -oE '[0-9]+[a-zA-Z]*' | head -1)
+                    req_percent=$(echo "$req_raw" | grep -oE '\([0-9]+%\)' | grep -oE '[0-9]+')
+                    if [[ -z "$req_percent" ]]; then
+                      req_percent="0"
+                    fi
+                    req_formatted=$(convert_cpu "$req_val")
+                    req_text="${req_formatted} (${req_percent}%)"
+                    req=$(format_with_color "$req_text" "$req_percent")
+                  else
+                    req="0 (0%)"
+                  fi
+                  
+                  if [[ -n "$lim_raw" && "$lim_raw" != "" ]]; then
+                    lim_val=$(echo "$lim_raw" | grep -oE '[0-9]+[a-zA-Z]*' | head -1)
+                    lim_percent=$(echo "$lim_raw" | grep -oE '\([0-9]+%\)' | grep -oE '[0-9]+')
+                    if [[ -z "$lim_percent" ]]; then
+                      lim_percent="0"
+                    fi
+                    if [[ -n "$lim_val" ]]; then
+                      lim_formatted=$(convert_cpu "$lim_val")
+                      lim_text="${lim_formatted} (${lim_percent}%)"
+                      lim=$(format_with_color "$lim_text" "$lim_percent")
+                    else
+                      lim_text="0 (${lim_percent}%)"
+                      lim=$(format_with_color "$lim_text" "$lim_percent")
+                    fi
+                  else
+                    lim="0 (0%)"
+                  fi
+                elif [[ "$res" == "memory" ]]; then
+                  cap_formatted=$(convert_memory "$cap")
+                  all_formatted=$(convert_memory "$all")
+                  
+                  if [[ -n "$req_raw" && "$req_raw" != "" ]]; then
+                    req_val=$(echo "$req_raw" | grep -oE '[0-9]+[a-zA-Z]*' | head -1)
+                    req_percent=$(echo "$req_raw" | grep -oE '\([0-9]+%\)' | grep -oE '[0-9]+')
+                    if [[ -z "$req_percent" ]]; then
+                      req_percent="0"
+                    fi
+                    req_formatted=$(convert_memory "$req_val")
+                    req_text="${req_formatted} (${req_percent}%)"
+                    req=$(format_with_color "$req_text" "$req_percent")
+                  else
+                    req="0GB (0%)"
+                  fi
+                  
+                  if [[ -n "$lim_raw" && "$lim_raw" != "" ]]; then
+                    lim_val=$(echo "$lim_raw" | grep -oE '[0-9]+[a-zA-Z]*' | head -1)
+                    lim_percent=$(echo "$lim_raw" | grep -oE '\([0-9]+%\)' | grep -oE '[0-9]+')
+                    if [[ -z "$lim_percent" ]]; then
+                      lim_percent="0"
+                    fi
+                    if [[ -n "$lim_val" ]]; then
+                      lim_formatted=$(convert_memory "$lim_val")
+                      lim_text="${lim_formatted} (${lim_percent}%)"
+                      lim=$(format_with_color "$lim_text" "$lim_percent")
+                    else
+                      lim_text="0GB (${lim_percent}%)"
+                      lim=$(format_with_color "$lim_text" "$lim_percent")
+                    fi
+                  else
+                    lim="0GB (0%)"
+                  fi
+                else
+                  cap_formatted="$cap"
+                  all_formatted="$all"
+                  
+                  if [[ -n "$req_raw" && "$req_raw" != "" ]]; then
+                    req_val=$(echo "$req_raw" | grep -oE '[0-9]+[a-zA-Z]*' | head -1)
+                    req_percent=$(echo "$req_raw" | grep -oE '\([0-9]+%\)' | grep -oE '[0-9]+')
+                    if [[ -z "$req_percent" && -n "$req_val" && -n "$all" && "$all" != "0" ]]; then
+                      req_num=$(echo "$req_val" | grep -oE '[0-9]+' | head -1)
+                      all_num=$(echo "$all" | grep -oE '[0-9]+' | head -1)
+                      if [[ -n "$req_num" && -n "$all_num" ]]; then
+                        req_percent=$(awk "BEGIN {printf \"%.0f\", ($req_num * 100) / $all_num}")
+                      else
+                        req_percent="0"
+                      fi
+                    elif [[ -z "$req_percent" ]]; then
+                      req_percent="0"
+                    fi
+                    req_text="${req_val} (${req_percent}%)"
+                    req=$(format_with_color "$req_text" "$req_percent")
+                  else
+                    req="0 (0%)"
+                  fi
+                  
+                  if [[ -n "$lim_raw" && "$lim_raw" != "" ]]; then
+                    lim_val=$(echo "$lim_raw" | grep -oE '[0-9]+[a-zA-Z]*' | head -1)
+                    lim_percent=$(echo "$lim_raw" | grep -oE '\([0-9]+%\)' | grep -oE '[0-9]+')
+                    if [[ -z "$lim_percent" && -n "$lim_val" && -n "$all" && "$all" != "0" ]]; then
+                      lim_num=$(echo "$lim_val" | grep -oE '[0-9]+' | head -1)
+                      all_num=$(echo "$all" | grep -oE '[0-9]+' | head -1)
+                      if [[ -n "$lim_num" && -n "$all_num" ]]; then
+                        lim_percent=$(awk "BEGIN {printf \"%.0f\", ($lim_num * 100) / $all_num}")
+                      else
+                        lim_percent="0"
+                      fi
+                    elif [[ -z "$lim_percent" ]]; then
+                      lim_percent="0"
+                    fi
+                    if [[ -n "$lim_val" ]]; then
+                      lim_text="${lim_val} (${lim_percent}%)"
+                      lim=$(format_with_color "$lim_text" "$lim_percent")
+                    else
+                      lim_text="0 (${lim_percent}%)"
+                      lim=$(format_with_color "$lim_text" "$lim_percent")
+                    fi
+                  else
+                    lim="0 (0%)"
+                  fi
+                fi
+              else
+                if [[ "$res" == "cpu" ]]; then
+                  cap_formatted=$(convert_cpu "$cap")
+                  all_formatted=$(convert_cpu "$all")
+                  req="0 (0%)"
+                  lim="0 (0%)"
+                elif [[ "$res" == "memory" ]]; then
+                  cap_formatted=$(convert_memory "$cap")
+                  all_formatted=$(convert_memory "$all")
+                  req="0GB (0%)"
+                  lim="0GB (0%)"
+                else
+                  cap_formatted="$cap"
+                  all_formatted="$all"
+                  req="0 (0%)"
+                  lim="0 (0%)"
+                fi
+              fi
+              
+              printf "%-32s %-12s %-12s %-20b %-20b\n" \
+                "$res" "$cap_formatted" "$all_formatted" "$req" "$lim"
             fi
-            
-            printf "%-32s %-10s %-12s %-10s %-10s\n" \
-              "$res" "$cap" "$all" "$req" "$lim"
           done
         done
