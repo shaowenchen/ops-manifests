@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: get-pod
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view pod information and status
+  tasks:
+    - name: get-pod-status
+      desc: view pod information and status
+      taskRef: get-pod

@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: collect-gpu-log
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: collect gpu related logs
+  tasks:
+    - name: collect-gpu-log
+      desc: collect gpu related logs
+      taskRef: collect-gpu-log

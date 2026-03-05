@@ -1,0 +1,17 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-evicted-pods
+  namespace: ops-system
+spec:
+  keywords:
+    matchMode: ALL
+    include:
+      - alerting
+      - alert-evicted-pods
+    exclude:
+      - healthcheck
+      - test
+  subject: ops.clusters.*.namespaces.ops-system.taskruns.alert-evicted-pods.findings
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=xxxx

@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: list-datasets
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: list datasets in namespace
+  tasks:
+    - name: list-datasets
+      desc: list datasets in namespace
+      taskRef: list-datasets

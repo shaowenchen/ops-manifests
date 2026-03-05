@@ -1,0 +1,11 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: alert-hosts-mem
+  namespace: ops-system
+spec:
+  desc: alert hosts memory every hour at 30 minutes
+  crontab: "30 * * * *"
+  taskRef: alert-hosts-mem
+  variables:
+    threshold: "84" 

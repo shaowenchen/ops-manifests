@@ -1,0 +1,9 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: alert-cluster-cert
+  namespace: ops-system
+spec:
+  desc: alert cluster cert every day at 9:30
+  crontab: "30 9 * * *"
+  taskRef: alert-cluster-cert

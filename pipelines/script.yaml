@@ -1,0 +1,11 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: script
+  namespace: ops-system
+spec:
+  desc: execute script
+  tasks:
+    - name: script
+      desc: execute script
+      taskRef: script

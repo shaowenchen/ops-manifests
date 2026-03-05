@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: cordon-node
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: cordon a node in the cluster
+  tasks:
+    - name: whitelist-pod
+      desc: check whitelist for pod
+      taskRef: check-whitelist
+    - name: cordon-node
+      desc: cordon node in cluster
+      taskRef: cordon-node

@@ -1,0 +1,15 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-gpu
+  namespace: ops-system
+spec:
+  keywords:
+    matchMode: ALL
+    matchType: REGEX
+    include:
+      - alerting
+      - .*alert-gpu-.*
+  subject: ops.clusters.*.nodes.*.findings
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

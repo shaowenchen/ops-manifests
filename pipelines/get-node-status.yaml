@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: get-node-status
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: check if node is ready
+  tasks:
+    - name: query-node-status
+      desc: query node readiness status
+      taskRef: get-node-status

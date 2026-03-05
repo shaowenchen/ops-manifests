@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: alert-public-network
+  namespace: ops-system
+spec:
+  desc: alert public network every hour at 30 minutes
+  crontab: "30 * * * *"
+  taskRef: alert-http-status
+  variables:
+    url: https://www.qq.com/
+    threshold: "200"

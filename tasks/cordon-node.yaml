@@ -1,0 +1,15 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: cordon-node
+  namespace: ops-system
+spec:
+  desc: cordon node in cluster
+  host: anymaster
+  variables:
+    nodename:
+      display: node name
+      required: true
+  steps:
+    - name: cordon-node
+      content: kubectl cordon ${nodename}

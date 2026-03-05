@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: create-dataload
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: preload dataset
+  tasks:
+    - name: create-dataset-preload-task
+      desc: create dataset preload task
+      taskRef: create-dataload

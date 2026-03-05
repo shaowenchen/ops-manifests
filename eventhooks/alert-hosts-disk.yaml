@@ -1,0 +1,15 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-hosts-disk
+  namespace: ops-system
+spec:
+  keywords:
+    matchMode: ALL
+    include:
+      - alerting
+      - alert-hosts-disk
+  subject: ops.clusters.*.namespaces.ops-system.hosts.*.findings
+  type: webhook
+  url: http://x.x.x.x/webhook
+  additional: "action: clear-disk"

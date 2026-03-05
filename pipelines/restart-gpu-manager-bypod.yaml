@@ -1,0 +1,19 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: restart-gpu-manager-bypod
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: restart gpu-manager container on the node where the pod is located
+  tasks:
+    - name: whitelist-check
+      desc: check whitelist
+      taskRef: check-whitelist
+    - name: get-pod-node
+      desc: get pod node information
+      taskRef: get-pod-node
+    - name: restart-gpu-manager-container
+      desc: restart gpu-manager container on pod node
+      taskRef: restart-gpu-manager

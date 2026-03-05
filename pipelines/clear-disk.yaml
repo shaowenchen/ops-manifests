@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: clear-disk
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: clear disk
+  tasks:
+    - name: clear-disk
+      desc: clear disk
+      taskRef: clear-disk

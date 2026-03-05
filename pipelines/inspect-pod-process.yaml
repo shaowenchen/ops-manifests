@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: inspect-pod-process
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view pod process related information
+  tasks:
+    - name: get-pod-node
+      desc: get pod node information
+      taskRef: get-pod-node
+    - name: view-pod-process-info
+      desc: view pod process information
+      taskRef: inspect-pod-process

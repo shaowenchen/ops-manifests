@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: restart-gpu-manager
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: restart gpu-manager container on node
+  tasks:
+    - name: whitelist-check
+      desc: check whitelist
+      taskRef: check-whitelist
+    - name: restart-gpu-manager-container
+      desc: restart gpu-manager container on node
+      taskRef: restart-gpu-manager

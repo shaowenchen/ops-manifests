@@ -1,0 +1,30 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: clear-docker
+  namespace: ops-system
+spec:
+  desc: clear docker unused resource, including container, image, network, volume for specified host
+  steps:
+    - name: clear-container-exit-more-than-30m
+      content: docker container prune -f --filter "until=$(date +'%Y-%m-%dT%H:%M:%S' --date='-30 minutes')"
+      allowfailure: "true"
+    - name: clear-none-image
+      content: docker image prune -f
+      allowfailure: "true"
+    - name: clear-biz-image-eg
+      content: docker images | egrep "([0-9a-z]+[-]){1,}[0-9]{9}" | egrep -v "seconds|minutes" | awk '{print $3}' | xargs /usr/bin/docker rmi -f
+      allowfailure: "true"
+    - name: clear-biz-image-eg-label-provider-cicd
+      content: docker images --filter label=provider=cicd | egrep -v "seconds|minutes" | awk '{print $3}' | xargs /usr/bin/docker rmi -f
+      allowfailure: "true"
+    - name: clear-network
+      content: docker network prune -f
+    - name: clear-volume
+      content: docker volume prune -f
+    - name: clear-build-cache
+      content: DOCKER_CLI_EXPERIMENTAL=enabled docker buildx prune --filter "until=72h" -f
+      allowfailure: "true"
+    - name: clear-system-cache
+      content: docker system prune -f
+      allowfailure: "true"

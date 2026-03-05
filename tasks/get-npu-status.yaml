@@ -1,0 +1,43 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-npu-status
+  namespace: ops-system
+spec:
+  desc: get npu status using npu-smi in specified host
+  steps:
+    - name: check-npu-smi
+      content: |
+        command -v npu-smi
+    - name: npu-number
+      content: |
+        timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}'
+    - name: npu-model
+      content: |
+        timeout 10 npu-smi info -t board -i 0 -c 0 | grep -oP 'Chip Name\s*:\s*\K[^\n]+'
+    - name: npu-status
+      content: |
+        count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        for i in $(seq 0 $((count - 1))); do
+          stats=$(timeout 10 npu-smi info -t memory -i $i | awk '
+            /HBM Capacity/ {cap=$NF}
+            /HBM Clock Speed/ {clk=$NF}
+            /HBM Temperature/ {temp=$NF}
+            END {printf "%s MB %s MHz %s C", cap, clk, temp}')
+          echo "NPU $i: $stats"
+        done
+    - name: npu-net-health
+      content: |
+        count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        for i in $(seq 0 $((count - 1))); do
+          timeout 10 hccn_tool -i $i -net_health -g
+        done
+    - name: npu-ecc-errors
+      content: |
+        count=$(timeout 10 npu-smi info -l | awk -F: '/Total Count/ {gsub(/ /, "", $2); print $2}')
+        for i in $(seq 0 $((count - 1))); do
+          output=$(timeout 10 npu-smi info -t ecc -i $i)
+          if echo "$output" | grep -qE 'HBM (Single|Double) Bit (Error|Aggregate Total Err|Isolated Pages|Next-Isolated Pages) Count\s*:\s*[1-9]'; then
+            echo "$output"
+          fi
+        done

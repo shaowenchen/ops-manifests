@@ -1,0 +1,15 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: nodes-p0
+  namespace: ops-system
+spec:
+  keywords:
+    include:
+      - NodeNotReady
+      - NodeReady
+      - Registered
+      - RemovingNode
+  subject: ops.clusters.*.nodes.*.events
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

@@ -1,0 +1,63 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+    name: alert-mount-exception
+    namespace: ops-system
+spec:
+    desc: check mount response exception
+    host: "alert-card="
+    variables:
+        threshold:
+            default: "3"
+    steps:
+        - name: alert-mount-exception
+          content: |
+              #!/usr/bin/python
+              import subprocess
+              import requests
+              import json
+              import os
+
+              TIMEOUT_SECONDS = int(${threshold})
+
+              def send(status, message):
+                  payload = {
+                      'host': '${HOSTNAME}',
+                      'type': 'TaskRunReport',
+                      'kind': '${TASKRUN}',
+                      'status': status,
+                      'message': message
+                  }
+                  headers = {
+                      'Content-Type': 'application/json'
+                  }
+                  try:
+                      # Always send to findings
+                      response = requests.post(
+                          '${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings',
+                          headers=headers,
+                          data=json.dumps(payload)
+                      )
+                      print(response.text)
+                      # If alerting, also send to alerts
+                      if status == 'alerting':
+                          response = requests.post(
+                              '${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts',
+                              headers=headers,
+                              data=json.dumps(payload)
+                          )
+                          print(response.text)
+                  except Exception as e:
+                      print(f"Failed to send alert: {str(e)}")
+
+              try:
+                  cmd = f"timeout {TIMEOUT_SECONDS} df -h 2>&1 > /dev/null"
+                  result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
+                  
+                  send('normal', '')
+
+              except subprocess.CalledProcessError as e:
+                  send('alerting', 'mount exception')
+
+              except Exception as e:
+                  send('alerting', f'Unexpected error: {str(e)}')

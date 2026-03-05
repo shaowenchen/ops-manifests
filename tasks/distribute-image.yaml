@@ -1,0 +1,67 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: distribute-image
+  namespace: ops-system
+spec:
+  desc: distribute docker images to target host using nerdctl save/load and scp
+  host: anymaster
+  variables:
+    image:
+      display: "Docker image name (e.g., nginx:latest)"
+      required: true
+    target_host:
+      display: "Target host IP or hostname"
+      required: true
+    platform:
+      display: "Target platform/architecture (e.g., linux/amd64, linux/arm64)"
+      required: false
+      default: "linux/amd64"
+  steps:
+    - name: distribute-image
+      content: |
+        #!/bin/bash
+
+        imageT="${image}"
+        [[ "$imageT" != *:* ]] && imageT="${image}:latest"
+
+        if [[ "${platformT}" == "" ]]; then
+          platformT="linux/amd64"
+        fi
+
+        echo "image: $imageT"
+        echo "platformT: $platformT"
+
+        echo "[INFO] Distributing image $imageT to ${target_host}"
+
+        # 1. Pull if missing or cross-arch
+        if ! nerdctl -n k8s.io images --format '{{.Repository}}:{{.Tag}} {{.Platform}}' \
+            | grep -Fxq "$imageT $platformT"; then
+          echo "[INFO] Pulling image $imageT for platform $platformT..."
+          nerdctl -n k8s.io pull --platform "$platformT" "$imageT"
+        else
+          echo "[INFO] Local image $imageT matches target platform $platformT"
+        fi
+
+        # 2. Save
+        TEMP_DIR="/tmp/image-dist-$(date +%s)-$RANDOM"
+        mkdir -p "$TEMP_DIR"
+        IMAGE_TAR="$TEMP_DIR/image.tar"
+        nerdctl -n k8s.io save -o "$IMAGE_TAR" "$imageT"
+
+        # 3. Copy to target
+        scp "$IMAGE_TAR" "${target_host}:/tmp/"
+
+        # 4. Load on target
+        ssh ${target_host} "
+          set -e
+          nerdctl -n k8s.io rmi $imageT 2>/dev/null || true
+          nerdctl -n k8s.io load -i /tmp/$(basename "$IMAGE_TAR")
+          rm -f /tmp/$(basename "$IMAGE_TAR")
+          nerdctl -n k8s.io images --format '{{.Repository}}:{{.Tag}} {{.Platform}}' | grep -Fx '$imageT'
+        "
+
+        # 5. Cleanup local
+        rm -rf "$TEMP_DIR"
+
+        echo "[SUCCESS] Image $imageT distributed to ${target_host}"

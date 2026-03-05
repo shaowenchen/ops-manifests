@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: nodes
+  namespace: ops-system
+spec:
+  keywords:
+    include:
+      - faild
+      - xid
+      - GPUUnhealthy
+      - NodeNotSchedulable
+      - NodeSchedulable
+  subject: ops.clusters.*.nodes.*.events
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

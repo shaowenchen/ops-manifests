@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: set-os-mirror
+  namespace: ops-system
+spec:
+  desc: set os mirror friendly to China for specified host
+  variables:
+    proxy: 
+      default: https://ghfast.top/
+  steps:
+    - name: set-mirror
+      content: curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops-hub/master/mirror/get.sh | sh -

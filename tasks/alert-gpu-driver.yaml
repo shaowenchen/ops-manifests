@@ -1,0 +1,125 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: alert-gpu-driver
+  namespace: ops-system
+spec:
+  desc: check gpu driver version on specified host
+  host: "alert-card=gpu"
+  steps:
+    - name: check-gpu-driver
+      content: |
+        #!/usr/bin/python
+        import os
+        import subprocess
+        import requests
+        import json
+        import re
+
+        message = ''
+        current_version = ''
+
+        def send(status, message, value=''):
+            payload = {
+                'host': '${HOSTNAME}',
+                'type': 'TaskRunReport',
+                'kind': '${TASKRUN}',
+                'threshold': 'installed',
+                'operator': '==',
+                'value': str(value),
+                'status': status,
+                'message': message
+            }
+            headers = {
+                'Content-Type': 'application/json'
+            }
+            # Always send to findings
+            response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
+            print(response.text)
+            # If alerting, also send to alerts
+            if status == 'alerting':
+                response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts', headers=headers, data=json.dumps(payload))
+                print(response.text)
+
+        def get_nvidia_driver_version():
+            """Get NVIDIA driver version through multiple methods"""
+            version_info = None
+            
+            # Method 1: Use nvidia-smi
+            try:
+                result = subprocess.run(['nvidia-smi', '--query-gpu=driver_version', '--format=csv,noheader,nounits'], 
+                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+                if result.returncode == 0 and result.stdout.strip():
+                    version_info = result.stdout.strip().split('\n')[0].strip()
+                    return version_info
+            except Exception as e:
+                print(f"nvidia-smi method failed: {e}")
+
+            # Method 2: Read /proc/driver/nvidia/version
+            try:
+                with open('/proc/driver/nvidia/version', 'r') as f:
+                    content = f.read()
+                    # Parse format like "NVRM version: NVIDIA UNIX x86_64 Kernel Module  470.182.03"
+                    match = re.search(r'Kernel Module\s+(\d+\.\d+(?:\.\d+)?)', content)
+                    if match:
+                        version_info = match.group(1)
+                        return version_info
+            except Exception as e:
+                print(f"Failed to read /proc/driver/nvidia/version: {e}")
+
+            # Method 3: Use modinfo nvidia
+            try:
+                result = subprocess.run(['modinfo', 'nvidia'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+                if result.returncode == 0:
+                    for line in result.stdout.split('\n'):
+                        if line.startswith('version:'):
+                            version_info = line.split(':', 1)[1].strip()
+                            return version_info
+            except Exception as e:
+                print(f"modinfo method failed: {e}")
+
+            return None
+
+        def check_gpu_devices():
+            """Check if GPU devices exist"""
+            try:
+                # Check if NVIDIA GPU devices exist
+                result = subprocess.run(['lspci', '|', 'grep', '-i', 'nvidia'], shell=True,
+                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                if result.returncode == 0 and result.stdout.strip():
+                    return True
+                
+                # Check /dev/nvidia* device files
+                nvidia_devices = [f for f in os.listdir('/dev') if f.startswith('nvidia')]
+                if nvidia_devices:
+                    return True
+                    
+                return False
+            except Exception as e:
+                print(f"Failed to check GPU devices: {e}")
+                return False
+
+        try:
+            # First check if GPU devices exist
+            if not check_gpu_devices():
+                message = 'NVIDIA GPU device not detected'
+                print(message)
+                send('normal', message, 'no_gpu_device')
+                exit(0)
+
+            # Get driver version
+            current_version = get_nvidia_driver_version()
+            if not current_version:
+                message = 'Unable to get NVIDIA driver version, driver not properly installed'
+                print(f"Alert: {message}")
+                send('alerting', message, 'not_installed')
+            else:
+                message = f'GPU driver installed, version: {current_version}'
+                print(message)
+                send('normal', message, current_version)
+
+        except Exception as e:
+            if len(message) == 0:
+                message = str(e)
+            print(f"Error: {message}")
+            send('alerting', message, 'error')

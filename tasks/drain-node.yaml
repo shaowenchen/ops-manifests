@@ -1,0 +1,19 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: drain-node
+  namespace: ops-system
+spec:
+  desc: drain node in cluster
+  host: anymaster
+  variables:
+    nodename:
+      display: node name
+      required: true
+  steps:
+    - name: cordon-node
+      content: kubectl cordon ${nodename}
+    - name: drain-node
+      content: kubectl drain ${nodename} --ignore-daemonsets
+    - name: show-pod-on-node
+      content: kubectl get pod -A |grep ${nodename}

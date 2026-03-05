@@ -1,0 +1,9 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: clear-opspod
+  namespace: ops-system
+spec:
+  desc: clear ops pod every hour at 30 minutes
+  crontab: "30 * * * *"
+  taskRef: clear-opspod 

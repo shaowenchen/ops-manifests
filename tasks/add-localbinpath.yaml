@@ -1,0 +1,10 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: add-localbinpath
+  namespace: ops-system
+spec:
+  desc: add /usr/local/bin to PATH for specified host
+  steps:
+    - name: set-usr-local-bin-to-path
+      content: echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile

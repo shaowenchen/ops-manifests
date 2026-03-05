@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-hosts-status
+  namespace: ops-system
+spec:
+  keywords:
+    matchMode: ALL
+    include:
+      - alerting
+      - alert-hosts-status
+  subject: ops.clusters.*.namespaces.ops-system.hosts.*.findings
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

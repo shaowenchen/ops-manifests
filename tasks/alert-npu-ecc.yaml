@@ -1,0 +1,76 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: alert-npu-ecc
+  namespace: ops-system
+spec:
+  desc: check npu ecc status in specified host
+  host: "alert-card=npu"
+  variables:
+    threshold:
+      default: "1"
+  steps:
+    - name: alert-card-npu
+      content: |
+        #!/usr/bin/python
+        import os
+        import subprocess
+        import requests
+        import json
+        from datetime import datetime
+
+        threshold = int('${threshold}')
+
+        def send(status, message):
+            payload = {
+                'host': '${HOSTNAME}',
+                'type': 'TaskRunReport',
+                'kind': '${TASKRUN}',
+                'threshold': str(threshold),
+                'operator': '>',
+                'status': status,
+                'message': message
+            }
+            headers = {
+                'Content-Type': 'application/json'
+            }
+            # Always send to findings
+            response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
+            print(response.text)
+            # If alerting, also send to alerts
+            if status == 'alerting':
+                response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts', headers=headers, data=json.dumps(payload))
+                print(response.text)
+
+        def build_message(message, device_id=''):
+            if device_id == '':
+                return f'Abnormal info: {message}\n'
+            return f'Abnormal location: {device_id}\nAbnormal info: {message}\n'
+
+        try:
+            if not os.path.exists('/usr/local/sbin/npu-smi'):
+                raise Exception(build_message('npu-smi command not found'))
+
+            output = ''
+            try:
+                output = subprocess.run(['/usr/local/sbin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+            except subprocess.TimeoutExpired:
+                raise Exception(build_message('npu-smi execution timeout 10s'))
+            except:
+                pass
+            message = ''
+            lines = output.split('\n')
+            for line in lines:
+                if 'Health' in line or 'ECC' in line:
+                    parts = line.strip().split()
+                    if any(keyword in line.lower() for keyword in ['error', 'fail', 'abnormal', 'warning']):
+                        device_id = parts[0] if len(parts) > 0 else 'Unknown'
+                        message += build_message(line, device_id)
+        except Exception as e:
+            if len(message) == 0:
+                message = str(e)
+        finally:
+            if len(message) > 0:
+                send('alerting', message)
+            else:
+                send('normal', message)

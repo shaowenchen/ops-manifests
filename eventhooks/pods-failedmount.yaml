@@ -1,0 +1,12 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: pods-failedmount
+  namespace: ops-system
+spec:
+  keywords:
+    include:
+      - FailedMount
+  subject: ops.clusters.*.namespaces.*.pods.*.events
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

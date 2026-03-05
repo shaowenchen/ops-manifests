@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: delete-kas-job
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: delete specified kas job
+  tasks:
+    - name: whitelist-check
+      desc: check whitelist
+      taskRef: check-whitelist
+    - name: delete-related-pod
+      desc: delete related pods for kas job
+      taskRef: delete-kas-job

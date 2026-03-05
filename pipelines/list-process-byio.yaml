@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: list-process-byio
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: get processes using io
+  tasks:
+    - name: view-node
+      desc: view node status
+      taskRef: get-node-status
+    - name: get-process-using-io
+      desc: get processes using io
+      taskRef: list-process-byio

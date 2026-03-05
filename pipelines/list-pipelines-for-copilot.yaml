@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: list-pipelines-for-copilot
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view and list all pipelines
+  tasks:
+    - name: list-all-pipelines
+      desc: list and view all pipelines
+      taskRef: list-pipelines-for-copilot

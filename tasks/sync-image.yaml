@@ -1,0 +1,38 @@
+# kubectl create secret generic ops-secret \
+#   --type=kubernetes.io/dockerconfigjson \
+#   --from-file=.dockerconfigjson=$HOME/.docker/config.json \
+#   -n ops-system
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: sync-image
+  namespace: ops-system
+spec:
+  desc: sync image
+  runtimeImage: registry.cn-beijing.aliyuncs.com/opshub/ghcr-io-containerd-nerdctl
+  variables:
+    source:
+      display: source image
+      required: true
+    destination:
+      display: destination image
+      required: true
+    secret_name:
+      display: secret name
+      required: true
+  mounts:
+    - hostPath: /run/containerd/containerd.sock
+      mountPath: /run/containerd/containerd.sock
+    - secret:
+        name: ${secret_name}
+        mountPath: /root/.docker
+  steps:
+    - name: pull-image
+      content: |
+        nerdctl pull ${source}
+    - name: tag-image
+      content: |
+        nerdctl tag ${source} ${destination}
+    - name: push-image
+      content: |
+        nerdctl push ${destination}

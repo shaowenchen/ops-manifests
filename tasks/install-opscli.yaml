@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: install-opscli
+  namespace: ops-system
+spec:
+  desc: install opscli tool in specified host
+  variables:
+    proxy: 
+      default: https://ghfast.top/
+  steps:
+    - name: install-opscli
+      content: |
+        curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops/main/getcli.sh | VERSION=latest PROXY=${proxy} sh -

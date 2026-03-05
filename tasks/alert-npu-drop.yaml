@@ -1,0 +1,92 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+    name: alert-npu-drop
+    namespace: ops-system
+spec:
+    desc: check npu drop in specified host
+    host: "alert-card=npu"
+    steps:
+        - name: alert-npu-drop
+          content: |
+              #!/usr/bin/python
+              import os
+              import subprocess
+              import requests
+              import json
+              from datetime import datetime
+
+              threshold = int('${card-num}')
+              card_id = ''
+              message = ''
+              card_count = 0
+
+              def send(status, message):
+                  payload = {
+                      'host': '${HOSTNAME}',
+                      'kind': '${TASKRUN}',
+                      'type': 'TaskRunReport',
+                      'threshold': str(threshold),
+                      'operator': '!=',
+                      'status': status,
+                      'value': str(card_count),
+                      'message': message
+                  }
+                  headers = {
+                      'Content-Type': 'application/json'
+                  }
+                  # Always send to findings
+                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
+                  print(response.text)
+                  # If alerting, also send to alerts
+                  if status == 'alerting':
+                      response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts', headers=headers, data=json.dumps(payload))
+                      print(response.text)
+
+              def build_message(message, card_id=''):
+                  if card_id == '':
+                      return f'{message}\n'
+                  return f'Abnormal location: {card_id}\nAbnormal info: {message}\n'
+
+              try:
+                  # 1. check npu-smi exists /usr/local/bin/npu-smi
+                  if not os.path.exists('/usr/local/bin/npu-smi'):
+                      send('alerting', 'npu-smi not found')
+                  # 2. check count from npu-smi
+                  # npu-smi info |grep 910
+                  output = ''
+                  try:
+                      output = subprocess.run(['/usr/local/bin/npu-smi', 'info'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('npu-smi execution timeout 10s'))
+                  except:
+                      pass
+                  card_count = 0
+                  lines = [line for line in output.split('\n') if '910B' in line]
+                  for _, line in enumerate(lines):
+                      line = line.strip()
+                      if 'OK' in line:
+                          card_count += 1
+                      else:
+                          message += build_message(line, card_count)
+                  if card_count != threshold:
+                      message += ' npu-smi info display abnormal'
+                      send('alerting', message)
+                  # 3. lspci check, lspci |grep d80
+                  output = ''
+                  try:
+                      output = subprocess.run(['lspci'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('lspci execution timeout 10s'))
+                  except:
+                      pass
+                  card_count = 0
+                  lines = [line for line in output.split('\n') if 'd80' in line]
+                  for _, line in enumerate(lines):
+                      line = line.strip()
+                      if 'Huawei' in line:
+                          card_count += 1
+                  if card_count != threshold:
+                      send('alerting', 'lspci check display abnormal')
+              except Exception as e:
+                  send('alerting', str(e))

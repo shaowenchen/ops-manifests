@@ -1,0 +1,9 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: clear-sshd
+  namespace: ops-system
+spec:
+  desc: clear sshd every hour at 30 minutes
+  crontab: "30 * * * *"
+  taskRef: clear-sshd 

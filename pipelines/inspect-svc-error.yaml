@@ -1,0 +1,22 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: inspect-svc-error
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view service error logs and error events when service is in abnormal state
+  tasks:
+    - name: get-svc
+      desc: get service information
+      taskRef: get-svc
+    - name: get-deployment
+      desc: get deployment by service
+      taskRef: get-deployment-bysvc
+    - name: view-svc-error-logs
+      desc: view service error logs
+      taskRef: get-pod-error-logs-bysvc
+    - name: view-svc-error-events
+      desc: view service error events
+      taskRef: list-error-events-bysvc

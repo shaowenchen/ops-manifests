@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: collect-npu-log
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: collect npu related logs
+  tasks:
+    - name: collect-npu-log
+      desc: collect npu related logs
+      taskRef: collect-npu-log

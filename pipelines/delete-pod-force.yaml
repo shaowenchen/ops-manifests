@@ -1,0 +1,19 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: delete-pod-force
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: force delete pod
+  tasks:
+    - name: whitelist-pod
+      desc: check whitelist for pod
+      taskRef: check-whitelist
+    - name: get-pod
+      desc: get pod information
+      taskRef: get-pod
+    - name: delete-pod
+      desc: force delete pod
+      taskRef: delete-pod-force

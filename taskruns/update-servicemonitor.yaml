@@ -1,0 +1,15 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: update-servicemonitor
+  namespace: ops-system
+spec:
+  desc: update servicemonitor every day at 3:30
+  crontab: 30 3 * * *
+  taskRef: script
+  variables:
+    content: |
+      #!/bin/bash
+      git clone https://ghfast.top/https://github.com/shaowenchen/ops-hub.git
+      kubectl apply -f ops-hub/prometheus/servicemonitor
+    host: anymaster

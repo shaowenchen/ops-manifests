@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: uncordon-node
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: uncordon a node in the cluster
+  tasks:
+    - name: uncordon-node
+      desc: uncordon node in cluster
+      taskRef: uncordon-node
+    - name: view-node
+      desc: view node status
+      taskRef: get-node-status

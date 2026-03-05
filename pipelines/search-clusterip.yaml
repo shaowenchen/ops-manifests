@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: search-clusterip
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view and search cluster IPs
+  tasks:
+    - name: search-clusterip
+      desc: search and view cluster IPs
+      taskRef: search-clusterip

@@ -1,0 +1,23 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: delete-pod-not200-bysvcmetrics
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: query pod non-200 metrics by service to determine if pod should be deleted
+  variables:
+    pod:
+      desc: pod name
+      required: false
+  tasks:
+    - name: get-pod-not200-metrics-by-svc
+      desc: get pod not 200 metrics by service
+      taskRef: get-metrics-pod-not200-bysvc
+    - name: get-pod-not200-increment-metrics
+      desc: get pod not 200 increment metrics
+      taskRef: get-metrics-pod-not200
+    - name: delete-abnormal-metric-pod
+      desc: delete pod with abnormal metrics
+      taskRef: delete-pod-bycounts

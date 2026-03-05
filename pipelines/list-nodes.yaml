@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: list-nodes
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view and list all nodes in a cluster
+  tasks:
+    - name: list-cluster-nodes
+      desc: list all nodes in cluster
+      taskRef: list-nodes

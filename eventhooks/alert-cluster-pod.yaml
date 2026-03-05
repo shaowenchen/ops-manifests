@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-cluster-pod
+  namespace: ops-system
+spec:
+  subject: ops.clusters.*.namespaces.*.pods.*.alerts
+  keywords:
+    include:
+      - ".*(kube-apiserver-|kube-controller-manager-|kube-scheduler-|kube-proxy-|etcd-|calico-|csi-|fluid-).*"
+    matchType: REGEX
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

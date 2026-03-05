@@ -1,0 +1,79 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+    name: alert-gpu-ecc
+    namespace: ops-system
+spec:
+    desc: check gpu drop in specified host
+    host: "alert-card=gpu"
+    variables:
+        threshold:
+            default: "1"
+    steps:
+        - name: alert-card-ecc
+          content: |
+              #!/usr/bin/python
+              import os
+              import subprocess
+              import requests
+              import json
+              from datetime import datetime
+
+              threshold = int('${threshold}')
+
+              def send(status, message):
+                  payload = {
+                      'host': '${HOSTNAME}',
+                      'type': 'TaskRunReport',
+                      'kind': '${TASKRUN}',
+                      'threshold': str(threshold),
+                      'operator': '==',
+                      'status': status,
+                      'message': message
+                  }
+                  headers = {
+                      'Content-Type': 'application/json'
+                  }
+                  # Always send to findings
+                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
+                  print(response.text)
+                  # If alerting, also send to alerts
+                  if status == 'alerting':
+                      response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts', headers=headers, data=json.dumps(payload))
+                      print(response.text)
+
+              def build_message(message, card_id=''):
+                  if card_id == '':
+                      return f'Abnormal info: {message}\n'
+                  return f'Abnormal location: {card_id}\nAbnormal info: {message}\n'
+
+              try:
+                  # 1. check nvidia-smi exists /usr/bin/nvidia-sm
+                  if not os.path.exists('/usr/bin/nvidia-smi'):
+                      raise Exception(build_message('nvidia-smi command not found'))
+                  # 2. check ecc from nvidia-smi
+                  output = ''
+                  try:
+                      output = subprocess.run(['nvidia-smi'], universal_newlines=True, stdout=subprocess.PIPE, timeout=10).stdout
+                  except subprocess.TimeoutExpired:
+                      raise Exception(build_message('nvidia-smi execution timeout 10s'))
+                  except:
+                      pass
+                  message = ''
+                  lines = [line for line in output.split('\n') if "NVIDIA" in line and "Driver" not in line]
+                  for index, line in enumerate(lines):
+                      location = line.split(" ")[3]
+                      ecc_count = line.split(" ")[-2]
+                      if not ecc_count.isdigit():
+                          continue
+                      ecc_count = int(ecc_count)
+                      if ecc_count > threshold:
+                          message += build_message(line, location)
+              except Exception as e:
+                  if len(message) == 0:
+                      message = str(e)
+              finally:
+                  if len(message) > 0:
+                      send('alerting', message)
+                  else:
+                      send('normal', message)

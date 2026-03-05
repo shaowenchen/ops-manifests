@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: inspect-pod-pending
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: view pod events when pod is in Pending state
+  tasks:
+    - name: get-pod
+      desc: get pod information
+      taskRef: get-pod
+    - name: view-pod-error-events
+      desc: view pod error events when pending
+      taskRef: list-error-events-bypod

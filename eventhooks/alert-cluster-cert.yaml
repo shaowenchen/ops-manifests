@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: alert-cluster-cert
+  namespace: ops-system
+spec:
+  keywords:
+    matchMode: ALL
+    include:
+      - alerting
+      - alert-cluster-cert
+  subject: ops.clusters.*.findings
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

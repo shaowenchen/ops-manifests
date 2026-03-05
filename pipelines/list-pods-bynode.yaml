@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: list-pod-bynode
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: list all pods on a specific node in the cluster
+  tasks:
+    - name: list-pods
+      desc: list all pods on a specific node
+      taskRef: list-pods-bynode

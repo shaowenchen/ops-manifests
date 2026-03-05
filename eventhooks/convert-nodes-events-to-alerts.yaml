@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: convert-nodes-events-to-alerts
+  namespace: ops-system
+spec:
+  type: event
+  subject: ops.clusters.*.nodes.*.events
+  keywords:
+    include:
+      - ".*(NodeNotReady|NotReady|Unreachable|MemoryPressure|DiskPressure|PIDPressure|NetworkUnavailable|Error|Failed).*"
+    matchType: REGEX
+  url: ops.clusters.*.nodes.*.alerts

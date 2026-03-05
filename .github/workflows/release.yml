@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: "Branch name"
+        required: true
+        type: choice
+        default: main
+        options:
+          - main
+          - v1.1
+
+jobs:
+  update-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Determine tag name
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            BRANCH_NAME="${{ github.event.inputs.branch_name }}"
+          else
+            BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          fi
+
+          if [ "$BRANCH_NAME" == "main" ]; then
+            TAG_NAME="latest"
+          elif [[ "$BRANCH_NAME" =~ ^v[0-9]+\.[0-9]+$ ]]; then
+            TAG_NAME="${BRANCH_NAME}.0"
+          else
+            echo "Error: Invalid branch name format. Expected 'main' or 'vx.x'"
+            exit 1
+          fi
+
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Branch: $BRANCH_NAME -> Tag: $TAG_NAME"
+
+      - name: Delete existing release if exists
+        run: |
+          TAG_NAME="${{ steps.tag.outputs.tag_name }}"
+
+          # Delete release if exists using GitHub CLI
+          RELEASE_ID=$(gh api repos/${{ github.repository }}/releases/tags/$TAG_NAME --jq '.id' 2>/dev/null || echo "")
+          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+            echo "Release for tag $TAG_NAME exists (ID: $RELEASE_ID), deleting..."
+            gh api repos/${{ github.repository }}/releases/$RELEASE_ID -X DELETE || echo "Failed to delete release, continuing..."
+          else
+            echo "No release found for tag $TAG_NAME"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag Repo
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

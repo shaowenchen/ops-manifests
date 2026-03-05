@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: pods-no-healthy-devices
+  namespace: ops-system
+spec:
+  additional: "action: restart-kubelet-bypod"
+  keywords:
+    include:
+      - no healthy devices
+  subject: ops.clusters.*.namespaces.*.pods.*.events
+  type: webhook
+  url: http://x.x.x.x/webhook

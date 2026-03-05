@@ -1,0 +1,20 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: velero-backup
+  namespace: ops-system
+spec:
+  desc: backup Kubernetes Using Velero
+  host: anymaster
+  variables:
+    cluster_name: 
+      default: default
+    version: 
+      default: "0"
+    namespace: 
+      default: default
+    velero_version: 
+      default: v1.9.2
+  steps:
+    - name: backup-specified-namespace
+      content: ./velero-${velero_version}-linux-amd64/velero backup create ${cluster_name}-${version} --include-namespaces ${namespace}

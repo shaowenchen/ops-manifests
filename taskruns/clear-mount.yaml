@@ -1,0 +1,11 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: TaskRun
+metadata:
+  name: clear-mount
+  namespace: ops-system
+spec:
+  desc: clear mount every hour at 25 minutes
+  crontab: "25 * * * *"
+  taskRef: clear-mount
+  variables:
+    host: managed-by=ops

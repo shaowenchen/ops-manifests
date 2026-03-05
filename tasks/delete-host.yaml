@@ -1,0 +1,20 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: delete-host
+  namespace: ops-system
+spec:
+  desc: delete host
+  host: anymaster
+  variables:
+    hostname:
+      display: hostname
+      required: true
+      examples:
+      - "10-10-10-10"
+    namespace:
+      value: ops-system
+  steps:
+    - name: delete-host
+      content: |
+        kubectl delete host ${hostname} -n ${namespace}

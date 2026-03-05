@@ -1,0 +1,49 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-metrics-pod-not200-bysvc
+  namespace: ops-system
+spec:
+  desc: get metrics from prometheus for pod not 200
+  host: anymaster
+  variables:
+    prometheusapi:
+      display: prometheusapi
+      required: true
+      examples:
+      - "http://prometheus-server.kube-system.svc.cluster.local:9090"
+    svc:
+      display: svc name
+      required: true
+  steps:
+    - name: get-pod-not-200-response-count-increase-in-last-5-minutes
+      content: |
+        #!/bin/bash
+        mysvc="${svc}"
+        prometheusapi="${prometheusapi}"
+        maxerrors=80
+        mysvc=$(echo "$mysvc" | awk '{gsub(/^atms-glb-/,""); print substr($0, 1, length($0)-1)}')
+        promql="sum(increase(istio_requests_total{reporter=\"destination\",destination_service_name=~\"$mysvc.*\", response_code!=\"200\"}[300s])) by (pod) > 0"
+        response=$(curl -s -G \
+          --data-urlencode "query=$promql" \
+          --data-urlencode "time=$(date +%s)" \
+          "$prometheusapi/api/v1/query")
+
+        result=$(echo "$response" | jq -r '.data.result[] | "\(.metric.pod) \(.value[1])"')
+        top_pod=$(echo "$result" | sort -k2 -nr | head -n1)
+        flag=0
+        if [ -n "$top_pod" ]; then
+          pod_name=$(echo "$top_pod" | awk '{print $1}')
+          errors=$(echo "$top_pod" | awk '{print int($2)}')
+
+          if [ -n "$maxerrors" ] && [ "$errors" -gt "$maxerrors" ]; then
+            echo "pod:$pod_name"
+            flag=1
+          fi
+        fi
+        if [ $flag -eq 0 ]; then
+          echo "No pod hit"
+          echo "$result" | sort -k2 -nr
+          exit 1
+        fi
+

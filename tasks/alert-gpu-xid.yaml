@@ -1,0 +1,114 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+    name: alert-gpu-xid
+    namespace: ops-system
+spec:
+    desc: check gpu xid errors from dmesg
+    host: "alert-card=gpu"
+    steps:
+        - name: alert-gpu-xid
+          content: |
+              #!/usr/bin/python
+              import os
+              import subprocess
+              import requests
+              import json
+              import re
+              from datetime import datetime, timedelta
+
+              message = ''
+              error_count = 0
+
+              def send(status, message, value):
+                  payload = {
+                      'host': '${HOSTNAME}',
+                      'type': 'TaskRunReport',
+                      'kind': '${TASKRUN}',
+                      'threshold': '0',
+                      'operator': '==',
+                      'value': str(value),
+                      'status': status,
+                      'message': message
+                  }
+                  headers = {
+                      'Content-Type': 'application/json'
+                  }
+                  # Always send to findings
+                  response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.findings', headers=headers, data=json.dumps(payload))
+                  print(response.text)
+                  # If alerting, also send to alerts
+                  if status == 'alerting':
+                      response = requests.post('${OPSSERVER_ENDPOINT}/api/v1/namespaces/${NAMESPACE}/events/nodes.${HOSTNAME}.alerts', headers=headers, data=json.dumps(payload))
+                      print(response.text)
+
+              def build_message(message, line_info=''):
+                  if line_info == '':
+                      return f'{message}'
+                  if message == '':
+                      return line_info
+                  return f'{message}\n{line_info}'
+
+              def parse_dmesg_timestamp(line):
+                  """Parse dmesg timestamp, return datetime object"""
+                  # Match format: [Tue Jul 15 17:16:15 2025]
+                  timestamp_pattern = r'\[([A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d{2}:\d{2}:\d{2} \d{4})\]'
+                  match = re.search(timestamp_pattern, line)
+                  if match:
+                      try:
+                          timestamp_str = match.group(1)
+                          # Parse time string
+                          return datetime.strptime(timestamp_str, '%a %b %d %H:%M:%S %Y')
+                      except ValueError:
+                          return None
+                  return None
+
+              def is_within_last_hour(log_time):
+                  """Check if log time is within the last hour"""
+                  if log_time is None:
+                      return False
+                  current_time = datetime.now()
+                  one_hour_ago = current_time - timedelta(hours=1)
+                  return log_time >= one_hour_ago
+
+              try:
+                  # Execute dmesg -T to get system logs
+                  output = ''
+                  try:
+                      result = subprocess.run(['dmesg', '-T'], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                      output = result.stdout
+                      if result.returncode != 0:
+                          raise Exception(f'dmesg command failed: {result.stderr}')
+                  except Exception as e:
+                      raise Exception(f'Failed to execute dmesg: {str(e)}')
+                  
+                  # Filter lines containing "xid"
+                  xid_lines = []
+                  for line in output.split('\n'):
+                      if 'xid' in line.lower():
+                          # Parse timestamp and check if within last hour
+                          log_time = parse_dmesg_timestamp(line)
+                          if is_within_last_hour(log_time):
+                              xid_lines.append(line.strip())
+                  
+                  # Check if lines containing "xid" also contain "error"
+                  error_lines = []
+                  for line in xid_lines:
+                      if 'error' in line.lower():
+                          error_lines.append(line)
+                          error_count += 1
+                  
+                  # Build message
+                  if error_count > 0:
+                      message = f'Found {error_count} GPU XID error(s) in the last hour:'
+                      for error_line in error_lines:
+                          message = build_message(message, error_line)
+                      send('alerting', message, error_count)
+                  else:
+                      if len(xid_lines) > 0:
+                          send('normal', f'Found {len(xid_lines)} XID line(s) in the last hour but no errors', 0)
+                      else:
+                          send('normal', 'No XID lines found in the last hour', 0)
+                          
+              except Exception as e:
+                  send('alerting', str(e), -1)

@@ -1,0 +1,35 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-metrics-pod-not200
+  namespace: ops-system
+spec:
+  desc: get metrics from prometheus for pod not 200
+  host: anymaster
+  variables:
+    prometheusapi:
+      display: prometheusapi
+      required: true
+      examples:
+      - "http://prometheus-server.kube-system.svc.cluster.local:9090"
+    pod:
+      display: pod name
+      required: true
+  steps:
+    - name: get-pod-not-200-response-count-increase-in-last-5-minutes
+      content: |
+        #!/bin/bash
+        pod="${pod}"
+        prometheusapi="${prometheusapi}"
+
+        response=$(curl -s -G \
+          --data-urlencode "query=increase(istio_requests_total{response_code!=\"200\",pod=\"$pod\",connection_security_policy!=\"unknown\"}[30s])" \
+          --data-urlencode "start=$(($(date +%s) - 300))" \
+          --data-urlencode "end=$(date +%s)" \
+          --data-urlencode "step=30" \
+          "$prometheusapi/api/v1/query_range")
+
+        values=$(echo "$response" | jq -r '.data.result[].values[][1]')
+        counts=$(echo "$values" | awk '{sum+=$1} END {print sum}')
+
+        echo "counts:$counts"

@@ -1,0 +1,14 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: EventHooks
+metadata:
+  name: drain-error-gpu
+  namespace: ops-system
+spec:
+  keywords:
+    matchMode: ALL
+    include:
+      - alerting
+      - drain-error-gpu
+  subject: ops.clusters.*.nodes.*.findings
+  type: xiezuo
+  url: https://xxx.com/api/v1/webhook/send?key=

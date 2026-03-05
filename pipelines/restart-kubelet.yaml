@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: restart-kubelet
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: restart kubelet
+  tasks:
+    - name: whitelist-check
+      desc: check whitelist
+      taskRef: check-whitelist
+    - name: restart-kubelet
+      desc: restart kubelet
+      taskRef: restart-kubelet

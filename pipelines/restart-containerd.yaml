@@ -1,0 +1,16 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: restart-containerd
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: restart containerd
+  tasks:
+    - name: whitelist-check
+      desc: check whitelist
+      taskRef: check-whitelist
+    - name: restart-containerd
+      desc: restart containerd
+      taskRef: restart-containerd
