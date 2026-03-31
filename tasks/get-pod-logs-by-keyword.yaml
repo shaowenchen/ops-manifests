@@ -1,0 +1,31 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-pod-logs-by-keyword
+  namespace: ops-system
+spec:
+  desc: get latest pod logs filtered by keyword; prints no match if no match
+  host: anymaster
+  variables:
+    namespace:
+      display: namespace
+      required: true
+    pod:
+      display: pod name
+      required: true
+    keyword:
+      display: keyword (literal match, case-insensitive)
+      required: true
+    topk:
+      display: tail line count
+      default: "200"
+  steps:
+    - name: filter-pod-logs-by-keyword
+      content: |
+        LOG=$(kubectl logs --tail=${topk} -n ${namespace} ${pod} 2>&1) || exit $?
+        MATCH=$(printf '%s\n' "$LOG" | grep -iF -- "${keyword}" || true)
+        if [ -z "$MATCH" ]; then
+          echo 'no match'
+        else
+          printf '%s\n' "$MATCH"
+        fi
