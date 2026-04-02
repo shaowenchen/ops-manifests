@@ -6,9 +6,9 @@ metadata:
 spec:
   desc: restart node or host
   variables:
-    cluster:
+    target_cluster:
       required: true
-    host:
+    target_host:
       required: true
     white:
       required: true
@@ -17,7 +17,7 @@ spec:
       content: |
         #!/bin/bash
 
-        URL="http://x.x.x.x/api/v1/copilot/execute?action=dropCardMachineHandler&cluster=${cluster}&host=${host}&username=${white}"
+        URL="http://x.x.x.x/api/v1/copilot/execute?action=dropCardMachineHandler&cluster=${target_cluster}&host=${taret_host}&username=${white}"
 
         if ! curl -f --location "$URL" --header 'copilot-token: xxx'; then
             echo "restart node or host failed"

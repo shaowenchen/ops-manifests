@@ -6,6 +6,13 @@ metadata:
   labels:
     ops/copilot: enabled
 spec:
+  variables:
+    cluster:
+      value: "cluster1"
+    host:
+      value: "host1"
+    whitelist:
+      value: "whitelist1"
   desc: restart node or host
   tasks:
     - name: restart-node
