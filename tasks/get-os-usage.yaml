@@ -31,6 +31,8 @@ spec:
       content: echo `/usr/sbin/arp -an | wc -l` `/sbin/sysctl net.ipv4.neigh.default.gc_thresh1 | awk '{print $3}'` |awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
     - name: open-files-number
       content: cat /proc/sys/fs/file-nr |awk '{printf "%.2f%%/%s\n", $1*100/$3, $3}'
+    - name: inode-usage
+      content: timeout 5 df -il 2>/dev/null | grep -vE '^Filesystem|tmpfs|cdrom|loop|udev' | awk '$2 > 0 { print $5 "/" $2 " " $1 }' | grep " "/
     - name: user-instances
       content: echo `find /proc/*/fd/* -type l -lname 'anon_inode:inotify' -print 2>/dev/null | cut -d/ -f3 |xargs -I '{}' -- ps --no-headers -o '%U' -p '{}' | sort | uniq -c | sort -nr | awk 'BEGIN {max = 0} {if ($1+0 > max+0) max=$1} END {print max}'` `/sbin/sysctl fs.inotify.max_user_instances|awk '{print $3}'` |awk '{printf "%.2f%%/%s\n", $1*100/$2, $2}'
     - name: user-watches
