@@ -1,7 +1,7 @@
 apiVersion: crd.chenshaowen.com/v1
 kind: Pipeline
 metadata:
-  name: restart-node
+  name: drain-node
   namespace: ops-system
   labels:
     ops/copilot: enabled
@@ -15,15 +15,15 @@ spec:
       value: |
         #!/bin/bash
 
-        URL="http://x.x.x.x/api/v1/copilot/execute?action=dropCardMachineHandler&cluster=${cluster}&host=${host}&username=username"
+        URL="http://x.x.x.x/api/v1/copilot/execute?action=drain-node&cluster=${cluster}&host=${host}&username=username"
 
         if ! curl -f --location "$URL" --header 'copilot-token: xxx'; then
-            echo "restart node or host failed"
+            echo "drain node failed"
         else
-            echo "restart node or host success"
+            echo "drain node success"
         fi
-  desc: restart node or host
+  desc: drain node
   tasks:
-    - name: restart-node
-      desc: restart node or host
+    - name: drain-node
+      desc: drain node
       taskRef: script
