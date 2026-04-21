@@ -20,7 +20,7 @@ spec:
           exit 1
         fi
     - name: download-nerdctl
-      content: wget ${proxy}https://github.com/containerd/nerdctl/releases/download/v${version}/nerdctl-${version}-linux-${arch}.tar.gz
+      content: wget ${proxy}/https://github.com/containerd/nerdctl/releases/download/v${version}/nerdctl-${version}-linux-${arch}.tar.gz
     - name: extract
       content: tar -xzf nerdctl-${version}-linux-${arch}.tar.gz
     - name: move

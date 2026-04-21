@@ -18,7 +18,7 @@ spec:
       default: linux
   steps:
     - name: download-nydus
-      content: wget ${proxy}https://github.com/dragonflyoss/nydus/releases/download/v${version}/nydus-static-v${version}-${os}-${arch}.tgz
+      content: wget ${proxy}/https://github.com/dragonflyoss/nydus/releases/download/v${version}/nydus-static-v${version}-${os}-${arch}.tgz
     - name: extract-nydus-static
       content: tar -xzf nydus-static-v${version}-${os}-${arch}.tgz
     - name: move-nydus-static-config
@@ -28,7 +28,7 @@ spec:
     - name: clean-nydus-static
       content: rm -rf nydus-static-v${version}-${os}-${arch}.tgz nydus-static
     - name: download-nydus-snapshotter
-      content: wget ${proxy}https://github.com/containerd/nydus-snapshotter/releases/download/v${rpcversion}/nydus-snapshotter-v${rpcversion}-x86_64.tgz
+      content: wget ${proxy}/https://github.com/containerd/nydus-snapshotter/releases/download/v${rpcversion}/nydus-snapshotter-v${rpcversion}-x86_64.tgz
     - name: extract-nydus-snapshotter
       content: tar -xzf nydus-snapshotter-v${rpcversion}-x86_64.tgz
     - name: move-nydus-snapshotter

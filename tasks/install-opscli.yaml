@@ -11,4 +11,4 @@ spec:
   steps:
     - name: install-opscli
       content: |
-        curl -sfL ${proxy}https://raw.githubusercontent.com/shaowenchen/ops/main/getcli.sh | VERSION=latest PROXY=${proxy} sh -
+        curl -sfL ${proxy}/https://raw.githubusercontent.com/shaowenchen/ops/main/getcli.sh | VERSION=latest PROXY=${proxy} sh -
