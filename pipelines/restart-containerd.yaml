@@ -8,9 +8,6 @@ metadata:
 spec:
   desc: restart containerd
   tasks:
-    - name: whitelist-check
-      desc: check whitelist
-      taskRef: check-whitelist
     - name: restart-containerd
       desc: restart containerd
       taskRef: restart-containerd
