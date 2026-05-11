@@ -1,0 +1,18 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: get-pod-yaml
+  namespace: ops-system
+spec:
+  desc: get pod manifest as YAML
+  host: anymaster
+  variables:
+    namespace:
+      display: namespace
+      required: true
+    pod:
+      display: pod name
+      required: true
+  steps:
+    - name: get-pod-yaml
+      content: kubectl get pod ${pod} -n ${namespace} -o yaml

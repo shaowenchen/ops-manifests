@@ -1,0 +1,13 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Pipeline
+metadata:
+  name: get-pod-yaml
+  namespace: ops-system
+  labels:
+    ops/copilot: enabled
+spec:
+  desc: dump pod manifest as YAML
+  tasks:
+    - name: get-pod-yaml
+      desc: get pod resource as YAML
+      taskRef: get-pod-yaml
