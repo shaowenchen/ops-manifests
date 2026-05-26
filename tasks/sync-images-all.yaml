@@ -1,0 +1,131 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: sync-images-all
+  namespace: ops-system
+spec:
+  desc: >-
+    Sync multiple container images from a source host to a destination host via
+    nerdctl save on source, scp through this runner, nerdctl load on destination.
+    Requires passwordless SSH from this host to both src and dst. tmp_dir must be
+    the same absolute path on all three (created automatically before sync).
+  host: anymaster
+  variables:
+    image_list:
+      display: "Image list (one full image ref per line, e.g. docker.io/library/nginx:1.25)"
+      required: true
+    src_host:
+      display: source host (hostname or IP)
+      required: true
+    dst_host:
+      display: destination host (hostname or IP)
+      required: true
+    src_user:
+      display: SSH user on source host
+      required: false
+      default: root
+    dst_user:
+      display: SSH user on destination host
+      required: false
+      default: root
+    tmp_dir:
+      display: "Shared temp directory path on source, runner, and destination (e.g. /tmp/ops-sync-images)"
+      required: false
+      default: /tmp/ops-sync-images
+  steps:
+    - name: sync-images-all
+      content: |
+        #!/bin/bash
+        GREEN=$'\033[0;32m'
+        YELLOW=$'\033[1;33m'
+        RED=$'\033[0;31m'
+        NC=$'\033[0m'
+
+        SRC_USER="${src_user}"
+        DST_USER="${dst_user}"
+        SRC_HOST="${src_host}"
+        DST_HOST="${dst_host}"
+        TMP_DIR="${tmp_dir}"
+        IMAGE_LIST="${image_list}"
+
+        mkdir -p "$TMP_DIR"
+        if ! ssh -n "${SRC_USER}@${SRC_HOST}" "mkdir -p $(printf '%q' "$TMP_DIR")"; then
+          echo -e "${RED}❌ cannot mkdir tmp_dir on source${NC}" >&2
+          exit 1
+        fi
+        if ! ssh -n "${DST_USER}@${DST_HOST}" "mkdir -p $(printf '%q' "$TMP_DIR")"; then
+          echo -e "${RED}❌ cannot mkdir tmp_dir on destination${NC}" >&2
+          exit 1
+        fi
+
+        FAILED=0
+        SUCCESS=0
+
+        while IFS= read -r IMAGE; do
+          [[ -z "$IMAGE" ]] && continue
+
+          echo -e "\n--------------------------------------------"
+          echo -e "正在处理：${GREEN}${IMAGE}${NC}"
+
+          SAFE_NAME=$(echo "$IMAGE" | tr '/:' '_')
+          TAR_FILE="${TMP_DIR}/${SAFE_NAME}.tar"
+          REMOTE_IMAGE=$(printf '%q' "$IMAGE")
+          REMOTE_TAR=$(printf '%q' "$TAR_FILE")
+
+          SRC_OK=false
+          LOCAL_OK=false
+          DST_OK=false
+
+          echo -e "${YELLOW}[1] 源头打包${NC}"
+          if ssh -n "${SRC_USER}@${SRC_HOST}" \
+              "nerdctl -n k8s.io save -o ${REMOTE_TAR} ${REMOTE_IMAGE}"; then
+            SRC_OK=true
+          else
+            echo -e "${RED}❌ 打包失败${NC}"
+            FAILED=$((FAILED + 1))
+            continue
+          fi
+
+          echo -e "${YELLOW}[2] 下载到本地${NC}"
+          if scp "${SRC_USER}@${SRC_HOST}:${TAR_FILE}" "$TAR_FILE" < /dev/null; then
+            LOCAL_OK=true
+          else
+            echo -e "${RED}❌ 下载失败${NC}"
+            ssh -n "${SRC_USER}@${SRC_HOST}" "rm -f ${REMOTE_TAR}" 2>/dev/null || true
+            FAILED=$((FAILED + 1))
+            continue
+          fi
+
+          echo -e "${YELLOW}[3] 上传到目标${NC}"
+          if scp "$TAR_FILE" "${DST_USER}@${DST_HOST}:${TAR_FILE}" < /dev/null; then
+            DST_OK=true
+          else
+            echo -e "${RED}❌ 上传失败${NC}"
+            ssh -n "${SRC_USER}@${SRC_HOST}" "rm -f ${REMOTE_TAR}" 2>/dev/null || true
+            rm -f "$TAR_FILE"
+            FAILED=$((FAILED + 1))
+            continue
+          fi
+
+          echo -e "${YELLOW}[4] 目标加载${NC}"
+          if ssh -n "${DST_USER}@${DST_HOST}" \
+              "nerdctl -n k8s.io load -i ${REMOTE_TAR}"; then
+            echo -e "${GREEN}✅ 同步完成${NC}"
+            SUCCESS=$((SUCCESS + 1))
+          else
+            echo -e "${RED}❌ 加载失败${NC}"
+            FAILED=$((FAILED + 1))
+          fi
+
+          echo -e "${YELLOW}[5] 清理临时文件${NC}"
+          $SRC_OK && ssh -n "${SRC_USER}@${SRC_HOST}" "rm -f ${REMOTE_TAR}" 2>/dev/null || true
+          $DST_OK && ssh -n "${DST_USER}@${DST_HOST}" "rm -f ${REMOTE_TAR}" 2>/dev/null || true
+          $LOCAL_OK && rm -f "$TAR_FILE"
+
+        done <<< "$IMAGE_LIST"
+
+        echo -e "\n--------------------------------------------"
+        echo -e "完成：${GREEN}成功 ${SUCCESS}${NC}，${RED}失败 ${FAILED}${NC}"
+        if [[ "$FAILED" -gt 0 ]]; then
+          exit 1
+        fi
