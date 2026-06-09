@@ -8,7 +8,7 @@ spec:
   host: anymaster
   variables:
     proxy: 
-      default: https://ghfast.top/
+      default: https://ghfast.top
     action: 
       default: apply
     kubeconfig: 
