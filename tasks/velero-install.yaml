@@ -7,13 +7,13 @@ spec:
   desc: install Velero Client && Server
   host: anymaster
   variables:
-    velero_version: 
+    velero_version:
       default: v1.9.2
-    download_url: 
-      default: https://ghfast.tophttps://github.com/vmware-tanzu/velero/releases/download/${velero_version}/velero-${velero_version}-linux-amd64.tar.gz
-    region: 
+    download_url:
+      default: https://gh-proxy.comhttps://github.com/vmware-tanzu/velero/releases/download/${velero_version}/velero-${velero_version}-linux-amd64.tar.gz
+    region:
       default: cn-north-4
-    endpoint: 
+    endpoint:
       required: true
       default: https://obs.cn-north-4.myhuaweicloud.com
     bucket:

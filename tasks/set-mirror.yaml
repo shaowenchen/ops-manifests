@@ -8,5 +8,5 @@ spec:
   steps:
     - name: install-required-packages
       content: |
-        PROXY="https://ghfast.top/" &&
+        PROXY="https://gh-proxy.com/" &&
         curl -sfL "$PROXY"https://raw.githubusercontent.com/shaowenchen/ops-hub/master/mirror/ubuntu/get.sh | sh -

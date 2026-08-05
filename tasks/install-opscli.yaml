@@ -6,8 +6,8 @@ metadata:
 spec:
   desc: install opscli tool in specified host
   variables:
-    proxy: 
-      default: https://ghfast.top
+    proxy:
+      default: https://gh-proxy.com
   steps:
     - name: install-opscli
       content: |

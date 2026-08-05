@@ -4,14 +4,14 @@ metadata:
   name: install-descheduler
   namespace: ops-system
 spec:
-  desc: install descheduler in Kubernetes 
+  desc: install descheduler in Kubernetes
   host: anymaster
   variables:
-    proxy: 
-      default: https://ghfast.top
-    action: 
+    proxy:
+      default: https://gh-proxy.com
+    action:
       default: apply
-    kubeconfig: 
+    kubeconfig:
       default: "/etc/kubernetes/admin.conf"
   steps:
     - name: action-rbac

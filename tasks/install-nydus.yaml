@@ -6,15 +6,15 @@ metadata:
 spec:
   desc: install nydus kit in specified host
   variables:
-    proxy: 
-      default: https://ghfast.top
-    version: 
+    proxy:
+      default: https://gh-proxy.com
+    version:
       default: 2.2.4
-    rpcversion: 
+    rpcversion:
       default: 0.13.4
-    arch: 
+    arch:
       default: amd64
-    os: 
+    os:
       default: linux
   steps:
     - name: download-nydus

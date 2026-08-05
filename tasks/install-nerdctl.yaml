@@ -6,11 +6,11 @@ metadata:
 spec:
   desc: install nerdctl tool in specified host
   variables:
-    proxy: 
-      default: https://ghfast.top
-    version: 
+    proxy:
+      default: https://gh-proxy.com
+    version:
       default: 2.1.3
-    arch: 
+    arch:
       default: amd64
   steps:
     - name: check-nerdctl
