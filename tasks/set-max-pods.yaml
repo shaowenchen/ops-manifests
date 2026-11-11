@@ -1,0 +1,31 @@
+apiVersion: crd.chenshaowen.com/v1
+kind: Task
+metadata:
+  name: set-max-pods
+  namespace: ops-system
+spec:
+  desc: set maxPods in kubelet config and restart kubelet
+  variables:
+    maxpods:
+      display: max pods
+      required: false
+      default: "250"
+  steps:
+    - name: set-max-pods
+      content: |
+        CONFIG=/var/lib/kubelet/config.yaml
+        if grep -q '^maxPods:' "$CONFIG"; then
+          sed -i.bak 's/^maxPods:.*/maxPods: ${maxpods}/' "$CONFIG"
+        else
+          sed -i.bak "/^kind: KubeletConfiguration/a maxPods: ${maxpods}" "$CONFIG"
+        fi
+        grep '^maxPods:' "$CONFIG"
+    - name: restart-kubelet
+      content: |
+        systemctl restart kubelet
+    - name: check-kubelet-status
+      content: |
+        systemctl is-active kubelet
+    - name: check-kubelet-active-time
+      content: |
+        systemctl show kubelet -p ActiveEnterTimestamp | awk -F= '{print $2}'
